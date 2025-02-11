@@ -1,0 +1,22 @@
+.searchContainer {
+  display: flex;
+  gap: 16px;
+  max-width: 600px;
+  padding: 10px 14px;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+}
+
+.searchField
+  :global(.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline) {
+  border-color: rgba(0, 0, 0, 0.5);
+}
+
+.searchButton {
+  padding: 0 20px !important;
+  background-color: black !important;
+}
+
+.searchButton:hover {
+  background-color: #333 !important;
+}

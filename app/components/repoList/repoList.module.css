@@ -1,0 +1,25 @@
+.repoList {
+  margin-top: 16px;
+}
+
+.repoListItems {
+  list-style-type: none;
+  padding: 0;
+}
+
+.repoListItem {
+  margin-bottom: 12px;
+  padding: 8px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.repoListItem:hover {
+  background-color: #f5f5f5;
+}
+
+.repoDescription {
+  color: #757575;
+  margin-top: 4px;
+}

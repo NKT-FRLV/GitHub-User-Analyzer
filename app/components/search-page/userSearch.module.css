@@ -1,0 +1,101 @@
+.container {
+  padding: 24px;
+  max-width: 600px;
+  background-color: var(--background-paper);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.searchBox {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.searchField
+  :global(.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline) {
+  border-color: rgba(0, 0, 0, 0.5);
+}
+
+.searchButton {
+  background-color: black !important;
+}
+
+.searchButton:hover {
+  background-color: #333 !important;
+}
+
+.userInfo {
+  text-align: center;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.avatarContainer {
+  cursor: pointer;
+  display: inline-block;
+  transition: transform 0.2s;
+}
+
+.avatarContainer:hover {
+  transform: scale(1.05);
+}
+
+.avatar {
+  border-radius: 50%;
+}
+
+.userDetails {
+  text-align: center;
+}
+
+.statsBox {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 32px;
+  margin-top: 16px;
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+
+.modalPaper {
+  background-color: var(--background-paper);
+  position: relative;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.closeButton {
+  position: absolute !important;
+  right: 8px;
+  top: 8px;
+  color: rgba(0, 0, 0, 0.5) !important;
+}
+
+.modalContent {
+  padding: 16px;
+  text-align: center;
+}
+
+.modalImage {
+  border-radius: 8px;
+  max-width: 100%;
+  height: auto;
+}
+
+.error {
+  color: red;
+  text-align: center;
+  margin-top: 16px;
+}

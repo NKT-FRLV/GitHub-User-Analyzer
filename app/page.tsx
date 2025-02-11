@@ -1,95 +1,91 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
+import { Octokit } from "@octokit/rest";
+import SearchBar from "./components/search-bar/SearchBar";
+import UserSearch from "./components/search-page/UserSearch";
 import styles from "./page.module.css";
+import { GitHubUser } from "./types/github";
+import { CircularProgress } from "@mui/material";
+import { Backdrop } from "@mui/material";
+
+const octokit = new Octokit();
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [user, setUser] = useState<GitHubUser | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+  const handleSearch = async (query: string) => {
+    if (!query.trim()) {
+      setError("Please enter a username");
+      return;
+    }
+    setLoading(true);
+    try {
+      setError("");
+      const response = await octokit.request("GET /users/{username}", {
+        username: query,
+      });
+
+      const userData: GitHubUser = {
+        id: response.data.id,
+        login: response.data.login,
+        name: response.data.name || "no name",
+        avatar_url: response.data.avatar_url,
+        public_repos: response.data.public_repos,
+        bio: response.data.bio,
+        followers: response.data.followers,
+        following: response.data.following,
+        repos_url: response.data.repos_url,
+      };
+
+      setUser(userData);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        if (error.message.includes("Not Found")) {
+          setError("User not found. Please check the username and try again.");
+        } else {
+          setError(
+            "An error occurred while searching. Please try again later.",
+          );
+        }
+      }
+      setUser(null);
+      if (process.env.NODE_ENV === "development") {
+        console.error(error);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <main>
+      <div className={styles.page}>
+        <header className={styles.header}>
+          <h1>GitHub User Analyzer</h1>
+          <SearchBar onSearch={handleSearch} />
+        </header>
+        <main className={styles.main}>
+          <UserSearch user={user} error={error} />
+        </main>
+        <footer className={styles.footer}>
+          <p>2025 GitHub User Analyzer by @nkt.frlv.</p>
+        </footer>
+      </div>
+      <Backdrop
+        sx={(theme) => ({
+          color: "#fff",
+          zIndex: theme.zIndex.drawer + 1,
+        })}
+        open={loading}
+        onClick={() => {}}
+        tabIndex={-1}
+        aria-hidden={true}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+    </main>
   );
 }
