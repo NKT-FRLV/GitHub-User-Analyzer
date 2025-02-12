@@ -23,3 +23,19 @@
   color: #757575;
   margin-top: 4px;
 }
+
+@media (max-width: 600px) {
+  .repoList {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .repoListItems {
+    padding: 0;
+  }
+
+  .repoListItem {
+    margin-bottom: 8px;
+    padding: 4px;
+  }
+}

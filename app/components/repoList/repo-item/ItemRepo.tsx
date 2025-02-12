@@ -82,13 +82,13 @@ const RepoItem: FC<RepoItemProps> = ({
       </AccordionSummary>
 
       <AccordionDetails>
-        <Box display="flex" flexDirection="column" gap={2}>
+        <Box display="flex" flexDirection="column" gap={1}>
           {/* Описание репозитория, если есть */}
           {repo.description && (
             <Typography
               variant="body2"
-              my={2}
-              sx={{ fontSize: "1.1rem" }}
+              my={1}
+              sx={{ fontSize: "0.9rem" }}
               component="h3"
               color="black"
             >

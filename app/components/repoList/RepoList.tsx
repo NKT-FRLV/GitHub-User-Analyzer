@@ -57,6 +57,11 @@ const RepoList: React.FC<RepoListProps> = ({ repos, repOwner }) => {
         </Typography>
         <Box mt={1}>
           {repos.map((repo) => (
+            // console.log(
+            //   'название репозитория', repo.name,
+            //   'Описание репозитория', repo.description,
+            // ),
+            
             <RepoItem
               key={repo.id}
               repo={repo}

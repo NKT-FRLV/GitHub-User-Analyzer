@@ -68,7 +68,6 @@ const PieComponent: FC<PieProps> = ({ title, data, infoInBytes = false }) => {
         >
           {Object.entries(dataToDisplay).map(
             ([lang, info]) => (
-              console.log("lang", lang),
               (
                 <Box
                   key={lang}

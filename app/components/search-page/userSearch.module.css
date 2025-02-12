@@ -99,3 +99,41 @@
   text-align: center;
   margin-top: 16px;
 }
+
+@media (max-width: 600px) {
+  .container {
+    padding: 8px;
+    max-width: 100%;
+    margin: 0 8px;
+  }
+
+  .header {
+    gap: 8px;
+  }
+
+  .statsBox {
+    gap: 16px;
+  }
+
+  .buttonGroup {
+    gap: 8px;
+  }
+
+  .userInfo, .userDetails, .modalContent {
+    font-size: 0.875rem;
+  }
+
+  .error {
+    font-size: 0.875rem;
+  }
+
+  .avatarContainer {
+    width: 120px;
+    height: 120px;
+  }
+
+  .avatar {
+    width: 100%;
+    height: auto;
+  }
+}
