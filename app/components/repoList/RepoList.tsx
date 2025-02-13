@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Box, Typography } from "@mui/material";
+import { useMediaQuery, useTheme } from '@mui/material';
 import { GitHubUser, Repository, LanguagesObject } from "../../types/github";
 import RepoItem from "./repo-item/ItemRepo";
 import PieComponent from "../common/PieComponent";
@@ -16,6 +17,11 @@ const RepoList: React.FC<RepoListProps> = ({ repos, repOwner }) => {
   const [loadingLangs, setLoadingLangs] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [selectedRepo, setSelectedRepo] = useState<Repository | null>(null);
+
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const pieWidth = isSmallScreen ? 135 : 220;
+  const pieHeight = isSmallScreen ? 135 : 220;
 
   // Функция для получения info о языках
   const fetchLanguages = async (url: string, repo: Repository) => {
@@ -50,9 +56,9 @@ const RepoList: React.FC<RepoListProps> = ({ repos, repOwner }) => {
   }
 
   return (
-    <Box className={styles.repoList} display="flex" flexDirection="row" gap={4}>
+    <Box className={styles.repoList} gap={4}>
       <Box>
-        <Typography variant="h6" sx={{ mt: 2, fontWeight: "bold" }}>
+        <Typography variant="h6" sx={{ mt: 2, fontWeight: "bold", fontSize: isSmallScreen ? "1rem" : "1.2rem" }}>
           Repositories of {repOwner.name}:
         </Typography>
         <Box mt={1}>
@@ -67,6 +73,7 @@ const RepoList: React.FC<RepoListProps> = ({ repos, repOwner }) => {
               repo={repo}
               selectedRepo={selectedRepo}
               expanded={expandedRepo === repo.id}
+              isSmallScreen={isSmallScreen}
               onChange={(isExpanded) => handleChange(repo.id, isExpanded)}
               fetchLanguages={fetchLanguages}
               loadingLangs={loadingLangs}
@@ -83,6 +90,8 @@ const RepoList: React.FC<RepoListProps> = ({ repos, repOwner }) => {
         }
         data={languages}
         infoInBytes={true}
+        responsiveWidth={pieWidth}
+        responsiveHeight={pieHeight}
       />
     </Box>
   );

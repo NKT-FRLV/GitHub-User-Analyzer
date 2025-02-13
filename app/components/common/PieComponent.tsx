@@ -1,10 +1,13 @@
 import { FC } from "react";
 import { PieChart } from "@mui/x-charts/PieChart";
+import { useTheme, useMediaQuery } from "@mui/material";
 import { Box, Typography } from "@mui/material";
 import { languageColors } from "../../utils";
 import { LanguagesObject } from "@/app/types/github";
 
 interface PieProps {
+  responsiveWidth?: number;
+  responsiveHeight?: number;
   title: string;
   data: LanguagesObject | null;
   infoInBytes?: boolean;
@@ -17,7 +20,10 @@ const defaultData = {
   ["Java Script"]: 10,
 };
 
-const PieComponent: FC<PieProps> = ({ title, data, infoInBytes = false }) => {
+const PieComponent: FC<PieProps> = ({ title, data, infoInBytes = false, responsiveWidth = 300, responsiveHeight = 300 }) => {
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
   const dataToDisplay =
     data && Object.keys(data).length > 0 ? data : defaultData;
 
@@ -46,21 +52,22 @@ const PieComponent: FC<PieProps> = ({ title, data, infoInBytes = false }) => {
 
   return (
     <Box>
-      <Typography variant="h6" sx={{ mt: 2, mb: 2, fontWeight: "bold" }}>
+      <Typography variant="h6" sx={{ mt: 2, mb: 2, fontWeight: "bold", fontSize: isSmallScreen ? "1rem" : "1.2rem" }}>
         {title}
       </Typography>
       <Box
         sx={{
           width: "100%",
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "center",
           alignItems: "center",
-          marginTop: 4,
+          marginTop: isSmallScreen ? 2 : 4,
+          gap: 2,
         }}
       >
         <Box
           sx={{
-            minWidth: "200px",
+            minWidth: isSmallScreen ? 150 : 200,
             display: "flex",
             flexDirection: "column",
             gap: 1,
@@ -81,8 +88,8 @@ const PieComponent: FC<PieProps> = ({ title, data, infoInBytes = false }) => {
                       backgroundColor: languageColors[lang] || "#CCCCCC",
                     }}
                   />
-                  <Box display="flex" alignItems="center" gap={1}>
-                    <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                  <Box display="flex" alignItems="center" gap={1} sx={{ fontSize: isSmallScreen ? "0.8rem" : "1rem" }}>
+                    <Typography variant="body2" sx={{ fontWeight: "bold", fontSize: 'inherit' }}>
                       {lang}:
                     </Typography>{" "}
                     {infoInBytes
@@ -96,10 +103,11 @@ const PieComponent: FC<PieProps> = ({ title, data, infoInBytes = false }) => {
         </Box>
 
         {/* Диаграмма справа */}
-        <Box width={300} height={300}>
+        <Box width='100%' display='flex' justifyContent='center' alignItems='center'>
           <PieChart
-            width={300}
-            height={300}
+            width={responsiveWidth}
+            height={responsiveHeight}
+            margin={{ right: 0, left: 0, top: 0, bottom: 0 }}
             slotProps={{ legend: { hidden: true } }}
             series={[
               {

@@ -48,7 +48,9 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
   return (
     <AppBar
       sx={{
-        position: "relative",
+        position: "sticky",
+        top: 0,
+        zIndex: 1000,
         backgroundColor: "grey.200",
         color: "grey.800",
         paddingInline: 2,
@@ -69,7 +71,6 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
           sx={{
             display: "flex",
             gap: 1,
-            flexWrap: "wrap",
             width: "100%",
             justifyContent: { xs: "center", sm: "flex-end" },
           }}
@@ -94,7 +95,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
             sx={{ backgroundColor: "grey.800", color: "grey.200" }}
             onClick={handleMenuOpen}
           >
-            Filter Options
+            Filter
           </Button>
           <Menu
             anchorEl={anchorEl}
@@ -122,6 +123,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
             autoFocus
             aria-label="close"
             variant="contained"
+            size="small"
             sx={{ backgroundColor: "grey.900", color: "grey.200" }}
             onClick={onClose}
           >

@@ -61,7 +61,7 @@ export default function Home() {
   };
 
   return (
-    <main>
+    <>
       <div className={styles.page}>
         <header className={styles.header}>
           <h1>GitHub User Analyzer</h1>
@@ -86,6 +86,6 @@ export default function Home() {
       >
         <CircularProgress color="inherit" />
       </Backdrop>
-    </main>
+    </>
   );
 }

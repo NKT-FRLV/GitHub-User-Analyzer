@@ -12,13 +12,14 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ShowChartIcon from "@mui/icons-material/ShowChart";
 import { Repository } from "../../../types/github";
 import { formatDistanceStrict } from "date-fns";
-
+import TextInfo from "./TextInfo";
 interface RepoItemProps {
   loadingLangs: boolean;
   error: string | null;
   repo: Repository;
   expanded: boolean;
   selectedRepo: Repository | null;
+  isSmallScreen: boolean;
   onChange: (isExpanded: boolean) => void;
   fetchLanguages: (url: string, repo: Repository) => void;
 }
@@ -29,6 +30,7 @@ const RepoItem: FC<RepoItemProps> = ({
   repo,
   expanded,
   selectedRepo,
+  isSmallScreen,
   onChange,
   fetchLanguages,
 }) => {
@@ -74,7 +76,7 @@ const RepoItem: FC<RepoItemProps> = ({
         {/* Основная информация о репе */}
         <Typography
           variant="subtitle1"
-          sx={{ fontWeight: "bold" }}
+          sx={{ fontWeight: "bold", fontSize: isSmallScreen ? "0.8rem" : "1rem" }}
           component="h2"
         >
           {repo.name}
@@ -88,7 +90,7 @@ const RepoItem: FC<RepoItemProps> = ({
             <Typography
               variant="body2"
               my={1}
-              sx={{ fontSize: "0.9rem" }}
+              sx={{ fontSize: isSmallScreen ? "0.8rem" : "0.9rem" }}
               component="h3"
               color="black"
             >
@@ -99,29 +101,23 @@ const RepoItem: FC<RepoItemProps> = ({
           {/* Дополнительная статистика: звёзды, форки, watchers и т.п. */}
           <Box
             display="flex"
-            flexDirection="row"
-            sx={{ justifyContent: "space-around" }}
+            flexDirection={isSmallScreen ? "column" : "row"}
+            sx={{ justifyContent: isSmallScreen ? "center" : "space-around" }}
             alignItems="center"
+            gap={isSmallScreen ? 1 : 0}
           >
             <Link
               href={repo.html_url}
               target="_blank"
               rel="noopener noreferrer"
+              sx={{ fontSize: isSmallScreen ? "1rem" : "1.2rem" }}
             >
               Go to repo
             </Link>
 
-            <Typography variant="body2">
-              Stars: {repo.stargazers_count}
-            </Typography>
-
-            <Typography variant="body2">Forks: {repo.forks_count}</Typography>
-            <Typography variant="body2">
-              Watchers: {repo.watchers_count}
-            </Typography>
-            <Typography variant="body2">
-              Open Issues: {repo.open_issues_count}
-            </Typography>
+            <TextInfo text="Stars" value={repo.stargazers_count} isSmallScreen={isSmallScreen} />
+            <TextInfo text="Watchers" value={repo.watchers_count} isSmallScreen={isSmallScreen} />
+            <TextInfo text="Open Issues" value={repo.open_issues_count} isSmallScreen={isSmallScreen} />
           </Box>
 
           {/* Информация о времени разработки */}
@@ -133,43 +129,23 @@ const RepoItem: FC<RepoItemProps> = ({
               alignItems: "center",
             }}
           >
-            <Box display={"flex"} alignItems={"center"} gap={1}>
-              Created:{" "}
-              <Typography sx={{ fontWeight: "bold" }}>
-                {new Date(repo.created_at).toLocaleDateString()}
-              </Typography>
-            </Box>
-            <Box display={"flex"} alignItems={"center"} gap={1}>
-              Development time:{" "}
-              <Typography sx={{ fontWeight: "bold" }}>
-                {getDevelopmentTime()}
-              </Typography>
-            </Box>
-            <Box display={"flex"} alignItems={"center"} gap={1}>
-              Last activity:{" "}
-              <Typography sx={{ fontWeight: "bold" }}>
-                {new Date(repo.pushed_at).toLocaleDateString()}
-              </Typography>
-            </Box>
-          </Box>
-
-          <Box display="flex" alignItems="center" justifyContent="center" gap={1}>
-            Total commits:{" "}
-            <Typography sx={{ fontWeight: "bold" }}>
-              {commitCount || "Loading..."}
-            </Typography>
+            <TextInfo text="Created" value={new Date(repo.created_at).toLocaleDateString()} isSmallScreen={isSmallScreen} />
+            <TextInfo text="Development time" value={getDevelopmentTime()} isSmallScreen={isSmallScreen} />
+            <TextInfo text="Last activity" value={new Date(repo.pushed_at).toLocaleDateString()} isSmallScreen={isSmallScreen} />
+            <TextInfo text="Total commits:" value={commitCount || "Loading..."} isSmallScreen={isSmallScreen} />
           </Box>
 
           <Button
             loading={loadingLangs}
             variant="contained"
             loadingPosition="end"
-            endIcon={<ShowChartIcon />}
+            endIcon={<ShowChartIcon sx={{ fontSize: isSmallScreen ? "1rem" : "1.2rem" }} />}
             onClick={() => fetchLanguages(repo.languages_url, repo)}
             sx={{
               backgroundColor:
                 selectedRepo?.id === repo.id ? "success.main" : "black",
               color: "white",
+              fontSize: isSmallScreen ? "0.8rem" : "1rem",
             }}
           >
             Show Analysis

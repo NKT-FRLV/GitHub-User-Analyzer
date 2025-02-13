@@ -13,6 +13,7 @@ import {
   Divider,
   Slide,
 } from "@mui/material";
+import { useTheme, useMediaQuery } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import Image from "next/image";
 import CloseIcon from "@mui/icons-material/Close";
@@ -34,6 +35,8 @@ const Transition = React.forwardRef(function Transition(
 });
 
 const UserSearch = ({ user, error }: UserSearchProps) => {
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const [openModal, setOpenModal] = React.useState(false);
   const [analiticsOpen, setAnaliticsOpen] = React.useState(false);
   const [repoListOpen, setRepoListOpen] = React.useState(false);
@@ -159,12 +162,12 @@ const UserSearch = ({ user, error }: UserSearchProps) => {
               >
                 <Typography
                   variant="subtitle1"
-                  sx={{ mt: 2, fontWeight: "bold", color: "grey.600" }}
+                  sx={{ mt: 2, fontWeight: "bold", color: "grey.600", fontSize: isSmallScreen ? "0.9rem" : "1.2rem" }}
                 >
                   Name:
                 </Typography>
 
-                <Typography variant="h5" sx={{ mt: 1 }}>
+                <Typography variant="h5" sx={{ mt: 1, fontSize: isSmallScreen ? "1rem" : "1.5rem", fontWeight: "bold" }}>
                   {user.name}
                 </Typography>
               </Box>
@@ -176,27 +179,27 @@ const UserSearch = ({ user, error }: UserSearchProps) => {
               >
                 <Typography
                   variant="subtitle1"
-                  sx={{ mt: 2, fontWeight: "bold", color: "grey.600" }}
+                  sx={{ mt: 2, fontWeight: "bold", color: "grey.600", fontSize: isSmallScreen ? "0.9rem" : "1.2rem" }}
                 >
                   Login:
                 </Typography>
 
-                <Typography variant="h5" sx={{ mt: 1 }}>
+                <Typography variant="h5" sx={{ mt: 1, fontSize: isSmallScreen ? "0.9rem" : "1.5rem", fontWeight: "bold" }}>
                   {user.login}
                 </Typography>
               </Box>
 
-              <Typography variant="body1" sx={{ mb: 1, mt: 2 }}>
+              <Typography variant="body1" sx={{ mb: 1, mt: 2, fontSize: isSmallScreen ? "0.8rem" : "1rem" }}>
                 {user.bio || "No bio available"}
               </Typography>
             </Box>
           </Box>
 
           <Box className={styles.statsBox}>
-            <Typography variant="body2" sx={{ mb: 1 }}>
+            <Typography variant="body2" sx={{ mb: 1, fontSize: isSmallScreen ? "0.8rem" : "1rem" }}>
               Followers: {user.followers}
             </Typography>
-            <Typography variant="body2" sx={{ mb: 1 }}>
+            <Typography variant="body2" sx={{ mb: 1, fontSize: isSmallScreen ? "0.8rem" : "1rem" }}>
               Following: {user.following}
             </Typography>
           </Box>

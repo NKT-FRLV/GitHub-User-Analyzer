@@ -1,5 +1,6 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
+import { useTheme, useMediaQuery } from "@mui/material";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import PieComponent from "../common/PieComponent";
 import { Repository, LanguagesObject } from "../../types/github";
@@ -11,6 +12,11 @@ interface UserAnalyticsProps {
 }
 
 const UserAnalytics = ({ repos }: UserAnalyticsProps) => {
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const pieWidth = isSmallScreen ? 100 : 250;
+  const pieHeight = isSmallScreen ? 100 : 250;
+
   // 1. Считаем статистику по языкам
   const languageStats: LanguagesObject = {};
 
@@ -38,12 +44,12 @@ const UserAnalytics = ({ repos }: UserAnalyticsProps) => {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"}}>
-      <Typography variant="h5" sx={{ mb: 2 }}>
+      <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold", fontSize: isSmallScreen ? "1rem" : "1.2rem" }}>
         Overall Language Usage Statistics
       </Typography>
       <Box display="flex" alignItems="center" gap={2}>
         Total Repositories:
-        <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+        <Typography variant="body2" sx={{ fontWeight: "bold", fontSize: isSmallScreen ? "0.8rem" : "1rem" }}>
           {repos.length}
         </Typography>
       </Box>
@@ -59,7 +65,7 @@ const UserAnalytics = ({ repos }: UserAnalyticsProps) => {
           {totalForks}
         </Typography>
       </Box>
-      <Box width={470} height={400}>
+      <Box>
         <PieComponent
           title={
             Object.keys(languageStats).length > 0
@@ -67,6 +73,8 @@ const UserAnalytics = ({ repos }: UserAnalyticsProps) => {
               : "Charge repositories to see languages"
           }
           data={languageStats || null}
+          responsiveWidth={pieWidth}
+          responsiveHeight={pieHeight}
         />
       </Box>
     </Box>

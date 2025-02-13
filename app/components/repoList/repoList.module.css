@@ -1,5 +1,7 @@
 .repoList {
   margin-top: 16px;
+  display: flex;
+  flex-direction: row;
 }
 
 .repoListItems {
@@ -26,8 +28,7 @@
 
 @media (max-width: 600px) {
   .repoList {
-    flex-direction: column;
-    gap: 16px;
+    flex-direction: column-reverse;
   }
 
   .repoListItems {
