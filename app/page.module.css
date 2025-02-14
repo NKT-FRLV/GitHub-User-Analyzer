@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: space-between;
   min-height: 100%;
-  padding: 20px;
+  padding: 1rem;
   gap: 40px;
   font-family: var(--font-geist-sans);
 }

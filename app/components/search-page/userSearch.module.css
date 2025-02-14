@@ -1,6 +1,4 @@
 .container {
-  padding: 24px;
-  max-width: 600px;
   background-color: var(--background-paper);
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -45,10 +43,6 @@
 
 .avatarContainer:hover {
   transform: scale(1.05);
-}
-
-.avatar {
-  border-radius: 50%;
 }
 
 .userDetails {
@@ -101,11 +95,6 @@
 }
 
 @media (max-width: 600px) {
-  .container {
-    padding: 8px;
-    max-width: 100%;
-    margin: 0 8px;
-  }
 
   .header {
     gap: 8px;
@@ -127,13 +116,4 @@
     font-size: 0.875rem;
   }
 
-  .avatarContainer {
-    width: 120px;
-    height: 120px;
-  }
-
-  .avatar {
-    width: 100%;
-    height: auto;
-  }
 }

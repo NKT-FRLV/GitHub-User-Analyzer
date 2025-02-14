@@ -3,6 +3,7 @@ import { Box, Typography } from "@mui/material";
 import { useTheme, useMediaQuery } from "@mui/material";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import PieComponent from "../common/PieComponent";
+import TextInfo from "../common/TextInfo";
 import { Repository, LanguagesObject } from "../../types/github";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -47,24 +48,9 @@ const UserAnalytics = ({ repos }: UserAnalyticsProps) => {
       <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold", fontSize: isSmallScreen ? "1rem" : "1.2rem" }}>
         Overall Language Usage Statistics
       </Typography>
-      <Box display="flex" alignItems="center" gap={2}>
-        Total Repositories:
-        <Typography variant="body2" sx={{ fontWeight: "bold", fontSize: isSmallScreen ? "0.8rem" : "1rem" }}>
-          {repos.length}
-        </Typography>
-      </Box>
-      <Box display="flex" alignItems="center" gap={2} my={2}>
-        Total Stars:{" "}
-        <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-          {totalStars}
-        </Typography>
-      </Box>
-      <Box display="flex" alignItems="center" gap={2}>
-        Total Forks:{" "}
-        <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-          {totalForks}
-        </Typography>
-      </Box>
+      <TextInfo text="Total Repositories" value={repos.length} isSmallScreen={isSmallScreen} />
+      <TextInfo text="Total Stars" value={totalStars} isSmallScreen={isSmallScreen} />
+      <TextInfo text="Total Forks" value={totalForks} isSmallScreen={isSmallScreen} />
       <Box>
         <PieComponent
           title={

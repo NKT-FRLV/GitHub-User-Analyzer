@@ -12,7 +12,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ShowChartIcon from "@mui/icons-material/ShowChart";
 import { Repository } from "../../../types/github";
 import { formatDistanceStrict } from "date-fns";
-import TextInfo from "./TextInfo";
+import TextInfo from "../../common/TextInfo";
 interface RepoItemProps {
   loadingLangs: boolean;
   error: string | null;
@@ -85,7 +85,6 @@ const RepoItem: FC<RepoItemProps> = ({
 
       <AccordionDetails>
         <Box display="flex" flexDirection="column" gap={1}>
-          {/* Описание репозитория, если есть */}
           {repo.description && (
             <Typography
               variant="body2"
@@ -97,8 +96,6 @@ const RepoItem: FC<RepoItemProps> = ({
               {repo.description}
             </Typography>
           )}
-
-          {/* Дополнительная статистика: звёзды, форки, watchers и т.п. */}
           <Box
             display="flex"
             flexDirection={isSmallScreen ? "column" : "row"}
@@ -115,9 +112,9 @@ const RepoItem: FC<RepoItemProps> = ({
               Go to repo
             </Link>
 
-            <TextInfo text="Stars" value={repo.stargazers_count} isSmallScreen={isSmallScreen} />
-            <TextInfo text="Watchers" value={repo.watchers_count} isSmallScreen={isSmallScreen} />
-            <TextInfo text="Open Issues" value={repo.open_issues_count} isSmallScreen={isSmallScreen} />
+            <TextInfo text="Stars" value={repo.stargazers_count} isSmallScreen={isSmallScreen} fsMax="1rem" fsMin="0.8rem" />
+            <TextInfo text="Watchers" value={repo.watchers_count} isSmallScreen={isSmallScreen} fsMax="1rem" fsMin="0.8rem" />
+            <TextInfo text="Open Issues" value={repo.open_issues_count} isSmallScreen={isSmallScreen} fsMax="1rem" fsMin="0.8rem" />
           </Box>
 
           {/* Информация о времени разработки */}
@@ -129,10 +126,10 @@ const RepoItem: FC<RepoItemProps> = ({
               alignItems: "center",
             }}
           >
-            <TextInfo text="Created" value={new Date(repo.created_at).toLocaleDateString()} isSmallScreen={isSmallScreen} />
-            <TextInfo text="Development time" value={getDevelopmentTime()} isSmallScreen={isSmallScreen} />
-            <TextInfo text="Last activity" value={new Date(repo.pushed_at).toLocaleDateString()} isSmallScreen={isSmallScreen} />
-            <TextInfo text="Total commits:" value={commitCount || "Loading..."} isSmallScreen={isSmallScreen} />
+            <TextInfo text="Created" value={new Date(repo.created_at).toLocaleDateString()} isSmallScreen={isSmallScreen} fsMax="1rem" fsMin="0.8rem" />
+            <TextInfo text="Development time" value={getDevelopmentTime()} isSmallScreen={isSmallScreen} fsMax="1rem" fsMin="0.8rem" />
+            <TextInfo text="Last activity" value={new Date(repo.pushed_at).toLocaleDateString()} isSmallScreen={isSmallScreen} fsMax="1rem" fsMin="0.8rem" />
+            <TextInfo text="Total commits" value={commitCount || "Loading..."} isSmallScreen={isSmallScreen} fsMax="1rem" fsMin="0.8rem" />
           </Box>
 
           <Button

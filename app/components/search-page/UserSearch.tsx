@@ -3,7 +3,6 @@
 import React, { useEffect } from "react";
 import {
   Box,
-  Paper,
   Typography,
   Dialog,
   IconButton,
@@ -12,8 +11,11 @@ import {
   Button,
   Divider,
   Slide,
+  Card,
+  CardContent,
+  Avatar
 } from "@mui/material";
-import { useTheme, useMediaQuery } from "@mui/material";
+import { useMediaQuery } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import Image from "next/image";
 import CloseIcon from "@mui/icons-material/Close";
@@ -24,7 +26,9 @@ import { UserSearchProps, Repository } from "../../types/github";
 import RepoList from "../repoList/RepoList";
 import UserAnalytics from "../user-analitics/UserAnalitics";
 import AppBarComponent from "../common/AppBarComponent";
-
+import TextInfo from "../common/TextInfo";
+import FolderIcon from "@mui/icons-material/Folder";
+import BarChartIcon from "@mui/icons-material/BarChart";
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
     children: React.ReactElement<unknown>;
@@ -35,15 +39,15 @@ const Transition = React.forwardRef(function Transition(
 });
 
 const UserSearch = ({ user, error }: UserSearchProps) => {
-  const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const isSmallScreen = useMediaQuery("(max-width: 600px)");
   const [openModal, setOpenModal] = React.useState(false);
   const [analiticsOpen, setAnaliticsOpen] = React.useState(false);
   const [repoListOpen, setRepoListOpen] = React.useState(false);
   const [repos, setRepos] = React.useState<Repository[]>([]);
   const [filteredRepos, setFilteredRepos] = React.useState<Repository[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
-
+  const avatarSize = isSmallScreen ? 120 : 150;
+  const buttonFontSize = isSmallScreen ? "0.7rem" : "1rem";
   useEffect(() => {
     if (user) {
       setRepos([]);
@@ -62,7 +66,6 @@ const UserSearch = ({ user, error }: UserSearchProps) => {
     try {
       const response = await fetch(url);
       const data: Repository[] = await response.json();
-      console.log(data);
       setRepos(data);
     } catch (error) {
       console.error("Ошибка при получении репозиториев:", error);
@@ -135,41 +138,42 @@ const UserSearch = ({ user, error }: UserSearchProps) => {
   }
 
   if (!user) return null;
-  console.log("user, --> ", user);
+
   return (
     <>
-      <Paper elevation={3} className={styles.container}>
-        <Box className={styles.userInfo}>
-          <Box className={styles.header}>
-            <div
-              className={styles.avatarContainer}
-              onClick={() => setOpenModal(true)}
-            >
-              <Image
+      <Card elevation={3} className={styles.container}>
+        <CardContent className={styles.userInfo}>
+            <Box className={styles.header}>
+              <Avatar
+                className={styles.avatarContainer}
+                aria-label="user avatar"
                 src={user.avatar_url}
                 alt={user.login}
-                width={150}
-                height={150}
-                className={styles.avatar}
+                sx={{ width: avatarSize, height: avatarSize, cursor: "pointer" }}
+                onClick={() => setOpenModal(true)}
               />
-            </div>
             <Box className={styles.userDetails}>
               <Box
                 display="flex"
                 flexDirection="row"
                 gap={1}
                 alignItems="baseline"
+                my={1}
               >
-                <Typography
-                  variant="subtitle1"
-                  sx={{ mt: 2, fontWeight: "bold", color: "grey.600", fontSize: isSmallScreen ? "0.9rem" : "1.2rem" }}
-                >
-                  Name:
-                </Typography>
-
-                <Typography variant="h5" sx={{ mt: 1, fontSize: isSmallScreen ? "1rem" : "1.5rem", fontWeight: "bold" }}>
-                  {user.name}
-                </Typography>
+                <TextInfo text={
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ fontWeight: "bold", color: "grey.600", fontSize: isSmallScreen ? "0.9rem" : "1.2rem" }}
+                    >
+                      Name:
+                    </Typography>
+                  }
+                  value={user.name}
+                  isSmallScreen={isSmallScreen}
+                  fsMax="1.5rem"
+                  fsMin="1rem" 
+                  spacing={false}
+                />
               </Box>
               <Box
                 display="flex"
@@ -177,16 +181,20 @@ const UserSearch = ({ user, error }: UserSearchProps) => {
                 gap={1}
                 alignItems="baseline"
               >
-                <Typography
-                  variant="subtitle1"
-                  sx={{ mt: 2, fontWeight: "bold", color: "grey.600", fontSize: isSmallScreen ? "0.9rem" : "1.2rem" }}
-                >
-                  Login:
-                </Typography>
-
-                <Typography variant="h5" sx={{ mt: 1, fontSize: isSmallScreen ? "0.9rem" : "1.5rem", fontWeight: "bold" }}>
-                  {user.login}
-                </Typography>
+                <TextInfo text={
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ fontWeight: "bold", color: "grey.600", fontSize: isSmallScreen ? "0.9rem" : "1.2rem" }}
+                    >
+                      Login:
+                    </Typography>
+                  }
+                  value={user.login}
+                  isSmallScreen={isSmallScreen}
+                  fsMax="1.5rem"
+                  fsMin="1rem" 
+                  spacing={false}
+                />
               </Box>
 
               <Typography variant="body1" sx={{ mb: 1, mt: 2, fontSize: isSmallScreen ? "0.8rem" : "1rem" }}>
@@ -195,27 +203,27 @@ const UserSearch = ({ user, error }: UserSearchProps) => {
             </Box>
           </Box>
 
-          <Box className={styles.statsBox}>
-            <Typography variant="body2" sx={{ mb: 1, fontSize: isSmallScreen ? "0.8rem" : "1rem" }}>
-              Followers: {user.followers}
-            </Typography>
-            <Typography variant="body2" sx={{ mb: 1, fontSize: isSmallScreen ? "0.8rem" : "1rem" }}>
-              Following: {user.following}
-            </Typography>
+          <Box className={styles.statsBox} my={2}>
+            <TextInfo text="Followers" value={user.followers} isSmallScreen={isSmallScreen} fsMax="1rem" fsMin="0.8rem" />
+            <TextInfo text="Following" value={user.following} isSmallScreen={isSmallScreen} fsMax="1rem" fsMin="0.8rem" />
           </Box>
 
           <Divider />
 
           <Box className={styles.buttonGroup}>
             <Button
-              variant="outlined"
+              variant="contained"
+              sx={{ backgroundColor: "grey.900", fontSize: buttonFontSize }}
+              startIcon={<FolderIcon sx={{ fontSize: buttonFontSize }} />}
               onClick={() => handleRepos(!repoListOpen, user.repos_url)}
               style={{ cursor: "pointer" }}
             >
               Repos: {user.public_repos}
             </Button>
             <Button
-              variant="outlined"
+              variant="contained"
+              sx={{ backgroundColor: "grey.900", fontSize: buttonFontSize }}
+              startIcon={<BarChartIcon sx={{ fontSize: buttonFontSize }} />}
               onClick={() => setAnaliticsOpen(true)}
               style={{ cursor: "pointer" }}
             >
@@ -304,8 +312,8 @@ const UserSearch = ({ user, error }: UserSearchProps) => {
               <UserAnalytics repos={repos} />
             </Box>
           </Dialog>
-        </Box>
-      </Paper>
+        </CardContent>
+      </Card>
 
       <Backdrop
         sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
