@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Octokit } from "@octokit/rest";
 import SearchBar from "./components/search-bar/SearchBar";
 import UserSearch from "./components/search-page/UserSearch";
-import styles from "./page.module.css";
+import styles from "./home.module.css";
 import { GitHubUser } from "./types/github";
 import { CircularProgress } from "@mui/material";
 import { Backdrop } from "@mui/material";
@@ -13,9 +13,10 @@ const octokit = new Octokit();
 
 interface initialServerUser {
   initialUser: GitHubUser | null;
+  isMobile: boolean;
 }
 
-export default function Home({ initialUser }: initialServerUser) {
+export default function Home({ initialUser, isMobile }: initialServerUser) {
   const [user, setUser] = useState<GitHubUser | null>(initialUser);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -72,7 +73,7 @@ export default function Home({ initialUser }: initialServerUser) {
           <SearchBar onSearch={handleSearch} />
         </header>
         <main className={styles.main}>
-          <UserSearch user={user} error={error} />
+          <UserSearch user={user} error={error} isMobile={isMobile} />
         </main>
         <footer className={styles.footer}>
           <p>2025 GitHub User Analyzer by @nkt.frlv.</p>

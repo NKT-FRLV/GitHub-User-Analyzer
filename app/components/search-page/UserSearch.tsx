@@ -38,7 +38,7 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const UserSearch = ({ user, error }: UserSearchProps) => {
+const UserSearch = ({ user, error, isMobile }: UserSearchProps & { isMobile: boolean }) => {
   const isSmallScreen = useMediaQuery("(max-width: 600px)");
   const [openModal, setOpenModal] = React.useState(false);
   const [analiticsOpen, setAnaliticsOpen] = React.useState(false);
@@ -46,8 +46,20 @@ const UserSearch = ({ user, error }: UserSearchProps) => {
   const [repos, setRepos] = React.useState<Repository[]>([]);
   const [filteredRepos, setFilteredRepos] = React.useState<Repository[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
-  const avatarSize = isSmallScreen ? 120 : 150;
-  const buttonFontSize = isSmallScreen ? "0.7rem" : "1rem";
+
+
+  const isClient = typeof window !== "undefined";
+
+  // Выбираем корректный вариант
+  const isMobileView = isClient ? isSmallScreen : isMobile;
+  console.log(isMobileView);
+
+  const avatarSize = isMobileView ? 120 : 150;
+  const buttonFontSize = isMobileView ? "0.7rem" : "1rem";
+  const fs = isMobileView ? "0.9rem" : "1.2rem";
+  const fs2 = isMobileView ? "0.8rem" : "1rem";
+
+
   useEffect(() => {
     if (user) {
       setRepos([]);
@@ -146,7 +158,6 @@ const UserSearch = ({ user, error }: UserSearchProps) => {
             <Box className={styles.header}>
               <Avatar
                 className={styles.avatarContainer}
-                aria-label="user avatar"
                 src={user.avatar_url}
                 alt={user.login}
                 sx={{ width: avatarSize, height: avatarSize, cursor: "pointer" }}
@@ -163,7 +174,7 @@ const UserSearch = ({ user, error }: UserSearchProps) => {
                 <TextInfo text={
                     <Typography
                       variant="subtitle1"
-                      sx={{ fontWeight: "bold", color: "grey.600", fontSize: isSmallScreen ? "0.9rem" : "1.2rem" }}
+                      sx={{ fontWeight: "bold", color: "grey.600", fontSize: fs }}
                     >
                       Name:
                     </Typography>
@@ -184,7 +195,7 @@ const UserSearch = ({ user, error }: UserSearchProps) => {
                 <TextInfo text={
                     <Typography
                       variant="subtitle1"
-                      sx={{ fontWeight: "bold", color: "grey.600", fontSize: isSmallScreen ? "0.9rem" : "1.2rem" }}
+                      sx={{ fontWeight: "bold", color: "grey.600", fontSize: fs }}
                     >
                       Login:
                     </Typography>
@@ -197,7 +208,7 @@ const UserSearch = ({ user, error }: UserSearchProps) => {
                 />
               </Box>
 
-              <Typography variant="body1" sx={{ mb: 1, mt: 2, fontSize: isSmallScreen ? "0.8rem" : "1rem" }}>
+              <Typography variant="body1" sx={{ mb: 1, mt: 2, fontSize: fs2 }}>
                 {user.bio || "No bio available"}
               </Typography>
             </Box>

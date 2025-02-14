@@ -1,6 +1,7 @@
 import { Octokit } from "@octokit/rest";
 import Home from "./Home"; // Подключаем клиентский компонент
 import { GitHubUser } from "./types/github";
+import { headers } from "next/headers";
 
 // SERVER MI-VIEJO-AMIGO USER DATA 
 // СЕРВЕРНЫЙ КОМПОНЕНТ
@@ -33,6 +34,8 @@ async function getUserData(username: string): Promise<GitHubUser | null> {
 
 export default async function Page() {
   const user = await getUserData("mi-viejo-amigo");
+  const userAgent = (await headers()).get("user-agent") || "";
+  const isMobile = /Mobi|Android/i.test(userAgent);
 
-  return <Home initialUser={user} />;
+  return <Home initialUser={user} isMobile={isMobile} />;
 }
