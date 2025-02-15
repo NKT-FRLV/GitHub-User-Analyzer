@@ -24,13 +24,13 @@ const SearchBar = ({ onSearch }: SearchBarProps) => {
   };
 
   return (
-    <Box className={styles.searchContainer}>
+    <Box className={styles.searchContainer} component="form">
       <TextField
         fullWidth
+        label="Enter GitHub username"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="Enter GitHub username"
         variant="outlined"
         size="small"
         className={styles.searchField}

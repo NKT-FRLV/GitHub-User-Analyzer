@@ -156,7 +156,7 @@ const UserSearch = ({ user, error, isMobile: serverIsMobile, userInteracted }: U
 
   return (
     <>
-      <Card elevation={3} className={styles.container}>
+      <Card elevation={3} className={styles.container} component="article">
         <CardContent className={styles.userInfo}>
             <Box className={styles.header}>
               <Avatar
