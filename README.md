@@ -73,11 +73,11 @@ Check out [Next.js Deployment Guide](https://nextjs.org/docs/app/building-your-a
 
 ---
 
-## 👨‍💻 Author  
-Developed by **[Nikita Frolov](https://github.com/mi-viejo-amigo)**  
+## **Author**  
+👨‍💻 **Developed by [Nikita Frolov](https://github.com/NKT-FRLV)**  
 
 📩 **Contact me:**  
-- **GitHub:** [mi-viejo-amigo](https://github.com/mi-viejo-amigo)  
+- **GitHub:** [mi-viejo-amigo](https://github.com/NKT-FRLV)  
 - **LinkedIn:** [LinkedIn Profile](https://www.linkedin.com/in/nktfrlv)  
 - **Email:** [Letter me](mailto:nkt.frlv7@yandex.ru)  
 
