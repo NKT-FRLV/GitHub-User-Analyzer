@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -29,6 +29,7 @@ import AppBarComponent from "../common/AppBarComponent";
 import TextInfo from "../common/TextInfo";
 import FolderIcon from "@mui/icons-material/Folder";
 import BarChartIcon from "@mui/icons-material/BarChart";
+
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
     children: React.ReactElement<unknown>;
@@ -38,27 +39,28 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const UserSearch = ({ user, error, isMobile }: UserSearchProps & { isMobile: boolean }) => {
-  const isSmallScreen = useMediaQuery("(max-width: 600px)");
+const UserSearch = ({ user, error, isMobile: serverIsMobile, userInteracted }: UserSearchProps & { isMobile: boolean, userInteracted: boolean }) => {
   const [openModal, setOpenModal] = React.useState(false);
   const [analiticsOpen, setAnaliticsOpen] = React.useState(false);
   const [repoListOpen, setRepoListOpen] = React.useState(false);
   const [repos, setRepos] = React.useState<Repository[]>([]);
   const [filteredRepos, setFilteredRepos] = React.useState<Repository[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
+  console.log('serverIsMobile', serverIsMobile);
+  const clientIsMobile = useMediaQuery("(max-width: 768px)");
+  const [isMobileView, setIsMobileView] = useState(serverIsMobile);
 
-
-  const isClient = typeof window !== "undefined";
-
-  // Выбираем корректный вариант
-  const isMobileView = isClient ? isSmallScreen : isMobile;
-  console.log(isMobileView);
+  // Функция переключения `isMobileView` при первом клике/таче
+  useEffect(() => {
+    if (userInteracted) {
+      setIsMobileView(clientIsMobile);
+    }
+  }, [clientIsMobile, userInteracted]);
 
   const avatarSize = isMobileView ? 120 : 150;
   const buttonFontSize = isMobileView ? "0.7rem" : "1rem";
   const fs = isMobileView ? "0.9rem" : "1.2rem";
   const fs2 = isMobileView ? "0.8rem" : "1rem";
-
 
   useEffect(() => {
     if (user) {
@@ -180,7 +182,7 @@ const UserSearch = ({ user, error, isMobile }: UserSearchProps & { isMobile: boo
                     </Typography>
                   }
                   value={user.name}
-                  isSmallScreen={isSmallScreen}
+                  isSmallScreen={isMobileView}
                   fsMax="1.5rem"
                   fsMin="1rem" 
                   spacing={false}
@@ -201,7 +203,7 @@ const UserSearch = ({ user, error, isMobile }: UserSearchProps & { isMobile: boo
                     </Typography>
                   }
                   value={user.login}
-                  isSmallScreen={isSmallScreen}
+                  isSmallScreen={isMobileView}
                   fsMax="1.5rem"
                   fsMin="1rem" 
                   spacing={false}
@@ -215,8 +217,8 @@ const UserSearch = ({ user, error, isMobile }: UserSearchProps & { isMobile: boo
           </Box>
 
           <Box className={styles.statsBox} my={2}>
-            <TextInfo text="Followers" value={user.followers} isSmallScreen={isSmallScreen} fsMax="1rem" fsMin="0.8rem" />
-            <TextInfo text="Following" value={user.following} isSmallScreen={isSmallScreen} fsMax="1rem" fsMin="0.8rem" />
+            <TextInfo text="Followers" value={user.followers} isSmallScreen={isMobileView} fsMax="1rem" fsMin="0.8rem" />
+            <TextInfo text="Following" value={user.following} isSmallScreen={isMobileView} fsMax="1rem" fsMin="0.8rem" />
           </Box>
 
           <Divider />

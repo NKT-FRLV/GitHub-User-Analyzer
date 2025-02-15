@@ -8,6 +8,7 @@ import styles from "./home.module.css";
 import { GitHubUser } from "./types/github";
 import { CircularProgress } from "@mui/material";
 import { Backdrop } from "@mui/material";
+import { useUserInteraction } from "./hooks/useUserInteraction";
 
 const octokit = new Octokit();
 
@@ -20,6 +21,9 @@ export default function Home({ initialUser, isMobile }: initialServerUser) {
   const [user, setUser] = useState<GitHubUser | null>(initialUser);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Используем кастомный хук для отслеживания первого взаимодействия
+  const userInteracted = useUserInteraction();
 
   const handleSearch = async (query: string) => {
     if (!query.trim()) {
@@ -73,7 +77,7 @@ export default function Home({ initialUser, isMobile }: initialServerUser) {
           <SearchBar onSearch={handleSearch} />
         </header>
         <main className={styles.main}>
-          <UserSearch user={user} error={error} isMobile={isMobile} />
+          <UserSearch user={user} error={error} isMobile={isMobile} userInteracted={userInteracted} />
         </main>
         <footer className={styles.footer}>
           <p>2025 GitHub User Analyzer by @nkt.frlv.</p>
