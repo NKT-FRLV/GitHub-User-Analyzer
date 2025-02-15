@@ -33,7 +33,7 @@ async function getUserData(username: string): Promise<GitHubUser | null> {
 }
 
 export default async function Page() {
-  const user = await getUserData("mi-viejo-amigo");
+  const user = await getUserData("NKT-FRLV");
   const userAgent = (await headers()).get("user-agent") || "";
   
   const isMobile = /Mobi|Android/i.test(userAgent);

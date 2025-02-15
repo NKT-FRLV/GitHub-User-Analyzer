@@ -18,6 +18,7 @@ import {
 import { useMediaQuery } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import Image from "next/image";
+import { FS, AvatarSize } from "../../types/enums";
 import CloseIcon from "@mui/icons-material/Close";
 // import clsx from 'clsx';
 import styles from "./userSearch.module.css";
@@ -46,9 +47,9 @@ const UserSearch = ({ user, error, isMobile: serverIsMobile, userInteracted }: U
   const [repos, setRepos] = React.useState<Repository[]>([]);
   const [filteredRepos, setFilteredRepos] = React.useState<Repository[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
-  console.log('serverIsMobile', serverIsMobile);
-  const clientIsMobile = useMediaQuery("(max-width: 768px)");
   const [isMobileView, setIsMobileView] = useState(serverIsMobile);
+
+  const clientIsMobile = useMediaQuery("(max-width: 768px)");
 
   // Функция переключения `isMobileView` при первом клике/таче
   useEffect(() => {
@@ -57,10 +58,10 @@ const UserSearch = ({ user, error, isMobile: serverIsMobile, userInteracted }: U
     }
   }, [clientIsMobile, userInteracted]);
 
-  const avatarSize = isMobileView ? 120 : 150;
-  const buttonFontSize = isMobileView ? "0.7rem" : "1rem";
-  const fs = isMobileView ? "0.9rem" : "1.2rem";
-  const fs2 = isMobileView ? "0.8rem" : "1rem";
+  const avatarSize = isMobileView ? AvatarSize.small : AvatarSize.big;
+  const buttonFontSize = isMobileView ? FS.S : FS.X;
+  const adaptiveFontSize1 = isMobileView ? FS.L : FS.XL;
+  const adaptiveFontSize2 = isMobileView ? FS.M : FS.X;
 
   useEffect(() => {
     if (user) {
@@ -176,7 +177,7 @@ const UserSearch = ({ user, error, isMobile: serverIsMobile, userInteracted }: U
                 <TextInfo text={
                     <Typography
                       variant="subtitle1"
-                      sx={{ fontWeight: "bold", color: "grey.600", fontSize: fs }}
+                      sx={{ fontWeight: "bold", color: "grey.600", fontSize: adaptiveFontSize1 }}
                     >
                       Name:
                     </Typography>
@@ -197,7 +198,7 @@ const UserSearch = ({ user, error, isMobile: serverIsMobile, userInteracted }: U
                 <TextInfo text={
                     <Typography
                       variant="subtitle1"
-                      sx={{ fontWeight: "bold", color: "grey.600", fontSize: fs }}
+                      sx={{ fontWeight: "bold", color: "grey.600", fontSize: adaptiveFontSize1 }}
                     >
                       Login:
                     </Typography>
@@ -210,7 +211,7 @@ const UserSearch = ({ user, error, isMobile: serverIsMobile, userInteracted }: U
                 />
               </Box>
 
-              <Typography variant="body1" sx={{ mb: 1, mt: 2, fontSize: fs2 }}>
+              <Typography variant="body1" sx={{ mb: 1, mt: 2, fontSize: adaptiveFontSize2 }}>
                 {user.bio || "No bio available"}
               </Typography>
             </Box>
