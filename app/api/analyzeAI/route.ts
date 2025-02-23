@@ -54,7 +54,7 @@ export async function POST(req: Request) {
         return codeExtensions.some(ext => path.toLowerCase().endsWith(ext));
         }
 
-        const blobs = treeData.tree.filter((item: any) => 
+        const blobs = treeData.tree.filter((item: { type: string; path: string }) => 
             item.type === "blob" && isCodeFile(item.path)
         );
 
@@ -63,7 +63,7 @@ export async function POST(req: Request) {
         }
 
         // d) Сортируем по size
-        blobs.sort((a: any, b: any) => (b.size || 0) - (a.size || 0));
+        blobs.sort((a: { size: number }, b: { size: number }) => (b.size || 0) - (a.size || 0));
         const biggestFile = blobs[0];
 
         // e) Получаем содержимое
