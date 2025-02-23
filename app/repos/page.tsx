@@ -6,11 +6,11 @@ import RepoListModal from '../components/user-card/modals/RepoListModal';
 import { Repository, GitHubUser } from '../types/github';
 
 const ReposPage = async (props: {
-  searchParams?: { url?: string };
+  searchParams: { url: string };
 }) => {
   
-  const sParams = (await props)?.searchParams;
-  const reposUrl = (await sParams)?.url;
+  const reposUrl = props?.searchParams?.url;
+  // const reposUrl = (await sParams)?.url;
 
   if (!reposUrl) {
     return <div>No `url` query param found</div>;
