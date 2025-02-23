@@ -1,9 +1,12 @@
+'use client'
 import React, { useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { useMediaQuery, useTheme } from '@mui/material';
 import { GitHubUser, Repository, LanguagesObject } from "../../types/github";
+import { fetchLanguagesApi } from "../../api/API";
 import RepoItem from "./repo-item/ItemRepo";
 import PieComponent from "../common/PieComponent";
+import AIFeedbackChat from "./AI-feedback/AIFeedbackChat";
 import styles from "./repoList.module.css";
 
 interface RepoListProps {
@@ -18,6 +21,7 @@ const RepoList: React.FC<RepoListProps> = ({ repos, repOwner }) => {
   const [error, setError] = React.useState<string | null>(null);
   const [selectedRepo, setSelectedRepo] = useState<Repository | null>(null);
 
+
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const pieWidth = isSmallScreen ? 135 : 220;
@@ -28,23 +32,18 @@ const RepoList: React.FC<RepoListProps> = ({ repos, repOwner }) => {
     if (selectedRepo && selectedRepo.id === repo.id) {
       return;
     }
-    try {
-      setLoadingLangs(true);
-      setError(null);
-
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error("Cannot fetch languages");
-      }
-      const data = await response.json();
-      setLanguages(data);
-      setSelectedRepo(repo);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Error fetching languages");
+    setLoadingLangs(true);
+    setError(null);
+    const data = await fetchLanguagesApi(url);
+    if (!data) {
+      setError("Cannot fetch languages");
       setSelectedRepo((prev) => (prev ? prev : null));
-    } finally {
       setLoadingLangs(false);
-    }
+      return;
+    } 
+    setLanguages(data);
+    setSelectedRepo(repo);
+    setLoadingLangs(false);
   };
 
   const handleChange = (repoId: number, isExpanded: boolean) => {
@@ -59,14 +58,10 @@ const RepoList: React.FC<RepoListProps> = ({ repos, repOwner }) => {
     <Box className={styles.repoList} gap={4}>
       <Box>
         <Typography variant="h6" sx={{ mt: 2, fontWeight: "bold", fontSize: isSmallScreen ? "1rem" : "1.2rem" }}>
-          Repositories of {repOwner.name}:
+          Repositories of {repOwner.login}:
         </Typography>
-        <Box mt={1}>
+        <Box mt={1} component="ul">
           {repos.map((repo) => (
-            // console.log(
-            //   'название репозитория', repo.name,
-            //   'Описание репозитория', repo.description,
-            // ),
             
             <RepoItem
               key={repo.id}
@@ -81,18 +76,22 @@ const RepoList: React.FC<RepoListProps> = ({ repos, repOwner }) => {
             />
           ))}
         </Box>
+
       </Box>
-      <PieComponent
-        title={
-          selectedRepo
-            ? `Repo Languages ${selectedRepo.name}:`
-            : "Select a repo to see languages"
-        }
-        data={languages}
-        infoInBytes={true}
-        responsiveWidth={pieWidth}
-        responsiveHeight={pieHeight}
-      />
+      <Box display='flex' sx={{ flexDirection: 'column', maxWidth: '50%'}}>
+        <PieComponent
+          title={
+            selectedRepo
+              ? `Repo Languages ${selectedRepo.name}:`
+              : "Select a repo to see languages"
+          }
+          data={languages}
+          infoInBytes={true}
+          responsiveWidth={pieWidth}
+          responsiveHeight={pieHeight}
+        />
+        <AIFeedbackChat owner={repOwner.login} repoName={selectedRepo?.name || null} isSmallScreen={isSmallScreen} />
+      </Box>
     </Box>
   );
 };

@@ -23,3 +23,48 @@ export const languageColors: Record<string, string> = {
   Scala: "#C22D40",
   SQL: "#336791",
 };
+
+export const predefinedSkills = [
+  // Основное фронтенд
+  'JavaScript',
+  'TypeScript',
+  'React',
+  'Next.js',
+  'HTML',
+  'CSS',
+  'SASS',
+  'REST API',
+
+  // Чуть-чуть бэкенд/инфраструктуры
+  'Node.js',
+  'Express.js',
+  'MongoDB',
+  'Docker',
+  'AWS',
+
+  // Инструменты и тесты
+  'AI Integration',
+  'Git',
+  'CI/CD',
+  'Jest',
+  'ESLint',
+  'Prettier',
+
+  // Оформление документации / процессы
+  'Technical Documentation',
+  'Agile/Scrum',
+
+  // Soft skills
+
+  'Grammar',
+  'Code Style',
+  'Code Quality',
+  'DRY',
+  'SOLID',
+  'Code Duplication',
+  'Code Maintainability',
+  'Code Reusability',
+  'Code Testability',
+  'Code Performance',
+  
+];

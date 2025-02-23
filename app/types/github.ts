@@ -1,18 +1,17 @@
 import { languageColors } from "../utils";
+import { components } from "@octokit/openapi-types";
 
-export interface GitHubUser {
-  id: number;
-  login: string;
-  name: string;
-  avatar_url: string;
-  public_repos: number;
-  bio: string | null;
-  followers: number;
-  following: number;
-  repos_url: string;
+// типы для github api
+export type GitHubUser = components["schemas"]["public-user"];
+
+
+export interface initialServerUser {
+  initialUser: GitHubUser | unknown;
+  isMobile: boolean;
 }
 
-export interface UserSearchProps {
+
+export interface UserCardProps {
   user: GitHubUser | null;
   error: string;
 }

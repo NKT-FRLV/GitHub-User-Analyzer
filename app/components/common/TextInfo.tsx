@@ -4,7 +4,7 @@ import React from 'react'
 
 interface Props {
   text: string | React.ReactNode;
-  value: string | number;
+  value: string | number | null;
   isSmallScreen: boolean;
   fsMax?: string;
   fsMin?: string;
@@ -23,7 +23,7 @@ const TextInfo = ({ text, value, isSmallScreen, propsBox, propsTypography, fsMax
         ...propsTypography 
         }}
       >
-        {value}
+        {value || "N/A"}
       </Typography>
     </Box>
   )

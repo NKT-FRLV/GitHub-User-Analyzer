@@ -1,53 +1,52 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Box,
   Typography,
   Dialog,
   IconButton,
-  Backdrop,
-  CircularProgress,
+  // Backdrop,
+  // CircularProgress,
   Button,
   Divider,
-  Slide,
   Card,
   CardContent,
-  Avatar
+  Avatar,
+  CircularProgress,
+  Backdrop
 } from "@mui/material";
 import { useMediaQuery } from "@mui/material";
-import { TransitionProps } from "@mui/material/transitions";
 import Image from "next/image";
 import { FS, AvatarSize } from "../../types/enums";
 import CloseIcon from "@mui/icons-material/Close";
-// import clsx from 'clsx';
-import styles from "./userSearch.module.css";
-import { UserSearchProps, Repository } from "../../types/github";
-
-import RepoList from "../repoList/RepoList";
+import styles from "./userCard.module.css";
+import { UserCardProps } from "../../types/github";
 import UserAnalytics from "../user-analitics/UserAnalitics";
-import AppBarComponent from "../common/AppBarComponent";
 import TextInfo from "../common/TextInfo";
 import FolderIcon from "@mui/icons-material/Folder";
 import BarChartIcon from "@mui/icons-material/BarChart";
+// import RepoListModal from "./modals/RepoListModal";
+// import { fetchReposApi } from "../../api/API";
 
-const Transition = React.forwardRef(function Transition(
-  props: TransitionProps & {
-    children: React.ReactElement<unknown>;
-  },
-  ref: React.Ref<unknown>,
-) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
-
-const UserSearch = ({ user, error, isMobile: serverIsMobile, userInteracted }: UserSearchProps & { isMobile: boolean, userInteracted: boolean }) => {
+const UserCard = ({ user, error, isMobile: serverIsMobile, userInteracted }: UserCardProps & { isMobile: boolean, userInteracted: boolean }) => {
   const [openModal, setOpenModal] = React.useState(false);
   const [analiticsOpen, setAnaliticsOpen] = React.useState(false);
-  const [repoListOpen, setRepoListOpen] = React.useState(false);
-  const [repos, setRepos] = React.useState<Repository[]>([]);
-  const [filteredRepos, setFilteredRepos] = React.useState<Repository[]>([]);
+
+  // const [repoListOpen, setRepoListOpen] = React.useState(false);
+  // const [repos, setRepos] = React.useState<Repository[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const [isMobileView, setIsMobileView] = useState(serverIsMobile);
+
+  const router = useRouter();
+
+  const handleRepos = () => {    
+    setIsLoading(true);
+    if (user) {
+      router.push(`/repos?url=${user.repos_url}`);
+    }
+  }
 
   const clientIsMobile = useMediaQuery("(max-width: 768px)");
 
@@ -65,84 +64,43 @@ const UserSearch = ({ user, error, isMobile: serverIsMobile, userInteracted }: U
 
   useEffect(() => {
     if (user) {
-      setRepos([]);
-      setRepoListOpen(false);
+      // setRepoListOpen(false);
       setAnaliticsOpen(false);
       setOpenModal(false);
     }
   }, [user]);
 
-  const fetchRepos = async (url: string) => {
-    if (repos.length > 0) {
-      setRepoListOpen(true);
-      return;
-    }
-    setIsLoading(true);
-    try {
-      const response = await fetch(url);
-      const data: Repository[] = await response.json();
-      setRepos(data);
-    } catch (error) {
-      console.error("Ошибка при получении репозиториев:", error);
-    } finally {
-      setRepoListOpen(true);
-      setIsLoading(false);
-    }
-  };
+  // const fetchRepos = async (url: string) => {
+  //   if (repos.length > 0) {
+  //     setRepoListOpen(true);
+  //     return;
+  //   }
+  
+  //   setIsLoading(true);
+  //   const data = await fetchReposApi(url);
+  
+  //   if (data) {
+  //     setRepos(data);
+  //   } else {
+  //     console.error("Error fetching repos");
+  //   }
+  
+  //   setRepoListOpen(true);
+  //   setIsLoading(false);
+  // };
 
-  const handleRepos = (isOpen: boolean, url?: string) => {
-    if (isOpen && url) {
-      fetchRepos(url);
-      //
-    } else {
-      setRepoListOpen(false);
-    }
-  };
-
-  const filterByLanguage = (language: string) => {
-    if (language === "All Langs") {
-      setFilteredRepos([]);
-      return;
-    }
-    const filtered = repos.filter((repo) => repo.language === language);
-    setFilteredRepos(filtered);
-  };
-
-  const filterByRecentCommit = () => {
-    const reposToFilter = filteredRepos.length > 0 ? filteredRepos : repos;
-    const sorted = [...reposToFilter].sort(
-      (a, b) =>
-        new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime(),
-    );
-    setFilteredRepos(sorted);
-  };
-
-  const filterByDevelopmentTime = () => {
-    const reposToFilter = filteredRepos.length > 0 ? filteredRepos : repos;
-    const sorted = [...reposToFilter].sort((a, b) => {
-      const aTime =
-        new Date(a.updated_at).getTime() - new Date(a.created_at).getTime();
-      const bTime =
-        new Date(b.updated_at).getTime() - new Date(b.created_at).getTime();
-      return bTime - aTime;
-    });
-    setFilteredRepos(sorted);
-  };
+  // const handleRepos = (isOpen: boolean, url?: string) => {
+  //   if (isOpen && url) {
+  //     fetchRepos(url);
+  //     //
+  //   } else {
+  //     setRepoListOpen(false);
+  //   }
+  // };
 
   const closeAnalitics = () => {
     setAnaliticsOpen(false);
   };
-
-  const availableLanguages = [
-    "All Langs",
-    ...Array.from(
-      new Set(
-        repos
-          .map((repo) => repo.language)
-          .filter((lang): lang is string => typeof lang === "string"),
-      ),
-    ),
-  ];
 
   if (error) {
     return (
@@ -152,7 +110,13 @@ const UserSearch = ({ user, error, isMobile: serverIsMobile, userInteracted }: U
     );
   }
 
-  if (!user) return null;
+  if (!user) {
+    return (
+      <Typography color="white" variant="h4" component="p">
+        Try to input GitHub username
+      </Typography>
+    );
+  }
 
   return (
     <>
@@ -229,7 +193,7 @@ const UserSearch = ({ user, error, isMobile: serverIsMobile, userInteracted }: U
               variant="contained"
               sx={{ backgroundColor: "grey.900", fontSize: buttonFontSize }}
               startIcon={<FolderIcon sx={{ fontSize: buttonFontSize }} />}
-              onClick={() => handleRepos(!repoListOpen, user.repos_url)}
+              onClick={handleRepos}
               style={{ cursor: "pointer" }}
             >
               Repos: {user.public_repos}
@@ -281,33 +245,13 @@ const UserSearch = ({ user, error, isMobile: serverIsMobile, userInteracted }: U
             </Box>
           </Dialog>
 
-          <Dialog
-            fullScreen
-            open={repoListOpen}
-            onClose={() => handleRepos(false)}
-            maxWidth="md"
-            slots={{ transition: Transition }}
-            slotProps={{
-              paper: {
-                className: styles.modalPaper,
-              },
-            }}
-          >
-            <AppBarComponent
-              onFilterByLanguage={filterByLanguage}
-              onFilterByRecentCommit={filterByRecentCommit}
-              onFilterByDevelopmentTime={filterByDevelopmentTime}
-              onClose={() => handleRepos(false)}
-              availableLanguages={availableLanguages}
-            />
-
-            <Box className={styles.modalContent}>
-              <RepoList
-                repos={filteredRepos.length > 0 ? filteredRepos : repos}
-                repOwner={user}
-              />
-            </Box>
-          </Dialog>
+        {/* 
+          <RepoListModal
+            repoListOpen={repoListOpen}
+            handleRepos={handleRepos}
+            user={user}
+          /> */}
+          
 
           <Dialog
             open={analiticsOpen}
@@ -323,7 +267,7 @@ const UserSearch = ({ user, error, isMobile: serverIsMobile, userInteracted }: U
               <CloseIcon />
             </IconButton>
             <Box className={styles.modalContent}>
-              <UserAnalytics repos={repos} />
+              <UserAnalytics reposUrl={user.repos_url} />
             </Box>
           </Dialog>
         </CardContent>
@@ -340,4 +284,4 @@ const UserSearch = ({ user, error, isMobile: serverIsMobile, userInteracted }: U
   );
 };
 
-export default UserSearch;
+export default UserCard;

@@ -7,6 +7,7 @@ import {
   Box,
   Link,
   Button,
+  CircularProgress,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ShowChartIcon from "@mui/icons-material/ShowChart";
@@ -59,14 +60,32 @@ const RepoItem: FC<RepoItemProps> = ({
   }, [repo.url]);
 
   useEffect(() => {
-    if (expanded && !commitCount) {
-      fetchCommitCount();
-    }
+    let isMounted = true;
+
+    const fetchData = async () => {
+      if (expanded && !commitCount) {
+        try {
+          await fetchCommitCount();
+        } catch (error) {
+          if (isMounted) {
+            console.error("Error fetching commit count:", error);
+          }
+        }
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      isMounted = false;
+    };
   }, [expanded, fetchCommitCount, commitCount]);
 
   // Здесь рендерим аккордеон
   return (
     <Accordion
+      component='li'
+      sx={{ listStyle: 'none' }}
       expanded={expanded}
       onChange={(_, isExpanded) => {
         onChange(isExpanded);
@@ -133,19 +152,16 @@ const RepoItem: FC<RepoItemProps> = ({
           </Box>
 
           <Button
-            loading={loadingLangs}
             variant="contained"
-            loadingPosition="end"
             endIcon={<ShowChartIcon sx={{ fontSize: isSmallScreen ? "1rem" : "1.2rem" }} />}
             onClick={() => fetchLanguages(repo.languages_url, repo)}
             sx={{
-              backgroundColor:
-                selectedRepo?.id === repo.id ? "success.main" : "black",
+              backgroundColor: selectedRepo?.id === repo.id ? "success.main" : "black",
               color: "white",
               fontSize: isSmallScreen ? "0.8rem" : "1rem",
             }}
           >
-            Show Analysis
+            {loadingLangs ? <CircularProgress size={24} /> : "Show Analysis"}
           </Button>
           {error && <Typography color="error">{error}</Typography>}
         </Box>

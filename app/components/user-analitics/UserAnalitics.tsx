@@ -1,33 +1,49 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Typography } from "@mui/material";
 import { useTheme, useMediaQuery } from "@mui/material";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import PieComponent from "../common/PieComponent";
 import TextInfo from "../common/TextInfo";
 import { Repository, LanguagesObject } from "../../types/github";
+import { fetchReposApi } from "@/app/api/API";
+import AnalyticsSkeleton from "./Skeleton";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 interface UserAnalyticsProps {
-  repos: Repository[];
+  reposUrl: string;
 }
 
-const UserAnalytics = ({ repos }: UserAnalyticsProps) => {
+const UserAnalytics = ({ reposUrl }: UserAnalyticsProps) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const pieWidth = isSmallScreen ? 100 : 250;
   const pieHeight = isSmallScreen ? 100 : 250;
+  const [repos, setRepos] = useState<Repository[] | null>(null);
+  const [loading, setLoading] = useState(true);
+  
 
   // 1. Считаем статистику по языкам
   const languageStats: LanguagesObject = {};
+
+  useEffect(() => {
+    const fetchRepos = async () => {
+      setLoading(true);
+      const repos = await fetchReposApi(reposUrl);
+      setRepos(repos);
+      setLoading(false);
+    };
+    fetchRepos();
+  }, [reposUrl]);
 
   // Пробегаемся по всем репо и суммируем звёзды, форки и т.д.
   let totalStars = 0;
   let totalForks = 0;
 
-  repos.forEach((repo) => {
-    totalStars += repo.stargazers_count;
-    totalForks += repo.forks_count;
+  if (repos) {
+    repos.forEach((repo) => {
+      totalStars += repo.stargazers_count;
+      totalForks += repo.forks_count;
 
     // Если хотим получить более точные данные по каждому repo.languages_url,
     // надо сделать дополнительный запрос (fetch).
@@ -40,31 +56,36 @@ const UserAnalytics = ({ repos }: UserAnalyticsProps) => {
       languageStats[lang] = 0;
     }
 
-    languageStats[lang]++;
-  });
+      languageStats[lang]++;
+    });
+  }
 
-  return (
-    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"}}>
-      <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold", fontSize: isSmallScreen ? "1rem" : "1.2rem" }}>
-        Overall Language Usage Statistics
-      </Typography>
-      <TextInfo text="Total Repositories" value={repos.length} isSmallScreen={isSmallScreen} />
-      <TextInfo text="Total Stars" value={totalStars} isSmallScreen={isSmallScreen} />
-      <TextInfo text="Total Forks" value={totalForks} isSmallScreen={isSmallScreen} />
-      <Box>
-        <PieComponent
-          title={
-            Object.keys(languageStats).length > 0
-              ? "Languages"
-              : "Charge repositories to see languages"
-          }
-          data={languageStats || null}
-          responsiveWidth={pieWidth}
-          responsiveHeight={pieHeight}
-        />
+    if (loading) {
+      return <AnalyticsSkeleton isSmallScreen={isSmallScreen} pieWidth={pieWidth} pieHeight={pieHeight} />;
+    }
+
+    return (
+      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", width: isSmallScreen ? 250 : 500}}>
+        <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold", fontSize: isSmallScreen ? "1rem" : "1.2rem" }}>
+          Overall Language Usage Statistics
+        </Typography>
+        <TextInfo text="Total Repositories" value={repos?.length || 0} isSmallScreen={isSmallScreen} />
+        <TextInfo text="Total Stars" value={totalStars} isSmallScreen={isSmallScreen} />
+        <TextInfo text="Total Forks" value={totalForks} isSmallScreen={isSmallScreen} />
+        <Box>
+          <PieComponent
+            title={
+              Object.keys(languageStats).length > 0
+                ? "Languages"
+                : "Charge repositories to see languages"
+            }
+            data={languageStats || null}
+            responsiveWidth={pieWidth}
+            responsiveHeight={pieHeight}
+          />
+        </Box>
       </Box>
-    </Box>
-  );
+    );
 };
 
 export default UserAnalytics;
