@@ -5,12 +5,20 @@ import { fetchReposApi } from '../api/API';
 import RepoListModal from '../components/user-card/modals/RepoListModal';
 import { Repository, GitHubUser } from '../types/github';
 
-interface ReposPageProps {
-  searchParams: { url: string };
-}
+type SearchParamsObject = { url?: string };
 
-const ReposPage = async ({ searchParams }: ReposPageProps) => {
-  const reposUrl = searchParams.url;
+const ReposPage = async ({ searchParams } : {
+  searchParams?: SearchParamsObject | Promise<SearchParamsObject>;
+}) => {
+  // Проверяем, Promise это или нет
+  let sParams: SearchParamsObject | undefined;
+  if (searchParams && typeof (searchParams as Promise<any>).then === "function") {
+    sParams = await (searchParams as Promise<SearchParamsObject>);
+  } else {
+    sParams = searchParams as SearchParamsObject;
+  }
+
+  const reposUrl = sParams?.url;
 
   if (!reposUrl) {
     return <div>No `url` query param found</div>;
