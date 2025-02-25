@@ -68,3 +68,28 @@ export const predefinedSkills = [
   'Code Performance',
   
 ];
+
+export const mapFileTypeToSyntaxHighlighter = (fileType: string) => {
+  const mappings: { [key: string]: string } = {
+    "js": "javascript",
+    "ts": "typescript",
+    "jsx": "javascript",
+    "tsx": "typescript",
+    "py": "python",
+    "java": "java",
+    "cs": "csharp",
+    "cpp": "cpp",
+    "go": "go",
+    "rb": "ruby",
+    "php": "php",
+    "md": "markdown",
+    "markdown": "markdown",
+    "json": "json",
+    "html": "xml",
+    "xml": "xml",
+    "css": "css",
+    "scss": "scss",
+  };
+  console.log(mappings[fileType] || "plaintext");
+  return mappings[fileType] || "plaintext";
+};

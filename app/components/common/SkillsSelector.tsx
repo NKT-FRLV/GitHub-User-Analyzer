@@ -11,7 +11,7 @@ interface SkillsSelectorProps {
 
 const SkillsSelector = ({ selectedSkills, onSkillsChange, isSmallScreen, isDisabled }: SkillsSelectorProps) => {
   return (
-    <Box sx={{ width: '100%', mt: 2, mb: 1 }}>
+    <Box display='flex' justifyContent='flex-end' sx={{ width: '100%', mt: 2, }}>
       <Autocomplete
         multiple
         options={predefinedSkills}

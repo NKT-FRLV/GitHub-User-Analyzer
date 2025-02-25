@@ -1,11 +1,15 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Box, Button, Typography, Divider } from "@mui/material";
-import SkillsSelector from "../../common/SkillsSelector";
-import LanguageSelector from "../../common/LanguageSelector";
-import FileSelector from "../../common/FileSelector";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { dracula, tomorrow, coy } from "react-syntax-highlighter/dist/esm/styles/prism";
 
+import { Box, Typography, Dialog, DialogTitle, DialogContent, IconButton, Button } from "@mui/material";
+import AIChatPanel from "./AI-chat-panel/AIChatPanel";
+
+import { mapFileTypeToSyntaxHighlighter } from "@/app/utils";
+import PromptSettings from "./Prompt-Settings/PromptSettings";
+import FileOpenIcon from '@mui/icons-material/FileOpen';
 /**
  * Пример компонента: Chat-окно,
  * где при нажатии на кнопку запрашивается AI и
@@ -20,15 +24,20 @@ interface AiFeedbackChatProps {
 
 
 export default function AiFeedbackChat({ owner, repoName, isSmallScreen }: AiFeedbackChatProps) {
-  const [aiMessage, setAiMessage] = useState("");
+  // const [aiMessage, setAiMessage] = useState("");
+  const [fileContent, setFileContent] = useState("");
+  const [fileType, setFileType] = useState("plaintext");
+  const [openFileDialog, setOpenFileDialog] = useState(false);
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [selectedSkills, setSelectedSkills] = useState<string[]>(['Technical Documentation', 'AI Integration', 'Grammar']);
+  const [selectedSkills, setSelectedSkills] = useState<string[]>(['Code Duplication', 'AI Integration', 'Grammar']);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("Russian");
-  const [selectedFile, setSelectedFile] = useState<string>("README.md");
+  const [selectedFile, setSelectedFile] = useState<string>("Code");
+  const [fileStyle, setFileStyle] = useState<any>(dracula);
 
   useEffect(() => {
-    setAiMessage("AI feedback about project " + (repoName || ""));
+    // setAiMessage("AI feedback about project " + (repoName || ""));
+    setFileContent("");
     setDone(false);
   }, [repoName, owner, selectedSkills, selectedLanguage, selectedFile]);
 
@@ -37,12 +46,12 @@ export default function AiFeedbackChat({ owner, repoName, isSmallScreen }: AiFee
    * 1) делает запрос к API `/api/analyze` (или другой ваш эндпоинт).
    * 2) получает итоговый текст и "печатает" его с анимацией.
    */
-  const handleAskAi = async () => {
+  const handleAskAi = async (callback: React.Dispatch<React.SetStateAction<string>>) => {
     if (!repoName) {
-      setAiMessage("No repo selected");
+      callback("No repo selected");
       return;
     }
-    setAiMessage("");
+    callback("");
     setLoading(true);
 
     try {
@@ -66,72 +75,105 @@ export default function AiFeedbackChat({ owner, repoName, isSmallScreen }: AiFee
 
       const data = await response.json();
       const fullMessage = data.summary || "No AI response...";
+      // Получаем содержимое файла
+      const fileContent = data.fileContent;
+      const fileType = data.fileType;
+      setFileContent(fileContent);
+      setFileType(fileType);
 
       // Псевдо-анимация "печатания"
       let i = 0;
       const typingInterval = setInterval(() => {
-        setAiMessage((prev) => prev + fullMessage.charAt(i));
+        callback((prev) => prev + fullMessage.charAt(i));
         i++;
         // Когда дошли до конца сообщения - останавливаем
         if (i >= fullMessage.length) {
           clearInterval(typingInterval);
-          setLoading(false);
-          setDone(true);
         }
       }, 30); // скорость печати (мс на символ)
 
     } catch (error: unknown) {
       console.error(error);
-      setAiMessage("Error: " + (error as Error).message);
+      callback("Error: " + (error as Error).message);
+    } finally {
       setLoading(false);
+      setDone(true);
     }
   };
 
   return (
     <Box display='flex' flexDirection='column' sx={{ mt: 2 }}>
-        <Typography variant="h6" sx={{ mb: 1, fontWeight: "bold" }}>
+        <Typography variant="h5" sx={{ mb: 1, fontWeight: "bold" }}>
             Ask AI feedback about project {repoName}:
         </Typography>
 
-        <Divider sx={{ my: 2 }} />
-        
-        <SkillsSelector
+        {/* Prompt Settings */}
+        <PromptSettings
+            selectedLanguage={selectedLanguage}
+            setSelectedLanguage={setSelectedLanguage}
+            selectedFile={selectedFile}
+            setSelectedFile={setSelectedFile}
             selectedSkills={selectedSkills}
-            onSkillsChange={setSelectedSkills}
+            setSelectedSkills={setSelectedSkills}
             isSmallScreen={isSmallScreen}
-            isDisabled={loading}
-        />
-        <Box display='flex' flexDirection='row' width='100%' gap={2}>
-            <LanguageSelector selectedLanguage={selectedLanguage} onLanguageChange={setSelectedLanguage} isDisabled={loading} />
-            <FileSelector selectedFile={selectedFile} onFileChange={setSelectedFile} isDisabled={loading} />
-            <Button
-                variant="contained"
-                sx={{ width: '60%', backgroundColor: 'black', fontWeight: 'bold' }}
-                disabled={loading || !repoName || done}
-                onClick={handleAskAi}
-            >
-                { done ? "Select another repo" : loading ? "Asking AI..." : "Ask AI"}
-            </Button>
-        </Box>
-        <Divider sx={{ my: 2 }} />
+            loading={loading}
+          />
 
-        {/* Окно, где показываем "напечатанный" ответ */}
-        <Box
-            sx={{
-                p: 2,
-                border: "1px solid #ccc",
-                borderRadius: 2,
-                minHeight: 120,
-                backgroundColor: "#f9f9f9",
-            }}
+        {/* AI Chat Panel */}
+        <AIChatPanel
+            fileContent={fileContent}
+            loading={loading}
+            done={done}
+            repoName={repoName}
+            setOpenFileDialog={() => setOpenFileDialog(true)}
+            handleAskAi={(callback: React.Dispatch<React.SetStateAction<string>>) => handleAskAi(callback)}
+        />
+
+        {/* Analyzed file content */}
+        <Dialog
+          open={openFileDialog}
+          onClose={() => setOpenFileDialog(false)}
+          maxWidth="lg"
+          fullWidth
         >
-            <Typography
-                component="pre"
-                sx={{ whiteSpace: "pre-wrap", fontFamily: "Roboto", fontWeight: 'bold' }}
-            >
-                {aiMessage || "No AI feedback yet."}
+          <DialogTitle>
+            <Typography sx={{ fontWeight: "bold" }}>
+              Analyzed file content ( .{fileType} )
             </Typography>
-        </Box>
+            <Box display='flex' flexDirection='row' alignItems='center' gap={2}>
+              <Typography sx={{ fontWeight: "bold" }}>
+                Choose file style
+              </Typography>
+              <Box display='flex' flexDirection='row' gap={2}>
+                <Button
+                  onClick={() => setFileStyle(dracula)}
+                >
+                  Dracula
+                </Button>
+                <Button
+                  onClick={() => setFileStyle(tomorrow)}
+                >
+                  Tomorrow
+                </Button>
+                <Button
+                  onClick={() => setFileStyle(coy)}
+                >
+                  coy ( default light )
+                </Button>
+              </Box>
+            </Box>
+          </DialogTitle>
+          <DialogContent sx={{ maxHeight: "80vh", overflow: "auto" }}>
+          <SyntaxHighlighter
+            language={mapFileTypeToSyntaxHighlighter(fileType)}
+            style={fileStyle}
+            showLineNumbers
+            wrapLongLines
+          >
+            {fileContent}
+          </SyntaxHighlighter>
+          </DialogContent>
+        </Dialog>
     </Box>
   );
 }

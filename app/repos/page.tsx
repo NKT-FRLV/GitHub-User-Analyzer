@@ -1,6 +1,5 @@
 'use server'
-// import { GetServerSideProps } from 'next';
-// import RepoListModal from '../components/user-card/modals/RepoListModal';
+
 import { fetchReposApi } from '../api/API';
 import RepoListModal from '../components/user-card/modals/RepoListModal';
 import { Repository, GitHubUser } from '../types/github';

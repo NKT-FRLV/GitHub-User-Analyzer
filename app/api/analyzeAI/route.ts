@@ -15,6 +15,7 @@ export async function POST(req: Request) {
     let fileResponse: Response;
     let readme = "";
     let fileContent = "";
+    let fileType = "plaintext";
 
     if (file === "README.md" && !isJoking) {
         // 1. Получаем README
@@ -32,6 +33,7 @@ export async function POST(req: Request) {
             );
         }
         readme = await fileResponse.text();
+        fileType = "markdown";
     } else if (file === "Code" && !isJoking) {
         // 2. Если analyzeWhat === "code", ищем biggest code file
         // a) Получаем default_branch
@@ -51,7 +53,7 @@ export async function POST(req: Request) {
         // c) Фильтруем
         const codeExtensions = [".js", ".ts", ".py", ".java", ".cs", ".cpp", ".go", ".rb", ".php"];
         function isCodeFile(path: string) {
-        return codeExtensions.some(ext => path.toLowerCase().endsWith(ext));
+          return codeExtensions.some(ext => path.toLowerCase().endsWith(ext));
         }
 
         const blobs = treeData.tree.filter((item: { type: string; path: string }) => 
@@ -65,7 +67,7 @@ export async function POST(req: Request) {
         // d) Сортируем по size
         blobs.sort((a: { size: number }, b: { size: number }) => (b.size || 0) - (a.size || 0));
         const biggestFile = blobs[0];
-
+        fileType = biggestFile.path.split('.').pop() || "plaintext"; // Достаем расширение файла
         // e) Получаем содержимое
         const fileUrl = `https://api.github.com/repos/${owner}/${repoName}/contents/${biggestFile.path}`;
         const fileRes = await fetch(fileUrl, {
@@ -75,17 +77,19 @@ export async function POST(req: Request) {
         },
         });
 
+
         fileContent = await fileRes.text();
         // console.log(fileContent);
     }
 
     
-    let sistemPrompt = "";
+    let systemPrompt = "";
     let userPrompt = "";
 
+    console.log(fileType);
 
     if (isJoking) {
-        sistemPrompt = `You are funny assistant, you should joke using ${language}, 
+        systemPrompt = `You are funny assistant, you should joke using ${language}, 
                     - Say a funny phrase in this language (no more than 2 sentences).
                     - Provide an **English translation**.
                     - Briefly **explain the language** (its origin, where it is used, and how it sounds).
@@ -96,21 +100,21 @@ export async function POST(req: Request) {
     
 
     if (file === "README.md" && !isJoking) {
-        sistemPrompt = `You analyze projects and give feedback to the recruiter, to define if the project is good for the programmer with the following skills: ${skills}.`;
+        systemPrompt = `You analyze projects and give feedback to the recruiter, to define if the project is good for the programmer with the following skills: ${skills}.`;
         userPrompt = `Analyze the repository ${repoName}.
                 Its README.md file:\n${readme}\nAnalyze the programmer's stack, his experience and skills, which he could have gained in the current project.\n
                 Give a short summary (up to 200 words) for the recruiter, in ${language} language, highlighting the strong and weak sides of the programmer, and is it a good match for selected skills.
                 `;
     } else if (file === "Code" && !isJoking) {
-        sistemPrompt = `You are a code reviewer AI.`;
+        systemPrompt = `You are a code reviewer AI, you should review the code and give feedback to the recruiter, make a smoll resume of the programmer's skills and code base quality.`;
         userPrompt = `
-                Please review the following code snippet. The programmer’s relevant skills are: ${skills}.
+                Please review the following code snippet. Recrutier looks for the following skills: ${skills}.
 
                 **Goals**:
-                1. Guess the purpose or functionality of this file.
+                1. Describe the purpose or functionality of this file.
                 2. Check how the code aligns with the mentioned skills (${skills}).
                 3. Evaluate code quality, best practices, potential issues, usage of modern standards, and any red flags (e.g., repeated patterns, code smells).
-                4. Mark the positive and negative points.
+                4. Mark the positive and negative points of the code.
                 5. Evaluate the programmer's level: Trainee, Junior, Middle, or Senior.
                 6. Provide a concluding summary.
 
@@ -130,7 +134,7 @@ export async function POST(req: Request) {
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
-        { role: "system", content: sistemPrompt },
+        { role: "system", content: systemPrompt },
         {
           role: "user",
           content: userPrompt,
@@ -139,7 +143,7 @@ export async function POST(req: Request) {
     });
 
     const summary = completion.choices[0]?.message?.content || "No content";
-    return NextResponse.json({ summary });
+    return NextResponse.json({ summary, fileContent: fileContent || readme || "No content", fileType });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Something went wrong" }, { status: 500 });

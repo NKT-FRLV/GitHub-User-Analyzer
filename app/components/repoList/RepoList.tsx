@@ -56,7 +56,7 @@ const RepoList: React.FC<RepoListProps> = ({ repos, repOwner }) => {
 
   return (
     <Box className={styles.repoList} gap={4}>
-      <Box>
+      <Box display='flex' sx={{ flexDirection: 'column', width: isSmallScreen ? '100%' : '50%'}}>
         <Typography variant="h6" sx={{ mt: 2, fontWeight: "bold", fontSize: isSmallScreen ? "1rem" : "1.2rem" }}>
           Repositories of {repOwner.login}:
         </Typography>
@@ -78,7 +78,7 @@ const RepoList: React.FC<RepoListProps> = ({ repos, repOwner }) => {
         </Box>
 
       </Box>
-      <Box display='flex' sx={{ flexDirection: 'column', maxWidth: '50%'}}>
+      <Box display='flex' sx={{ flexDirection: 'column', width: isSmallScreen ? '100%' : '50%'}}>
         <PieComponent
           title={
             selectedRepo

@@ -19,7 +19,7 @@ const FileSelector = ({ selectedFile, onFileChange, isDisabled }: FileSelectorPr
                 disabled={isDisabled}
             >
                 <MenuItem value="README.md">README.md</MenuItem>
-                <MenuItem value="Code">Code File</MenuItem>
+                <MenuItem value="Code">Code Snippet</MenuItem>
             </Select>
         </FormControl>
     </Box>
