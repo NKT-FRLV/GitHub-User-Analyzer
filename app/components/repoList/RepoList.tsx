@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from "react";
+import { useState, Dispatch, SetStateAction } from "react";
 import { Box, Typography } from "@mui/material";
 import { useMediaQuery, useTheme } from '@mui/material';
 import { GitHubUser, Repository, LanguagesObject } from "../../types/github";
@@ -12,13 +12,15 @@ import styles from "./repoList.module.css";
 interface RepoListProps {
   repos: Repository[];
   repOwner: GitHubUser;
+  selectedPage: 'ai' | 'list';
+  setSelectedPage: Dispatch<SetStateAction<'ai' | 'list'>>;
 }
 
-const RepoList: React.FC<RepoListProps> = ({ repos, repOwner }) => {
+const RepoList: React.FC<RepoListProps> = ({ repos, repOwner, selectedPage, setSelectedPage }) => {
   const [expandedRepo, setExpandedRepo] = useState<number | null>(null);
   const [languages, setLanguages] = useState<LanguagesObject | null>(null);
-  const [loadingLangs, setLoadingLangs] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
+  const [loadingLangs, setLoadingLangs] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [selectedRepo, setSelectedRepo] = useState<Repository | null>(null);
 
 
@@ -44,6 +46,9 @@ const RepoList: React.FC<RepoListProps> = ({ repos, repOwner }) => {
     setLanguages(data);
     setSelectedRepo(repo);
     setLoadingLangs(false);
+    if (isSmallScreen && selectedPage === 'list') {
+      setSelectedPage('ai');
+    }
   };
 
   const handleChange = (repoId: number, isExpanded: boolean) => {
@@ -56,30 +61,33 @@ const RepoList: React.FC<RepoListProps> = ({ repos, repOwner }) => {
 
   return (
     <Box className={styles.repoList} gap={4}>
-      <Box display='flex' sx={{ flexDirection: 'column', width: isSmallScreen ? '100%' : '50%'}}>
-        <Typography variant="h6" sx={{ mt: 2, fontWeight: "bold", fontSize: isSmallScreen ? "1rem" : "1.2rem" }}>
-          Repositories of {repOwner.login}:
-        </Typography>
-        <Box mt={1} component="ul">
-          {repos.map((repo) => (
-            
-            <RepoItem
-              key={repo.id}
-              repo={repo}
-              selectedRepo={selectedRepo}
-              expanded={expandedRepo === repo.id}
-              isSmallScreen={isSmallScreen}
-              onChange={(isExpanded) => handleChange(repo.id, isExpanded)}
-              fetchLanguages={fetchLanguages}
-              loadingLangs={loadingLangs}
-              error={error}
-            />
-          ))}
+      
+      {((isSmallScreen && selectedPage === 'list') || !isSmallScreen) && (
+          <Box display='flex' sx={{ flexDirection: 'column', width: isSmallScreen ? '100%' : '50%'}}>
+          <Typography variant="h6" sx={{ mt: 2, fontWeight: "bold", fontSize: isSmallScreen ? "1rem" : "1.2rem" }}>
+            Repositories of {repOwner.login}:
+          </Typography>
+          <Box mt={1} component="ul">
+            {repos.map((repo) => (
+              
+              <RepoItem
+                key={repo.id}
+                repo={repo}
+                selectedRepo={selectedRepo}
+                expanded={expandedRepo === repo.id}
+                isSmallScreen={isSmallScreen}
+                onChange={(isExpanded) => handleChange(repo.id, isExpanded)}
+                fetchLanguages={fetchLanguages}
+                loadingLangs={loadingLangs}
+                error={error}
+              />
+            ))}
+          </Box>
         </Box>
-
-      </Box>
-      <Box display='flex' sx={{ flexDirection: 'column', width: isSmallScreen ? '100%' : '50%'}}>
-        <PieComponent
+      )}
+      {((isSmallScreen && selectedPage === 'ai') || !isSmallScreen) && (
+        <Box display='flex' sx={{ flexDirection: 'column', width: isSmallScreen ? '100%' : '50%'}}>
+          <PieComponent
           title={
             selectedRepo
               ? `Repo Languages ${selectedRepo.name}:`
@@ -90,8 +98,9 @@ const RepoList: React.FC<RepoListProps> = ({ repos, repOwner }) => {
           responsiveWidth={pieWidth}
           responsiveHeight={pieHeight}
         />
-        <AIFeedbackChat owner={repOwner.login} repoName={selectedRepo?.name || null} isSmallScreen={isSmallScreen} />
-      </Box>
+          <AIFeedbackChat owner={repOwner.login} repoName={selectedRepo?.name || null} isSmallScreen={isSmallScreen} />
+        </Box>
+      )}
     </Box>
   );
 };

@@ -3,6 +3,7 @@ import ClientPage from "./ClientPage";
 import { getUserData } from "./api/API";
 
 
+
 // ✅ Серверный компонент, загружает дефолтного юзера и проверяет мобильный браузер
 export default async function Page() {
 

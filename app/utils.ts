@@ -1,3 +1,4 @@
+
 export const languageColors: Record<string, string> = {
   TypeScript: "#007ACC",
   HTML: "#E34F26",

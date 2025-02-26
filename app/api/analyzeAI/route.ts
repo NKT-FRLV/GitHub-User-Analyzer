@@ -1,14 +1,14 @@
 // pages/api/analyze.ts
 import OpenAI from 'openai';
 import { NextResponse } from 'next/server';
-
+import { calculateCost } from './aiCostCalculator';
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
 const jokeLanguages = ["Shyriiwook, Wookie Language, from Star Wars", "Quenya, Elvish Language from The Lord of the Rings", "Dothraki, from Game of Thrones"];
 
-export async function POST(req: Request) {
+export async function POST(req: Request): Promise<NextResponse> {
   try {
     const { owner, repoName, skills, language, file } = await req.json();
     const isJoking = jokeLanguages.includes(language);
@@ -132,7 +132,7 @@ export async function POST(req: Request) {
     }
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: "gpt-4o-mini-2024-07-18",
       messages: [
         { role: "system", content: systemPrompt },
         {
@@ -141,9 +141,12 @@ export async function POST(req: Request) {
         },
       ],
     });
+    // Считаем стоимость запроса
+    const costInfo = calculateCost(completion);
+    
 
     const summary = completion.choices[0]?.message?.content || "No content";
-    return NextResponse.json({ summary, fileContent: fileContent || readme || "No content", fileType });
+    return NextResponse.json({ summary, fileContent: fileContent || readme || "No content", fileType, costInfo });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Something went wrong" }, { status: 500 });

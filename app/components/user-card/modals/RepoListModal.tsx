@@ -28,6 +28,8 @@ const Transition = React.forwardRef(function Transition(
 const RepoListModal = ({ repos, user }: RepoListModalProps) => {
     const [open, setOpen] = useState(false);
     const [filteredRepos, setFilteredRepos] = useState<Repository[]>([]);
+    const [selectedPage, setSelectedPage] = useState<'ai' | 'list'>('list');
+
 
     useEffect(() => {
         setOpen(true);
@@ -84,7 +86,7 @@ const RepoListModal = ({ repos, user }: RepoListModalProps) => {
             open={open}
             onClose={() => {}}
             onTransitionExited={() => {
-              router.back();
+              router.push('/');
             }}
             maxWidth="md"
             slots={{ transition: Transition }}
@@ -100,12 +102,16 @@ const RepoListModal = ({ repos, user }: RepoListModalProps) => {
                 onFilterByDevelopmentTime={filterByDevelopmentTime}
                 onClose={() => setOpen(false)}
                 availableLanguages={availableLanguages}
+                setPage={setSelectedPage}
+                page={selectedPage}
             />
 
             <Box className={styles.modalContent}>
                 <RepoList
                     repos={filteredRepos.length > 0 ? filteredRepos : repos}
                     repOwner={user}
+                    selectedPage={selectedPage}
+                    setSelectedPage={setSelectedPage}
                 />
             </Box>
           </Dialog>

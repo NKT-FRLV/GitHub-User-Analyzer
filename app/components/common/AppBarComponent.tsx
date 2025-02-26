@@ -11,6 +11,9 @@ import {
   FormControl,
   InputLabel,
   SelectChangeEvent,
+  useMediaQuery,
+  ToggleButton,
+  ToggleButtonGroup,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 interface AppBarComponentProps {
@@ -19,6 +22,8 @@ interface AppBarComponentProps {
   onFilterByDevelopmentTime: () => void;
   onClose: () => void;
   availableLanguages: string[];
+  setPage: (page: 'ai' | 'list') => void;
+  page: 'ai' | 'list';
 }
 
 const AppBarComponent: React.FC<AppBarComponentProps> = ({
@@ -27,9 +32,13 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
   onFilterByDevelopmentTime,
   onClose,
   availableLanguages,
+  setPage,
+  page,
 }) => {
   const [selectedLanguage, setSelectedLanguage] = React.useState("All Langs");
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const isSmallScreen = useMediaQuery('(max-width: 600px)');
 
   const handleLanguageChange = (event: SelectChangeEvent<string>) => {
     const language = event.target.value as string;
@@ -43,6 +52,13 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  const handlePageChange = (
+    event: React.MouseEvent<HTMLElement>,
+    newPage: 'ai' | 'list',
+  ) => {
+    setPage(newPage);
   };
 
   return (
@@ -64,9 +80,9 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
         }}
 
       >
-        <Typography sx={{ ml: 2, flex: 1, minWidth: '80px' }} variant="h6" component="div">
+        {!isSmallScreen && <Typography sx={{ ml: 2, flex: 1, minWidth: '80px' }} variant="h6" component="div">
           Tool Bar
-        </Typography>
+        </Typography>}
         <Box
           sx={{
             display: "flex",
@@ -75,6 +91,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
             justifyContent: { xs: "center", sm: "flex-end" },
           }}
         >
+
           <FormControl variant="outlined" sx={{ minWidth: 120 }} size="small">
             <InputLabel>Language</InputLabel>
             <Select
@@ -130,6 +147,20 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
             <CloseIcon sx={{ color: "grey.200" }} />
           </Button>
         </Box>
+        {isSmallScreen && (
+            <ToggleButtonGroup
+              size="small"
+              sx={{ display: 'flex', alignItems: 'center', width: '100%' }}
+              color='secondary'
+              value={page}
+              exclusive
+              onChange={handlePageChange}
+              aria-label="page toggler"
+            >
+              <ToggleButton sx={{ flex: 1, fontWeight: 'bold' }} value="list">List</ToggleButton>
+              <ToggleButton sx={{ flex: 1, fontWeight: 'bold' }}  value="ai">AI</ToggleButton>
+            </ToggleButtonGroup>
+          )}
       </Toolbar>
     </AppBar>
   );

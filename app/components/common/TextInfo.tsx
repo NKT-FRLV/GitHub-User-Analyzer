@@ -23,7 +23,7 @@ const TextInfo = ({ text, value, isSmallScreen, propsBox, propsTypography, fsMax
         ...propsTypography 
         }}
       >
-        {value || "N/A"}
+        {value || "0"}
       </Typography>
     </Box>
   )

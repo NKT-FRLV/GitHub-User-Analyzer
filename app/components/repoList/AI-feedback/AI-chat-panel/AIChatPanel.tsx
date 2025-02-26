@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Box, Typography, IconButton, CircularProgress, Divider } from '@mui/material'
-import FileOpenIcon from '@mui/icons-material/FileOpen'
+import CodeIcon from '@mui/icons-material/Code';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import Button from '@mui/material/Button'
 
 
@@ -9,20 +10,48 @@ interface AIChatPanelProps {
   loading: boolean
   done: boolean
   repoName: string
+  isSmallScreen: boolean
   setOpenFileDialog: () => void
   handleAskAi: (callback: React.Dispatch<React.SetStateAction<string>>) => void
+  setOpenCostInfoDialog: () => void
 }
 
-const AIChatPanel = ({ fileContent, loading, done, repoName, setOpenFileDialog, handleAskAi }: AIChatPanelProps) => {
+const AIChatPanel = ({ fileContent, loading, done, repoName, isSmallScreen, setOpenFileDialog, handleAskAi, setOpenCostInfoDialog }: AIChatPanelProps) => {
 
     const [aiMessage, setAiMessage] = useState("Professional review and feedback, by Open AI Model GPT-4o");
 
   return (
     <>
-    <Box display='flex' flexDirection='row' width='100%' justifyContent='flex-end' gap={2}>
+    <Box display='flex' flexDirection='row' width='100%' justifyContent='space-between' gap={2}>
+            <Button
+              variant="outlined"
+              sx={{ width: '30%', border: '1px solid black', color: 'black', fontWeight: 'bold' }}
+              aria-label="open file content preview"
+              component="button"
+              onClick={setOpenFileDialog}
+              disabled={!fileContent}
+            >
+              <CodeIcon sx={{ fontSize: 35 }} />
+              { !isSmallScreen && <Typography variant="body2" sx={{fontWeight: 'bold', marginLeft: 1 }}>
+                File preview
+              </Typography>}
+            </Button>
+            <Button
+                variant="outlined"
+                component="button"
+                aria-label="open cost info"
+                sx={{ width: '30%', border: '1px solid black', color: 'black', fontWeight: 'bold' }}
+                onClick={setOpenCostInfoDialog}
+                disabled={!fileContent}
+            >
+                <AttachMoneyIcon sx={{ fontSize: 35 }} />
+                { !isSmallScreen && <Typography variant="body2" sx={{fontWeight: 'bold', marginLeft: 1 }}>
+                    Cost Info
+                </Typography>}
+            </Button>
             <Button
                 variant="contained"
-                sx={{ width: '30%', backgroundColor: 'black', fontWeight: 'bold' }}
+                sx={{ fontSize: 16, minWidth: '40%', backgroundColor: 'black', fontWeight: 'bold' }}
                 disabled={loading || !repoName || done}
                 onClick={() => handleAskAi(setAiMessage)}
             >
@@ -32,7 +61,6 @@ const AIChatPanel = ({ fileContent, loading, done, repoName, setOpenFileDialog, 
         
         <Box
             sx={{
-                position: 'relative',
                 my:2,
                 p: 2,
                 border: "1px solid #ccc",
@@ -41,17 +69,6 @@ const AIChatPanel = ({ fileContent, loading, done, repoName, setOpenFileDialog, 
                 backgroundColor: "#f9f9f9",
             }}
         >
-            <Box display='flex' justifyContent='flex-end'>
-              <IconButton
-                sx={{ backgroundColor: 'black', color: 'white', position: 'absolute', top: 5, left: 5 }}
-                aria-label="open file content preview"
-                component="button"
-                onClick={setOpenFileDialog}
-                disabled={!fileContent}
-              >
-                <FileOpenIcon sx={{ fontSize: 30 }} />
-              </IconButton>
-            </Box>
             <Typography
                 component="pre"
                 sx={{ whiteSpace: "pre-wrap", fontFamily: "Roboto", fontWeight: 'bold' }}

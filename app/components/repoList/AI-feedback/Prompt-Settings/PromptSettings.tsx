@@ -21,12 +21,12 @@ const PromptSettings = ({ selectedLanguage, setSelectedLanguage, selectedFile, s
   return (
     <>
         <Box display='flex' flexDirection='column' width='100%' >
-            <Divider sx={{ my: 1 }} />
+            <Divider sx={{ my: 2 }} />
 
-            <Box display='flex' flexDirection='row' alignItems='start' width='100%' justifyContent='space-between'>
-                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+            <Box display='flex' flexDirection='row' alignItems='start' width='100%' justifyContent={isSmallScreen ? 'center' : 'space-between'}>
+                {!isSmallScreen && <Typography variant="h6" sx={{ fontWeight: "bold"}}>
                     Prompt Settings:
-                </Typography>
+                </Typography>}
                 <Box display='flex' flexDirection='row' gap={2}>
                     <LanguageSelector selectedLanguage={selectedLanguage} onLanguageChange={setSelectedLanguage} isDisabled={loading} />
                     <FileSelector selectedFile={selectedFile} onFileChange={setSelectedFile} isDisabled={loading} />

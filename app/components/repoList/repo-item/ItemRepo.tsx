@@ -161,7 +161,7 @@ const RepoItem: FC<RepoItemProps> = ({
               fontSize: isSmallScreen ? "0.8rem" : "1rem",
             }}
           >
-            {loadingLangs ? <CircularProgress size={24} /> : "Show Analysis"}
+            {loadingLangs ? <CircularProgress size={24} /> : "Analyze this repo"}
           </Button>
           {error && <Typography color="error">{error}</Typography>}
         </Box>
