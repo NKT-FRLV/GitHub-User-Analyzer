@@ -158,7 +158,7 @@ export async function POST(req: Request): Promise<NextResponse> {
         voice: "alloy",
         input: summary,
       });
-
+      
       // 3. Сохранение аудиофайла
       audioUrl = `/speech_${Date.now()}.mp3`;
       const audioFilePath = path.join(process.cwd(), "public", audioUrl);

@@ -57,14 +57,6 @@ const UserCard = ({ user, error, isMobile: serverIsMobile, userInteracted }: Use
   const adaptiveFontSize1 = isMobileView ? FS.L : FS.XL;
   const adaptiveFontSize2 = isMobileView ? FS.M : FS.X;
 
-  // useEffect(() => {
-  //   if (user) {
-  //     // setRepoListOpen(false);
-  //     setAnaliticsOpen(false);
-  //     setAvatarOpen(false);
-  //   }
-  // }, [user]);
-
   const closeAnalitics = () => {
     setAnaliticsOpen(false);
     if (modalButtonRef.current) {
@@ -192,7 +184,7 @@ const UserCard = ({ user, error, isMobile: serverIsMobile, userInteracted }: Use
           <Dialog
             open={avatarOpen}
             onClose={handleAvatarClose}
-            maxWidth="md"
+            // maxWidth="md"
             slotProps={{
               paper: {
                 className: styles.modalPaper,
@@ -230,7 +222,7 @@ const UserCard = ({ user, error, isMobile: serverIsMobile, userInteracted }: Use
             onClose={closeAnalitics}
             onTransitionExited={closeAnalitics}
             aria-label="Analitics modal"
-            maxWidth="md"
+            // maxWidth="md"
             slotProps={{
               paper: {
                 className: styles.modalPaper,

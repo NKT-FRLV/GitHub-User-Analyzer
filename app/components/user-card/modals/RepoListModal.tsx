@@ -9,7 +9,7 @@ import { TransitionProps } from '@mui/material/transitions';
 import { Repository, GitHubUser } from '../../../types/github';
 
 
-interface RepoListModalProps {
+interface RepoListPageProps {
     repos: Repository[];
     user: GitHubUser;
 }
@@ -23,7 +23,7 @@ interface RepoListModalProps {
 //     return <Slide direction="up" ref={ref} {...props} />;
 //   });
 
-const RepoListModal = ({ repos, user }: RepoListModalProps) => {
+const RepoListPage = ({ repos, user }: RepoListPageProps) => {
 
     const [filteredRepos, setFilteredRepos] = useState<Repository[]>([]);
     const [selectedPage, setSelectedPage] = useState<'ai' | 'list'>('list');
@@ -74,7 +74,7 @@ const RepoListModal = ({ repos, user }: RepoListModalProps) => {
   
 
     return (
-        <Box className={styles.modalPaper} >
+        <Box className={styles.reposPageContainer} >
 
             <AppBarComponent
                 onFilterByLanguage={filterByLanguage}
@@ -99,4 +99,4 @@ const RepoListModal = ({ repos, user }: RepoListModalProps) => {
   )
 }
 
-export default RepoListModal
+export default RepoListPage
