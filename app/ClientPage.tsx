@@ -62,7 +62,7 @@ const ClientPage = ({ initialUser, isMobile }: initialServerUser) => {
           open={loading}
           onClick={() => {}}
           tabIndex={-1}
-          aria-hidden={true}
+          aria-hidden={false}
         >
           <CircularProgress color="inherit" />
         </Backdrop>

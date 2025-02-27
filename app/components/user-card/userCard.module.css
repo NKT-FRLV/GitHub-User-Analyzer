@@ -64,10 +64,12 @@
 }
 
 .modalPaper {
+  color: black;
+  width: 100vw;
   background-color: var(--background-paper);
   position: relative;
   padding: 16px;
-  border-radius: 8px;
+  /* border-radius: 8px; */
 }
 
 .closeButton {

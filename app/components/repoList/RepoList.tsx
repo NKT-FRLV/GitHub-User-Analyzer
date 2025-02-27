@@ -24,8 +24,7 @@ const RepoList: React.FC<RepoListProps> = ({ repos, repOwner, selectedPage, setS
   const [selectedRepo, setSelectedRepo] = useState<Repository | null>(null);
 
 
-  const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const isSmallScreen = useMediaQuery('(max-width: 950px)');
   const pieWidth = isSmallScreen ? 135 : 220;
   const pieHeight = isSmallScreen ? 135 : 220;
 

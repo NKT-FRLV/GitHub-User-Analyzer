@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useRouter } from "next/navigation";
 import { Dialog, Box, Slide } from '@mui/material';
 import styles from '../userCard.module.css';
@@ -7,33 +7,26 @@ import AppBarComponent from '../../common/AppBarComponent';
 import RepoList from '../../repoList/RepoList';
 import { TransitionProps } from '@mui/material/transitions';
 import { Repository, GitHubUser } from '../../../types/github';
-// import { fetchReposApi } from '@/app/api/API';
+
 
 interface RepoListModalProps {
-    // repoListOpen: boolean;
-    // handleRepos: (open: boolean) => void;
     repos: Repository[];
     user: GitHubUser;
 }
 
-const Transition = React.forwardRef(function Transition(
-    props: TransitionProps & {
-      children: React.ReactElement<unknown>;
-    },
-    ref: React.Ref<unknown>,
-  ) {
-    return <Slide direction="up" ref={ref} {...props} />;
-  });
+// const Transition = React.forwardRef(function Transition(
+//     props: TransitionProps & {
+//       children: React.ReactElement<unknown>;
+//     },
+//     ref: React.Ref<unknown>,
+//   ) {
+//     return <Slide direction="up" ref={ref} {...props} />;
+//   });
 
 const RepoListModal = ({ repos, user }: RepoListModalProps) => {
-    const [open, setOpen] = useState(false);
+
     const [filteredRepos, setFilteredRepos] = useState<Repository[]>([]);
     const [selectedPage, setSelectedPage] = useState<'ai' | 'list'>('list');
-
-
-    useEffect(() => {
-        setOpen(true);
-    }, []);
 
     const router = useRouter();
 
@@ -81,26 +74,13 @@ const RepoListModal = ({ repos, user }: RepoListModalProps) => {
   
 
     return (
-        <Dialog
-            fullScreen
-            open={open}
-            onClose={() => {}}
-            onTransitionExited={() => {
-              router.push('/');
-            }}
-            maxWidth="md"
-            slots={{ transition: Transition }}
-            slotProps={{
-                paper: {
-                    className: styles.modalPaper,
-                },
-            }}
-        >
+        <Box className={styles.modalPaper} >
+
             <AppBarComponent
                 onFilterByLanguage={filterByLanguage}
                 onFilterByRecentCommit={filterByRecentCommit}
                 onFilterByDevelopmentTime={filterByDevelopmentTime}
-                onClose={() => setOpen(false)}
+                onClose={() => router.push('/')}
                 availableLanguages={availableLanguages}
                 setPage={setSelectedPage}
                 page={selectedPage}
@@ -114,7 +94,8 @@ const RepoListModal = ({ repos, user }: RepoListModalProps) => {
                     setSelectedPage={setSelectedPage}
                 />
             </Box>
-          </Dialog>
+
+        </Box>
   )
 }
 

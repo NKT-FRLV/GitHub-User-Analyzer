@@ -1,17 +1,12 @@
 "use client";
 
-import React, { useMemo, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CostInfo } from "@/app/types/types";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { dracula, tomorrow, coy } from "react-syntax-highlighter/dist/esm/styles/prism";
 
-import { Box, Typography, Dialog, DialogTitle, DialogContent, Button, ToggleButtonGroup, ToggleButton, Divider } from "@mui/material";
+import { Box, Typography} from "@mui/material";
 import AIChatPanel from "./AI-chat-panel/AIChatPanel";
 
-import { mapFileTypeToSyntaxHighlighter } from "@/app/utils";
 import PromptSettings from "./Prompt-Settings/PromptSettings";
-import CloseIcon from "@mui/icons-material/Close";
-import TextInfo from "../../common/TextInfo";
 import CostInfoModal from "./modals/CostInfoModal";
 import FilePreviewModal from "./modals/FilePreviewModal";
 /**
@@ -28,20 +23,20 @@ interface AiFeedbackChatProps {
 
 
 export default function AiFeedbackChat({ owner, repoName, isSmallScreen }: AiFeedbackChatProps) {
-  // const [aiMessage, setAiMessage] = useState("");
   const [fileContent, setFileContent] = useState("");
   const [fileType, setFileType] = useState("plaintext");
   const [costInfo, setCostInfo] = useState<CostInfo | null>(null);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [openFileDialog, setOpenFileDialog] = useState(false);
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selectedSkills, setSelectedSkills] = useState<string[]>(['Code Duplication', 'AI Integration', 'Grammar']);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("Russian");
   const [selectedFile, setSelectedFile] = useState<string>("Code");
+  const [isSpeechAllowed, setIsSpeechAllowed] = useState<boolean>(false);
   const [isCostInfoDialogOpen, setIsCostInfoDialogOpen] = useState(false);
 
   useEffect(() => {
-    // setAiMessage("AI feedback about project " + (repoName || ""));
     setFileContent("");
     setDone(false);
   }, [repoName, owner, selectedSkills, selectedLanguage, selectedFile]);
@@ -72,6 +67,7 @@ export default function AiFeedbackChat({ owner, repoName, isSmallScreen }: AiFee
           skills: selectedSkills,
           language: selectedLanguage,
           file: selectedFile,
+          isSpeechAllowed
         }),
       });
 
@@ -82,10 +78,11 @@ export default function AiFeedbackChat({ owner, repoName, isSmallScreen }: AiFee
       const data = await response.json();
       const fullMessage = data.summary || "No AI response...";
       // Получаем содержимое файла
-      const { fileContent, fileType, costInfo } = data;
+      const { fileContent, fileType, costInfo, audioUrl } = data;
       setFileContent(fileContent);
       setFileType(fileType);
       setCostInfo({...costInfo});
+      setAudioUrl(audioUrl);
 
       // Псевдо-анимация "печатания"
       let i = 0;
@@ -112,6 +109,13 @@ export default function AiFeedbackChat({ owner, repoName, isSmallScreen }: AiFee
         <Typography variant="h5" sx={{ fontWeight: "bold", fontSize: isSmallScreen ? 18 : 24 }}>
             Ask AI feedback about project
         </Typography>
+        
+        {audioUrl && (
+        <audio controls style={{ marginTop: "10px" }}>
+          <source src={audioUrl} type="audio/mpeg" />
+          Your browser does not support the audio element.
+        </audio>
+      )}
 
         {/* Prompt Settings */}
         <PromptSettings
@@ -123,7 +127,9 @@ export default function AiFeedbackChat({ owner, repoName, isSmallScreen }: AiFee
             setSelectedSkills={setSelectedSkills}
             isSmallScreen={isSmallScreen}
             loading={loading}
-          />
+            isSpeechAllowed={isSpeechAllowed}
+            setSpeechAllowed={setIsSpeechAllowed}
+        />
 
         {/* AI Chat Panel */}
         <AIChatPanel

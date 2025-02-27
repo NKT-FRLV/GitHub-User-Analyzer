@@ -1,14 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   Box,
   Typography,
   Dialog,
   IconButton,
-  // Backdrop,
-  // CircularProgress,
   Button,
   Divider,
   Card,
@@ -27,15 +25,12 @@ import UserAnalytics from "../user-analitics/UserAnalitics";
 import TextInfo from "../common/TextInfo";
 import FolderIcon from "@mui/icons-material/Folder";
 import BarChartIcon from "@mui/icons-material/BarChart";
-// import RepoListModal from "./modals/RepoListModal";
-// import { fetchReposApi } from "../../api/API";
 
 const UserCard = ({ user, error, isMobile: serverIsMobile, userInteracted }: UserCardProps & { isMobile: boolean, userInteracted: boolean }) => {
-  const [openModal, setOpenModal] = React.useState(false);
+  const [avatarOpen, setAvatarOpen] = React.useState(false);
   const [analiticsOpen, setAnaliticsOpen] = React.useState(false);
-
-  // const [repoListOpen, setRepoListOpen] = React.useState(false);
-  // const [repos, setRepos] = React.useState<Repository[]>([]);
+  const modalButtonRef = useRef<HTMLButtonElement>(null);
+  const avatarRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [isMobileView, setIsMobileView] = useState(serverIsMobile);
 
@@ -62,44 +57,26 @@ const UserCard = ({ user, error, isMobile: serverIsMobile, userInteracted }: Use
   const adaptiveFontSize1 = isMobileView ? FS.L : FS.XL;
   const adaptiveFontSize2 = isMobileView ? FS.M : FS.X;
 
-  useEffect(() => {
-    if (user) {
-      // setRepoListOpen(false);
-      setAnaliticsOpen(false);
-      setOpenModal(false);
-    }
-  }, [user]);
-
-  // const fetchRepos = async (url: string) => {
-  //   if (repos.length > 0) {
-  //     setRepoListOpen(true);
-  //     return;
+  // useEffect(() => {
+  //   if (user) {
+  //     // setRepoListOpen(false);
+  //     setAnaliticsOpen(false);
+  //     setAvatarOpen(false);
   //   }
-  
-  //   setIsLoading(true);
-  //   const data = await fetchReposApi(url);
-  
-  //   if (data) {
-  //     setRepos(data);
-  //   } else {
-  //     console.error("Error fetching repos");
-  //   }
-  
-  //   setRepoListOpen(true);
-  //   setIsLoading(false);
-  // };
-
-  // const handleRepos = (isOpen: boolean, url?: string) => {
-  //   if (isOpen && url) {
-  //     fetchRepos(url);
-  //     //
-  //   } else {
-  //     setRepoListOpen(false);
-  //   }
-  // };
+  // }, [user]);
 
   const closeAnalitics = () => {
     setAnaliticsOpen(false);
+    if (modalButtonRef.current) {
+      modalButtonRef.current.focus();
+    }
+  };
+
+  const handleAvatarClose = () => {
+    setAvatarOpen(false);
+    if (avatarRef.current) {
+      avatarRef.current.focus();
+    }
   };
 
   if (error) {
@@ -125,10 +102,12 @@ const UserCard = ({ user, error, isMobile: serverIsMobile, userInteracted }: Use
             <Box className={styles.header}>
               <Avatar
                 className={styles.avatarContainer}
+                aria-label="Avatar modal"
                 src={user.avatar_url}
                 alt={user.login}
                 sx={{ width: avatarSize, height: avatarSize, cursor: "pointer" }}
-                onClick={() => setOpenModal(true)}
+                ref={avatarRef}
+                onClick={() => setAvatarOpen(true)}
               />
             <Box className={styles.userDetails}>
               <Box
@@ -200,6 +179,7 @@ const UserCard = ({ user, error, isMobile: serverIsMobile, userInteracted }: Use
             </Button>
             <Button
               variant="contained"
+              ref={modalButtonRef}
               sx={{ backgroundColor: "grey.900", fontSize: buttonFontSize }}
               startIcon={<BarChartIcon sx={{ fontSize: buttonFontSize }} />}
               onClick={() => setAnaliticsOpen(true)}
@@ -210,8 +190,8 @@ const UserCard = ({ user, error, isMobile: serverIsMobile, userInteracted }: Use
           </Box>
 
           <Dialog
-            open={openModal}
-            onClose={() => setOpenModal(false)}
+            open={avatarOpen}
+            onClose={handleAvatarClose}
             maxWidth="md"
             slotProps={{
               paper: {
@@ -220,7 +200,7 @@ const UserCard = ({ user, error, isMobile: serverIsMobile, userInteracted }: Use
             }}
           >
             <IconButton
-              onClick={() => setOpenModal(false)}
+              onClick={handleAvatarClose}
               className={styles.closeButton}
             >
               <CloseIcon />
@@ -245,17 +225,11 @@ const UserCard = ({ user, error, isMobile: serverIsMobile, userInteracted }: Use
             </Box>
           </Dialog>
 
-        {/* 
-          <RepoListModal
-            repoListOpen={repoListOpen}
-            handleRepos={handleRepos}
-            user={user}
-          /> */}
-          
-
           <Dialog
             open={analiticsOpen}
             onClose={closeAnalitics}
+            onTransitionExited={closeAnalitics}
+            aria-label="Analitics modal"
             maxWidth="md"
             slotProps={{
               paper: {

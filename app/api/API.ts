@@ -76,30 +76,3 @@ export const fetchLanguagesApi = async (url: string): Promise<LanguagesObject | 
     return null;
   }
 };
-
-export const analyzeRepoWithAI = async (
-  owner: string,
-  repoName: string,
-  skills: string[]
-): Promise<string | null> => {
-  try {
-    const response = await fetch('/api/analyzeAI', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ owner, repoName, skills }),
-    });
-
-    if (!response.ok) {
-      console.error('Ошибка при анализе репозитория:', response.status);
-      return null;
-    }
-
-    const data = await response.json();
-    return data.summary;
-  } catch (error) {
-    console.error('Ошибка при запросе к API анализа:', error);
-    return null;
-  }
-};

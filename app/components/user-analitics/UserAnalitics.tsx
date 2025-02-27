@@ -1,12 +1,14 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 import { Box, Typography } from "@mui/material";
 import { useTheme, useMediaQuery } from "@mui/material";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import PieComponent from "../common/PieComponent";
 import TextInfo from "../common/TextInfo";
+import AnalyticsSkeleton from "./Skeleton";
 import { Repository, LanguagesObject } from "../../types/github";
 import { fetchReposApi } from "@/app/api/API";
-import AnalyticsSkeleton from "./Skeleton";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -23,8 +25,6 @@ const UserAnalytics = ({ reposUrl }: UserAnalyticsProps) => {
   const [loading, setLoading] = useState(true);
   
 
-  // 1. Считаем статистику по языкам
-  const languageStats: LanguagesObject = {};
 
   useEffect(() => {
     const fetchRepos = async () => {
@@ -35,6 +35,10 @@ const UserAnalytics = ({ reposUrl }: UserAnalyticsProps) => {
     };
     fetchRepos();
   }, [reposUrl]);
+
+  // 1. Считаем статистику по языкам
+  const languageStats: LanguagesObject = {};
+
 
   // Пробегаемся по всем репо и суммируем звёзды, форки и т.д.
   let totalStars = 0;

@@ -38,7 +38,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
   const [selectedLanguage, setSelectedLanguage] = React.useState("All Langs");
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-  const isSmallScreen = useMediaQuery('(max-width: 600px)');
+  const isSmallScreen = useMediaQuery('(max-width: 950px)');
 
   const handleLanguageChange = (event: SelectChangeEvent<string>) => {
     const language = event.target.value as string;
@@ -58,7 +58,9 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
     event: React.MouseEvent<HTMLElement>,
     newPage: 'ai' | 'list',
   ) => {
-    setPage(newPage);
+    if (newPage !== null) {
+      setPage(newPage);
+    }
   };
 
   return (
@@ -66,17 +68,23 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
       sx={{
         position: "sticky",
         top: 0,
+        left: 10,
         zIndex: 1000,
         backgroundColor: "grey.200",
         color: "grey.800",
-        paddingInline: 2,
+        "&.MuiPaper-root": {
+          paddingRight: "16px !important", // ✅ Фиксируем `padding-right`!! что бы не скакал.
+          paddingLeft: "16px !important",
+    },
       }}
+      
     >
       <Toolbar
         sx={{
-          flexWrap: { xs: "wrap", sm: "nowrap" },
-          padding: { xs: 1, sm: 2 },
-          gap: { xs: 1, sm: 2, md: 0 },
+          width: '100%',
+          flexWrap: isSmallScreen ? 'wrap' : 'nowrap',
+          padding: isSmallScreen ? 1 : 2,
+          gap: isSmallScreen ? 1 : 2,
         }}
 
       >
@@ -88,7 +96,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
             display: "flex",
             gap: 1,
             width: "100%",
-            justifyContent: { xs: "center", sm: "flex-end" },
+            justifyContent: isSmallScreen ? 'center' : 'flex-end',
           }}
         >
 

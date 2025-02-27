@@ -1,16 +1,19 @@
 // pages/api/analyze.ts
 import OpenAI from 'openai';
+import fs from 'fs';
 import { NextResponse } from 'next/server';
 import { calculateCost } from './aiCostCalculator';
+import { clearOldAudioFiles, jokeLanguages } from './utils';
+import path from 'path';
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const jokeLanguages = ["Shyriiwook, Wookie Language, from Star Wars", "Quenya, Elvish Language from The Lord of the Rings", "Dothraki, from Game of Thrones"];
-
 export async function POST(req: Request): Promise<NextResponse> {
   try {
-    const { owner, repoName, skills, language, file } = await req.json();
+    
+    const { owner, repoName, skills, language, file, isSpeechAllowed } = await req.json();
     const isJoking = jokeLanguages.includes(language);
     let fileResponse: Response;
     let readme = "";
@@ -51,7 +54,7 @@ export async function POST(req: Request): Promise<NextResponse> {
         const treeData = await treeRes.json();
 
         // c) Фильтруем
-        const codeExtensions = [".js", ".ts", ".py", ".java", ".cs", ".cpp", ".go", ".rb", ".php"];
+        const codeExtensions = [".js", ".ts", ".py", ".java", ".cs", ".cpp", ".go", ".rb", ".php", ".css"];
         function isCodeFile(path: string) {
           return codeExtensions.some(ext => path.toLowerCase().endsWith(ext));
         }
@@ -86,7 +89,6 @@ export async function POST(req: Request): Promise<NextResponse> {
     let systemPrompt = "";
     let userPrompt = "";
 
-    console.log(fileType);
 
     if (isJoking) {
         systemPrompt = `You are funny assistant, you should joke using ${language}, 
@@ -130,7 +132,6 @@ export async function POST(req: Request): Promise<NextResponse> {
                 Thank you.
                 `;
     }
-
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini-2024-07-18",
       messages: [
@@ -143,10 +144,35 @@ export async function POST(req: Request): Promise<NextResponse> {
     });
     // Считаем стоимость запроса
     const costInfo = calculateCost(completion);
-    
 
     const summary = completion.choices[0]?.message?.content || "No content";
-    return NextResponse.json({ summary, fileContent: fileContent || readme || "No content", fileType, costInfo });
+
+    // 1. Инициализируем переменную для аудиофайла
+    let audioUrl = null;
+    if (isSpeechAllowed) {
+      // 1. Удаляем все старые аудиофайлы
+      clearOldAudioFiles();
+      // 2. Генерация аудио из текста (TTS)
+      const speechResponse = await openai.audio.speech.create({
+        model: "tts-1",
+        voice: "alloy",
+        input: summary,
+      });
+
+      // 3. Сохранение аудиофайла
+      audioUrl = `/speech_${Date.now()}.mp3`;
+      const audioFilePath = path.join(process.cwd(), "public", audioUrl);
+      const buffer = Buffer.from(await speechResponse.arrayBuffer());
+      await fs.promises.writeFile(audioFilePath, buffer);
+    }
+    
+    return NextResponse.json({
+      summary,
+      fileContent: fileContent || readme || "No content",
+      fileType,
+      costInfo,
+      audioUrl: audioUrl
+    });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
