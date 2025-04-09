@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { 
   Container, 
   Box, 
@@ -20,7 +20,7 @@ import { useAuth } from '../../context/AuthContext';
 import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined';
 import Avatar from '@mui/material/Avatar';
 
-export default function RegisterPage() {
+function RegisterContent() {
   const router = useRouter();
   const theme = useTheme();
   const { register, user, loading: authLoading } = useAuth();
@@ -242,5 +242,22 @@ export default function RegisterPage() {
         </Box>
       </Paper>
     </Container>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        flexGrow: 1 
+      }}>
+        <CircularProgress color="primary" />
+      </Box>
+    }>
+      <RegisterContent />
+    </Suspense>
   );
 } 

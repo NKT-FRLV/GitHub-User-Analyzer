@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { prisma } from '@/app/lib/prisma';
 import { verifyJWT } from '../../utils/auth';
-import { Prisma, User } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { AuthUser } from '@/app/types/github';
 
 export async function POST(request: NextRequest) {

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { 
   Container, 
   Box, 
@@ -20,7 +20,7 @@ import { useAuth } from '../../context/AuthContext';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Avatar from '@mui/material/Avatar';
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const theme = useTheme();
@@ -203,5 +203,22 @@ export default function LoginPage() {
         </Box>
       </Paper>
     </Container>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        flexGrow: 1 
+      }}>
+        <CircularProgress color="primary" />
+      </Box>
+    }>
+      <LoginContent />
+    </Suspense>
   );
 } 

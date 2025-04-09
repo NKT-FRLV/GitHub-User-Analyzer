@@ -21,6 +21,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  serverExternalPackages: ['punycode'],
 };
 
 export default nextConfig;

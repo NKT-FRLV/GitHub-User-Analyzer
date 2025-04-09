@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
+    "build": "set NODE_OPTIONS=--no-warnings --no-deprecation && next build",
+    "start": "set NODE_OPTIONS=--no-warnings --no-deprecation && next start",
     "lint": "next lint",
     "prisma:seed": "tsx prisma/seed.ts"
   },
