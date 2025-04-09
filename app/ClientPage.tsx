@@ -1,17 +1,14 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getUserData } from "./api/API";
 import { GitHubUser, initialServerUser } from "./types/github";
-import SearchBar from "./components/search-bar/SearchBar";
 import UserCard from "./components/user-card/UserCard";
+import SearchBar from "./components/search-bar/SearchBar";
 import { useUserInteraction } from "./hooks/useUserInteraction";
-import { CircularProgress, Backdrop } from "@mui/material";
+import { CircularProgress, Backdrop, Container, Box } from "@mui/material";
 import styles from "./page.module.css";
 
-
-
 const ClientPage = ({ initialUser, isMobile }: initialServerUser) => {
-
     const [user, setUser] = useState<GitHubUser | null>(initialUser as GitHubUser | null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -39,24 +36,25 @@ const ClientPage = ({ initialUser, isMobile }: initialServerUser) => {
       setLoading(false);
     };
 
-      
     return (
     <>
-        <div className={styles.page}>
-        <header className={styles.header}>
-            <h1>GitHub User Analyzer</h1>
-            <SearchBar onSearch={handleSearch} />
-        </header>
-        <main className={styles.main}>
-            <UserCard user={user} error={error} isMobile={isMobile} userInteracted={userInteracted} />
-        </main>
-        <footer className={styles.footer}>
-            <p>2025 GitHub User Analyzer by @nkt.frlv.</p>
-        </footer>
-        </div>
+          <Container component="main" className={styles.main}>
+              <Box 
+                sx={{ 
+                  maxWidth: 600, 
+                  mb: 3, 
+                  mx: 'auto',
+                  px: { xs: 2, sm: 0 },
+                  mt: 2
+                }}
+              >
+                <SearchBar onSearch={handleSearch} />
+              </Box>
+              <UserCard user={user} error={error} isMobile={isMobile} userInteracted={userInteracted} />
+          </Container>
         <Backdrop
           sx={(theme) => ({
-              color: "#fff",
+              color: theme.palette.primary.main,
               zIndex: theme.zIndex.drawer + 1,
           })}
           open={loading}
@@ -64,10 +62,10 @@ const ClientPage = ({ initialUser, isMobile }: initialServerUser) => {
           tabIndex={-1}
           aria-hidden={false}
         >
-          <CircularProgress color="inherit" />
+          <CircularProgress color="primary" />
         </Backdrop>
     </>
     );
-    }
+}
   
-  export default ClientPage;
+export default ClientPage;

@@ -1,0 +1,106 @@
+.registerContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  padding: 20px;
+  background: #F5F5F5;
+}
+
+.registerPaper {
+  padding: 30px;
+  border-radius: 12px !important;
+  width: 100%;
+  max-width: 450px;
+  background-color: #FFFFFF !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  animation: fadeIn 0.4s ease-out;
+  overflow-y: auto;
+  max-height: calc(100vh - 80px);
+}
+
+.registerTitle {
+  margin-bottom: 20px !important;
+  color: #333333;
+  text-align: center;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px;
+  font-size: 1.6rem !important;
+}
+
+.form {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.submitButton {
+  margin: 16px 0 10px !important;
+  padding: 10px !important;
+  background-color: #546E7A !important;
+  transition: all 0.2s ease !important;
+}
+
+.submitButton:hover {
+  background-color: #455A64 !important;
+  transform: translateY(-1px);
+}
+
+.links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.alert {
+  margin-bottom: 16px !important;
+  width: 100%;
+}
+
+.neonLink {
+  color: #546E7A;
+  text-decoration: none;
+  position: relative;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.neonLink:hover {
+  color: #455A64;
+}
+
+.neonLink::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 1px;
+  bottom: -2px;
+  left: 0;
+  background-color: #455A64;
+  transition: width 0.2s;
+}
+
+.neonLink:hover::after {
+  width: 100%;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 600px) {
+  .registerPaper {
+    padding: 1.5rem;
+    max-height: calc(100vh - 40px);
+  }
+} 

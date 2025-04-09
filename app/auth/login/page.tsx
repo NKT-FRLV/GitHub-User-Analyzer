@@ -1,0 +1,207 @@
+"use client";
+
+import React, { useState, useEffect } from 'react';
+import { 
+  Container, 
+  Box, 
+  Typography, 
+  TextField, 
+  Button, 
+  Paper, 
+  Alert,
+  CircularProgress,
+  useTheme
+} from '@mui/material';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import styles from './login.module.css';
+import { LoginCredentials } from '../../types/github';
+import { useAuth } from '../../context/AuthContext';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Avatar from '@mui/material/Avatar';
+
+export default function LoginPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const theme = useTheme();
+  const { login, user, loading: authLoading } = useAuth();
+  const [credentials, setCredentials] = useState<LoginCredentials>({
+    username: '',
+    password: ''
+  });
+  const [error, setError] = useState<string>('');
+  const [success, setSuccess] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+
+  // Если пользователь уже аутентифицирован, перенаправляем на главную
+  useEffect(() => {
+    if (user?.isAuthenticated) {
+      const redirectPath = searchParams.get('from') || '/';
+      router.push(redirectPath);
+    }
+  }, [user, router, searchParams]);
+
+  // Проверяем, есть ли сообщение об успешной регистрации
+  useEffect(() => {
+    if (searchParams.get('registered') === 'true') {
+      setSuccess('Регистрация прошла успешно! Теперь вы можете войти в систему.');
+    }
+  }, [searchParams]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setCredentials(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+    
+    if (!credentials.username.trim() || !credentials.password.trim()) {
+      setError('Пожалуйста, заполните все поля');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const success = await login(credentials.username, credentials.password);
+      
+      if (success) {
+        const redirectPath = searchParams.get('from') || '/';
+        router.push(redirectPath);
+      } else {
+        setError('Неверное имя пользователя или пароль');
+      }
+    } catch (err) {
+      setError('Произошла ошибка при входе в систему');
+      console.error('Login error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (authLoading) {
+    return (
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        flexGrow: 1, 
+        bgcolor: theme.palette.background.default 
+      }}>
+        <CircularProgress color="primary" />
+      </Box>
+    );
+  }
+
+  return (
+    <Container component="main" maxWidth="xs" className={styles.loginContainer}>
+      <Paper elevation={2} className={styles.loginPaper}>
+        <Box 
+          sx={{ 
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+          }}
+        >
+          <Avatar sx={{ 
+            m: 1, 
+            bgcolor: 'rgba(84, 110, 122, 0.1)',
+            width: 50,
+            height: 50
+          }}>
+            <LockOutlinedIcon sx={{ color: theme.palette.primary.main }} />
+          </Avatar>
+          
+          <Typography component="h1" variant="h5" className={styles.loginTitle}>
+            Вход в систему
+          </Typography>
+          
+          {error && (
+            <Alert 
+              severity="error" 
+              className={styles.alert}
+              sx={{ width: '100%' }}
+            >
+              {error}
+            </Alert>
+          )}
+          
+          {success && (
+            <Alert 
+              severity="success" 
+              className={styles.alert}
+              sx={{ width: '100%' }}
+            >
+              {success}
+            </Alert>
+          )}
+          
+          <Box component="form" onSubmit={handleSubmit} className={styles.form}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="username"
+              label="Имя пользователя"
+              name="username"
+              autoComplete="username"
+              autoFocus
+              value={credentials.username}
+              onChange={handleChange}
+              variant="outlined"
+              size="small"
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Пароль"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              value={credentials.password}
+              onChange={handleChange}
+              variant="outlined"
+              size="small"
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              className={styles.submitButton}
+              disabled={loading}
+              sx={{ mt: 2, mb: 2 }}
+            >
+              {loading ? 'Загрузка...' : 'Войти'}
+            </Button>
+            <Box className={styles.links}>
+              <Link 
+                href="/auth/register" 
+                className={styles.neonLink} 
+                passHref
+                aria-label="Перейти на страницу регистрации"
+              >
+                Нет аккаунта? Зарегистрируйтесь
+              </Link>
+              <Link 
+                href="/" 
+                className={styles.neonLink} 
+                passHref
+                aria-label="Вернуться на главную страницу"
+              >
+                Вернуться на главную
+              </Link>
+            </Box>
+          </Box>
+        </Box>
+      </Paper>
+    </Container>
+  );
+} 

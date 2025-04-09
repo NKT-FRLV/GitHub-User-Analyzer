@@ -57,6 +57,13 @@
   margin-top: 16px;
 }
 
+.buttonContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0.5rem;
+}
+
 .buttonGroup {
   display: flex;
   justify-content: space-between;

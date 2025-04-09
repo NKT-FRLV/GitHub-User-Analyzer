@@ -1,0 +1,76 @@
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  background-color: rgba(18, 18, 18, 0.95);
+  backdrop-filter: blur(8px);
+}
+
+.title {
+  flex-grow: 0;
+  margin-right: 24px;
+  font-weight: bold;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.title:hover {
+  color: #bbbbbb;
+}
+
+.searchContainer {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  max-width: 600px;
+  margin: 0 16px;
+}
+
+@media (max-width: 768px) {
+  .toolbar {
+    padding: 0.5rem 1rem;
+  }
+  
+  .title {
+    font-size: 1rem;
+    margin-right: 12px;
+  }
+  
+  .searchContainer {
+    max-width: 100%;
+    margin: 0 8px;
+  }
+}
+
+.header {
+  background-color: transparent;
+  padding: 1rem 0;
+  text-align: center;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #fff;
+  text-decoration: none;
+}
+
+@media (prefers-color-scheme: light) {
+  .logo {
+    color: #000;
+  }
+  
+  .toolbar {
+    background-color: rgba(255, 255, 255, 0.95);
+  }
+} 

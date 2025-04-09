@@ -1,87 +1,120 @@
-# 🚀 GitHub User Analyzer  
+# WONDER - GitHub User Analyzer
 
-🔗 **Live Demo:** [GitHub User Analyzer](https://git-hub-user-analyzer.vercel.app/)  
+Приложение для поиска, анализа и сохранения профилей GitHub разработчиков для последующего рассмотрения на позиции.
 
-A **Next.js-powered** application that allows users to **search and analyze GitHub profiles** in an interactive and visually appealing way. Built with **Material UI**, **TypeScript**, and **Next.js**, this project fetches data from the **GitHub API** to provide **in-depth repository analytics**, language distribution, and more.
+## Основные возможности
 
----
+- Поиск разработчиков GitHub по имени пользователя
+- Анализ профиля разработчика, его репозиториев и используемых языков программирования
+- Регистрация и авторизация пользователей
+- Сохранение профилей разработчиков как потенциальных кандидатов на позицию
+- Управление сохраненными кандидатами
 
-## 📌 **Features**
+## Технологический стек
 
-✅ **GitHub User Search** – Enter a username and fetch profile details in real time  
-✅ **Repository Analysis** – Displays public repositories, their descriptions, and creation dates  
-✅ **Advanced Data Visualization** – Uses **MUI X PieChart** to visually represent the programming languages used in repositories  
-✅ **Dynamic User Stats** – Showcases followers, following, and bio information in a structured format  
-✅ **Error Handling** – Gracefully handles invalid usernames and network issues  
-✅ **Optimized Performance** – Uses **Next.js optimizations** for fast and efficient data fetching  
-✅ **Fully Responsive** – Designed with **Material UI** to ensure a sleek UI across all devices  
+- **Frontend**: Next.js 15, React 19, TypeScript, Material UI 6
+- **Backend**: Next.js API Routes
+- **База данных**: PostgreSQL (Supabase)
+- **ORM**: Prisma
+- **Аутентификация**: JWT с использованием библиотеки jose
+- **API**: GitHub API, OpenAI API
 
-🚀 *This project lays the groundwork for deeper analytics, including tracking user engagement time in future updates!*  
+## Настройка и запуск проекта
 
----
+### Предварительные требования
 
-## 🛠 **Tech Stack & Libraries**  
+- Node.js 18+ и npm
+- Учетная запись Supabase с PostgreSQL базой данных
+- Токен доступа GitHub API
+- (Опционально) Токен доступа OpenAI API для анализа кода
 
-- **Frontend:** Next.js, React, TypeScript  
-- **UI Framework:** Material UI (MUI)  
-- **Data Fetching:** Standard Fetch API (server-side & client-side)  
-- **State Management:** React Hooks  
-- **Data Visualization:** MUI X Charts (PieChart for repository insights)  
-- **Hosting:** Vercel  
+### Шаги установки
 
----
+1. Клонируйте репозиторий:
 
-## 🏗 **Getting Started**  
-
-### **1️⃣ Clone the Repository**  
 ```bash
-git clone https://github.com/mi-viejo-amigo/GitHub-User-Analyzer.git
-cd GitHub-User-Analyzer
+git clone https://github.com/username/wonder.git
+cd wonder
 ```
-### **2️⃣ Install Dependencies** 
+
+2. Установите зависимости:
+
 ```bash
 npm install
-# or
-yarn install
 ```
 
-### **3️⃣ Run the Development Server** 
+3. Настройте переменные окружения в файле `.env`:
+
+```
+# Connect to Supabase via connection pooling
+DATABASE_URL="postgresql://user:password@aws-0-region.pooler.supabase.com:6543/postgres?pgbouncer=true"
+
+# Direct connection to the database. Used for migrations
+DIRECT_URL="postgresql://user:password@aws-0-region.supabase.com:5432/postgres"
+
+# GitHub API
+GITHUB_API_TOKEN=your_github_token
+NEXT_PUBLIC_GITHUB_API_TOKEN=your_github_token
+
+# Admin credentials
+ADMIN_PASSWORD=your_admin_password
+ADMIN_EMAIL=your_admin_email
+
+# JWT secrets
+JWT_SECRET=your_jwt_secret_at_least_32_chars
+REFRESH_SECRET=your_refresh_secret_at_least_32_chars
+
+# OpenAI (optional)
+OPENAI_API_KEY=your_openai_api_key
+```
+
+4. Инициализируйте базу данных и запустите миграции:
+
+```bash
+npx prisma migrate reset -f
+```
+
+5. Заполните базу данных начальными данными:
+
+```bash
+npm run prisma:seed
+```
+
+6. Запустите приложение в режиме разработки:
+
 ```bash
 npm run dev
-# or
-yarn dev
 ```
 
-## 🚀 Why Next.js?
-🔹 **Hybrid Rendering (SSR & CSR)** – Ensures optimized fetching of GitHub data  
-🔹 **File-Based Routing** – Simplifies route management  
-🔹 **Automatic Code Splitting** – Boosts performance and page load speed  
-🔹 **Built-in API Support** – Makes data fetching seamless  
+Приложение будет доступно по адресу: http://localhost:3000
 
----
+## Структура проекта
 
-## 📚 Learn More  
-- [Next.js Documentation](https://nextjs.org/docs)  
-- [Learn Next.js](https://nextjs.org/learn)  
-- [Next.js GitHub Repository](https://github.com/vercel/next.js)  
+- `app/` - Исходный код приложения (Next.js App Router)
+  - `api/` - API-маршруты и утилиты для бэкенда
+  - `components/` - React-компоненты
+  - `context/` - Контекст приложения для глобального состояния
+  - `lib/` - Библиотеки и утилиты
+  - `types/` - TypeScript-типы
+- `prisma/` - Схема базы данных и миграции
+- `public/` - Статические файлы
 
----
+## Основные функции и их использование
 
-## 🌍 Deploy on Vercel  
-The easiest way to deploy a **Next.js** app is through **Vercel**.  
-Check out [Next.js Deployment Guide](https://nextjs.org/docs/app/building-your-application/deploying) for more details.  
+### Авторизация
 
----
+В приложении реализована JWT-авторизация с использованием access и refresh токенов. Токены хранятся в http-only cookies для безопасности.
 
-## **Author**  
-👨‍💻 **Developed by [Nikita Frolov](https://github.com/NKT-FRLV)**  
+- `/auth/register` - Регистрация нового пользователя
+- `/auth/login` - Вход в систему
+- `/auth/logout` - Выход из системы
 
-📩 **Contact me:**  
-- **GitHub:** [mi-viejo-amigo](https://github.com/NKT-FRLV)  
-- **LinkedIn:** [LinkedIn Profile](https://www.linkedin.com/in/nktfrlv)  
-- **Email:** [Letter me](mailto:nkt.frlv7@yandex.ru)  
+### Работа с кандидатами
 
----
+- `/candidates` - Страница со списком сохраненных кандидатов
+- `/api/candidates` - API для сохранения и удаления кандидатов
 
-🚀 **GitHub User Analyzer** takes profile exploration to the next level, offering **visual insights** into repositories, programming languages, and user stats. Contributions and feedback are always welcome! 🎉 
+## Лицензия
+
+MIT
 

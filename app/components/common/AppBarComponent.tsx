@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import {
   AppBar,
   Toolbar,
@@ -35,10 +35,10 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
   setPage,
   page,
 }) => {
-  const [selectedLanguage, setSelectedLanguage] = React.useState("All Langs");
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
+  const [selectedLanguage, setSelectedLanguage] = useState("All Langs");
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const isSmallScreen = useMediaQuery('(max-width: 950px)');
+
 
   const handleLanguageChange = (event: SelectChangeEvent<string>) => {
     const language = event.target.value as string;

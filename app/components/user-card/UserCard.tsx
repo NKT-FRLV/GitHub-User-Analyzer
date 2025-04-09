@@ -23,8 +23,8 @@ import styles from "./userCard.module.css";
 import { UserCardProps } from "../../types/github";
 import UserAnalytics from "../user-analitics/UserAnalitics";
 import TextInfo from "../common/TextInfo";
-import FolderIcon from "@mui/icons-material/Folder";
-import BarChartIcon from "@mui/icons-material/BarChart";
+import { Add, BarChart, Folder, BookmarkAdd } from "@mui/icons-material";
+import { useAuth } from '../../context/AuthContext';
 
 const UserCard = ({ user, error, isMobile: serverIsMobile, userInteracted }: UserCardProps & { isMobile: boolean, userInteracted: boolean }) => {
   const [avatarOpen, setAvatarOpen] = React.useState(false);
@@ -35,6 +35,7 @@ const UserCard = ({ user, error, isMobile: serverIsMobile, userInteracted }: Use
   const [isMobileView, setIsMobileView] = useState(serverIsMobile);
 
   const router = useRouter();
+  const { user: authUser } = useAuth();
 
   const handleRepos = () => {    
     setIsLoading(true);
@@ -71,6 +72,49 @@ const UserCard = ({ user, error, isMobile: serverIsMobile, userInteracted }: Use
     }
   };
 
+  const buttonStyle = { 
+    backgroundColor: "grey.900", 
+    fontSize: buttonFontSize,
+    cursor: "pointer",
+    "&:hover": {
+      backgroundColor: "grey.800"
+    }
+  }
+
+  // Функция для сохранения кандидата
+  const handleSaveCandidate = async () => {
+    if (!user || !authUser?.isAuthenticated) {
+      // Если пользователь не авторизован, перенаправляем на страницу логина
+      router.push('/auth/login?from=/');
+      return;
+    }
+    
+    try {
+      const response = await fetch('/api/candidates', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          githubName: user.login,
+          githubUrl: user.html_url,
+          avatarUrl: user.avatar_url
+        }),
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        // Показать уведомление об успешном сохранении
+        alert('Кандидат успешно сохранен');
+      } else {
+        console.error('Ошибка при сохранении кандидата:', data.message);
+      }
+    } catch (error) {
+      console.error('Ошибка при отправке запроса:', error);
+    }
+  };
+
   if (error) {
     return (
       <Typography color="error" className={styles.error}>
@@ -95,7 +139,10 @@ const UserCard = ({ user, error, isMobile: serverIsMobile, userInteracted }: Use
               <Avatar
                 className={styles.avatarContainer}
                 aria-label="Avatar modal"
-                src={user.avatar_url}
+                src={authUser?.isAuthenticated && user.login === authUser.username 
+                  ? authUser.avatarUrl || user.avatar_url  // Use avatar from profile if available
+                  : user.avatar_url
+                }
                 alt={user.login}
                 sx={{ width: avatarSize, height: avatarSize, cursor: "pointer" }}
                 ref={avatarRef}
@@ -158,29 +205,35 @@ const UserCard = ({ user, error, isMobile: serverIsMobile, userInteracted }: Use
           </Box>
 
           <Divider />
-
-          <Box className={styles.buttonGroup}>
+          <Box className={styles.buttonContainer}>
+            <Box className={styles.buttonGroup}>
+              <Button
+                variant="contained"
+                sx={buttonStyle}
+                startIcon={<Folder sx={{ fontSize: buttonFontSize }} />}
+                onClick={handleRepos}
+              >
+                Repos: {user.public_repos}
+              </Button>
+              <Button
+                variant="contained"
+                ref={modalButtonRef}
+                sx={buttonStyle}
+                startIcon={<BarChart sx={{ fontSize: buttonFontSize }} />}
+                onClick={() => setAnaliticsOpen(true)}
+              >
+                Languages
+              </Button>
+            </Box>
             <Button
               variant="contained"
-              sx={{ backgroundColor: "grey.900", fontSize: buttonFontSize }}
-              startIcon={<FolderIcon sx={{ fontSize: buttonFontSize }} />}
-              onClick={handleRepos}
-              style={{ cursor: "pointer" }}
+              onClick={handleSaveCandidate}
+              sx={buttonStyle}
+              startIcon={<BookmarkAdd sx={{ fontSize: buttonFontSize }} />}
             >
-              Repos: {user.public_repos}
-            </Button>
-            <Button
-              variant="contained"
-              ref={modalButtonRef}
-              sx={{ backgroundColor: "grey.900", fontSize: buttonFontSize }}
-              startIcon={<BarChartIcon sx={{ fontSize: buttonFontSize }} />}
-              onClick={() => setAnaliticsOpen(true)}
-              style={{ cursor: "pointer" }}
-            >
-              Languages
+              Save candidate
             </Button>
           </Box>
-
           <Dialog
             open={avatarOpen}
             onClose={handleAvatarClose}

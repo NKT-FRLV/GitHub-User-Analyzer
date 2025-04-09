@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./node_modules/.prisma/client"
+  seed     = "tsx seed.ts"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id            String         @id @default(cuid())
+  username      String         @unique
+  email         String         @unique
+  passwordHash  String
+  salt          String
+  role          Role           @default(USER)
+  createdAt     DateTime       @default(now())
+  avatarUrl     String?
+  candidates    Candidate[]
+  refreshTokens RefreshToken[]
+}
+
+model Candidate {
+  id         String   @id @default(cuid())
+  githubName String
+  githubUrl  String
+  avatarUrl  String
+  savedAt    DateTime @default(now())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+
+  @@unique([githubName, userId])
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+enum Role {
+  USER
+  ADMIN
+}

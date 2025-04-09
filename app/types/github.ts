@@ -1,15 +1,41 @@
 import { languageColors } from "../utils";
 import { components } from "@octokit/openapi-types";
 
-// типы для github api
+// types for github api
 export type GitHubUser = components["schemas"]["public-user"];
 
+// types for authentication
+export interface AuthUser {
+  id: string;
+  username: string;
+  email: string;
+  avatarUrl?: string;
+  isAuthenticated: boolean;
+}
+
+export interface LoginCredentials {
+  username: string;
+  password: string;
+}
+
+export interface RegisterCredentials extends LoginCredentials {
+  email: string;
+}
 
 export interface initialServerUser {
   initialUser: GitHubUser | unknown;
   isMobile: boolean;
 }
 
+// Type for a candidate saved in the database
+export interface Candidate {
+  id: string;
+  githubName: string;
+  githubUrl: string;
+  avatarUrl: string;
+  savedAt: string;
+  userId: string;
+}
 
 export interface UserCardProps {
   user: GitHubUser | null;
