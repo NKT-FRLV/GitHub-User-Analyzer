@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 import { AuthUser } from '@/app/types/github';
 import crypto from 'crypto';
 import { prisma } from '@/app/lib/prisma';
-import { Role, User } from '@prisma/client';
+import { Role } from '../types';
 
 // Создаем секретные ключи для JWT
 const JWT_SECRET = new TextEncoder().encode(

@@ -1,6 +1,11 @@
 import { AuthUser } from '../types/github';
 import { JWTPayload } from 'jose';
 
+export enum Role {
+  USER = 'USER',
+  ADMIN = 'ADMIN'
+}
+
 export interface LoginRequest {
   username: string;
   password: string;
