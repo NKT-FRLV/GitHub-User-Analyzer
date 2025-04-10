@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import { prisma } from '@/app/lib/prisma';
 import { verifyJWT } from '../../utils/auth';
 import { Prisma } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { AuthUser } from '@/app/types/github';
 
 export async function POST(request: NextRequest) {
@@ -100,7 +101,7 @@ export async function POST(request: NextRequest) {
     } catch (dbError) {
       console.error('Database error updating avatar:', dbError);
       
-      if (dbError instanceof Prisma.PrismaClientKnownRequestError) {
+      if (dbError instanceof PrismaClientKnownRequestError) {
         console.log('Prisma error:', dbError.message);
         return NextResponse.json(
           { success: false, message: `Database error: ${dbError.message}` },
