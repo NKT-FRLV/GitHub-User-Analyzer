@@ -3,10 +3,6 @@ import { cookies } from 'next/headers';
 import { verifyJWT, verifyRefreshToken, signJWT, signRefreshToken, setAuthCookies, findRefreshToken, saveRefreshToken } from '../../utils/auth';
 import { AuthResponse } from '../../types';
 import { prisma } from '@/app/lib/prisma';
-import { User } from '@prisma/client';
-
-// Extended User type to ensure TypeScript recognizes avatarUrl
-type UserWithAvatar = User & { avatarUrl?: string };
 
 export async function GET(request: NextRequest): Promise<NextResponse<AuthResponse>> {
   try {
