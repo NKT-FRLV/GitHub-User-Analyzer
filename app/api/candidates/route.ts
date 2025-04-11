@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
 
     if (!token) {
       return NextResponse.json(
-        { success: false, message: 'Необходима авторизация' },
+        { success: false, message: 'Authorization required' },
         { status: 401 }
       );
     }
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     const userData = await verifyJWT(token);
     if (!userData) {
       return NextResponse.json(
-        { success: false, message: 'Недействительный токен' },
+        { success: false, message: 'Invalid token' },
         { status: 401 }
       );
     }
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Error getting candidates:', error);
     return NextResponse.json(
-      { success: false, message: 'Ошибка сервера' },
+      { success: false, message: 'Server error' },
       { status: 500 }
     );
   }

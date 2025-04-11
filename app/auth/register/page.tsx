@@ -54,23 +54,23 @@ function RegisterContent() {
 
   const validateForm = (): boolean => {
     if (!credentials.username || !credentials.email || !credentials.password) {
-      setError('Все поля обязательны для заполнения');
+      setError('All fields are required');
       return false;
     }
     
     if (credentials.password !== confirmPassword) {
-      setError('Пароли не совпадают');
+      setError('Passwords do not match');
       return false;
     }
     
     if (credentials.password.length < 6) {
-      setError('Пароль должен содержать не менее 6 символов');
+      setError('Password must be at least 6 characters long');
       return false;
     }
     
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(credentials.email)) {
-      setError('Введите корректный email');
+      setError('Enter a valid email');
       return false;
     }
     
@@ -97,10 +97,10 @@ function RegisterContent() {
       if (success) {
         router.push('/auth/login?registered=true');
       } else {
-        setError('Пользователь с таким именем уже существует');
+        setError('User with this name already exists');
       }
     } catch (err) {
-      setError('Произошла ошибка при регистрации');
+      setError('An error occurred while registering');
       console.error('Registration error:', err);
     } finally {
       setLoading(false);
@@ -141,7 +141,7 @@ function RegisterContent() {
           </Avatar>
           
           <Typography component="h1" variant="h5" className={styles.registerTitle}>
-            Регистрация
+            Registration
           </Typography>
           
           {error && (
@@ -160,7 +160,7 @@ function RegisterContent() {
               required
               fullWidth
               id="username"
-              label="Имя пользователя"
+              label="Username"
               name="username"
               autoComplete="username"
               autoFocus
@@ -188,7 +188,7 @@ function RegisterContent() {
               required
               fullWidth
               name="password"
-              label="Пароль"
+              label="Password"
               type="password"
               id="password"
               autoComplete="new-password"
@@ -202,7 +202,7 @@ function RegisterContent() {
               required
               fullWidth
               name="confirmPassword"
-              label="Подтвердите пароль"
+              label="Confirm password"
               type="password"
               id="confirmPassword"
               value={confirmPassword}
@@ -218,24 +218,24 @@ function RegisterContent() {
               disabled={loading}
               sx={{ mt: 2, mb: 2 }}
             >
-              {loading ? 'Регистрация...' : 'Зарегистрироваться'}
+              {loading ? 'Registration...' : 'Register'}
             </Button>
             <Box className={styles.links}>
               <Link 
                 href="/auth/login" 
                 className={styles.neonLink} 
                 passHref 
-                aria-label="Перейти на страницу входа"
+                aria-label="Go to the login page"
               >
-                Уже есть аккаунт? Войти 
+                Already have an account? Login
               </Link>
               <Link 
                 href="/" 
                 className={styles.neonLink} 
                 passHref
-                aria-label="Вернуться на главную страницу"
+                aria-label="Go to the main page"
               >
-                Вернуться на главную
+                Back to the main page
               </Link>
             </Box>
           </Box>

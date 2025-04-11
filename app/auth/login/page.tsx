@@ -44,7 +44,7 @@ function LoginContent() {
   // Проверяем, есть ли сообщение об успешной регистрации
   useEffect(() => {
     if (searchParams.get('registered') === 'true') {
-      setSuccess('Регистрация прошла успешно! Теперь вы можете войти в систему.');
+      setSuccess('Registration successful! Now you can login to the system.');
     }
   }, [searchParams]);
 
@@ -62,7 +62,7 @@ function LoginContent() {
     setSuccess('');
     
     if (!credentials.username.trim() || !credentials.password.trim()) {
-      setError('Пожалуйста, заполните все поля');
+      setError('Please fill in all fields');
       return;
     }
 
@@ -75,10 +75,10 @@ function LoginContent() {
         const redirectPath = searchParams.get('from') || '/';
         router.push(redirectPath);
       } else {
-        setError('Неверное имя пользователя или пароль');
+        setError('Invalid username or password');
       }
     } catch (err) {
-      setError('Произошла ошибка при входе в систему');
+      setError('An error occurred while logging in');
       console.error('Login error:', err);
     } finally {
       setLoading(false);
@@ -119,7 +119,7 @@ function LoginContent() {
           </Avatar>
           
           <Typography component="h1" variant="h5" className={styles.loginTitle}>
-            Вход в систему
+            Login to system
           </Typography>
           
           {error && (
@@ -148,7 +148,7 @@ function LoginContent() {
               required
               fullWidth
               id="username"
-              label="Имя пользователя"
+              label="Username"
               name="username"
               autoComplete="username"
               autoFocus
@@ -162,7 +162,7 @@ function LoginContent() {
               required
               fullWidth
               name="password"
-              label="Пароль"
+              label="Password"
               type="password"
               id="password"
               autoComplete="current-password"
@@ -179,24 +179,24 @@ function LoginContent() {
               disabled={loading}
               sx={{ mt: 2, mb: 2 }}
             >
-              {loading ? 'Загрузка...' : 'Войти'}
+              {loading ? 'Loading...' : 'Login'}
             </Button>
             <Box className={styles.links}>
               <Link 
                 href="/auth/register" 
                 className={styles.neonLink} 
                 passHref
-                aria-label="Перейти на страницу регистрации"
+                aria-label="Go to the registration page"
               >
-                Нет аккаунта? Зарегистрируйтесь
+                No account? Register
               </Link>
               <Link 
                 href="/" 
                 className={styles.neonLink} 
                 passHref
-                aria-label="Вернуться на главную страницу"
+                aria-label="Go to the main page"
               >
-                Вернуться на главную
+                Back to the main page
               </Link>
             </Box>
           </Box>

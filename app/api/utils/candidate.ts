@@ -53,7 +53,7 @@ export async function saveCandidate(
 
     return true;
   } catch (error) {
-    console.error('Ошибка при сохранении кандидата:', error);
+    console.error('Error saving candidate:', error);
     return false;
   }
 }
@@ -74,7 +74,7 @@ export async function getCandidates(userId: string) {
       }
     });
   } catch (error) {
-    console.error('Ошибка при получении кандидатов:', error);
+    console.error('Error fetching candidates:', error);
     return [];
   }
 }
@@ -83,7 +83,7 @@ export async function getCandidates(userId: string) {
  * Удаляет кандидата из списка сохраненных
  * @param candidateId - ID кандидата
  * @param userId - ID авторизованного пользователя
- * @returns true, если удаление прошло успешно
+  * @returns true, если удаление прошло успешно
  */
 export async function deleteCandidate(candidateId: string, userId: string): Promise<boolean> {
   try {
@@ -107,7 +107,7 @@ export async function deleteCandidate(candidateId: string, userId: string): Prom
 
     return true;
   } catch (error) {
-    console.error('Ошибка при удалении кандидата:', error);
+    console.error('Error deleting candidate:', error);
     return false;
   }
 } 

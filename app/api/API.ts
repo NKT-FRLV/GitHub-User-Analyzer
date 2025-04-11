@@ -23,7 +23,7 @@ export const getUserData = async (username: string): Promise<GitHubUser | null> 
     return response.data as GitHubUser;
   } catch (error) {
     if (error instanceof Error) {
-      console.error("Ошибка запроса к GitHub API:", error.message);
+      console.error("GitHub API request error:", error.message);
 
       // Проверяем на лимит API
       if (error.message.includes("403")) {
@@ -49,14 +49,14 @@ export const fetchReposApi = async (url: string): Promise<Repository[] | null> =
       }
     });
     if (!response.ok) {
-      console.error(`Ошибка при получении репозиториев: ${response.status} ${response.statusText}`);
+      console.error(`Error fetching repositories: ${response.status} ${response.statusText}`);
       return null;
     }
 
     const data: Repository[] = await response.json();
     return data;
   } catch (error) {
-    console.error("Ошибка сети или сервера при запросе к GitHub API:", error);
+    console.error("Network or server error when fetching GitHub API:", error);
     return null;
   }
 };
@@ -65,14 +65,14 @@ export const fetchLanguagesApi = async (url: string): Promise<LanguagesObject | 
   try {
     const response = await fetch(url);
     if (!response.ok) {
-      console.error(`Ошибка при получении языков: ${response.status} ${response.statusText}`);
+      console.error(`Error fetching languages: ${response.status} ${response.statusText}`);
       return null;
     }
 
     const data: LanguagesObject = await response.json();
     return data;
   } catch (error) {
-    console.error("Ошибка сети или сервера при запросе к GitHub API:", error);
+    console.error("Network or server error when fetching GitHub API:", error);
     return null;
   }
 };

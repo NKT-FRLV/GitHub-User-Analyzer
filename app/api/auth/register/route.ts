@@ -10,7 +10,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<AuthRespo
     // Проверка полей
     if (!username || !email || !password) {
       return NextResponse.json(
-        { success: false, message: 'Все поля обязательны для заполнения' },
+        { success: false, message: 'All fields are required' },
         { status: 400 }
       );
     }
@@ -19,7 +19,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<AuthRespo
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return NextResponse.json(
-        { success: false, message: 'Некорректный email' },
+        { success: false, message: 'Invalid email' },
         { status: 400 }
       );
     }
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<AuthRespo
     // Проверка длины пароля
     if (password.length < 6) {
       return NextResponse.json(
-        { success: false, message: 'Пароль должен содержать не менее 6 символов' },
+        { success: false, message: 'Password must be at least 6 characters long' },
         { status: 400 }
       );
     }
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<AuthRespo
 
     if (!success) {
       return NextResponse.json(
-        { success: false, message: 'Пользователь с таким именем или email уже существует' },
+        { success: false, message: 'User with this name or email already exists' },
         { status: 409 }
       );
     }
@@ -45,12 +45,12 @@ export async function POST(request: NextRequest): Promise<NextResponse<AuthRespo
     // Возвращаем успешный ответ
     return NextResponse.json({
       success: true,
-      message: 'Регистрация прошла успешно'
+      message: 'Registration successful'
     });
   } catch (error) {
     console.error('Registration error:', error);
     return NextResponse.json(
-      { success: false, message: 'Ошибка сервера' },
+      { success: false, message: 'Server error' },
       { status: 500 }
     );
   }

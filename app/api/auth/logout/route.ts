@@ -33,12 +33,12 @@ export async function POST(_request: NextRequest): Promise<NextResponse<AuthResp
 
     return NextResponse.json({
       success: true,
-      message: 'Вы успешно вышли из системы'
+      message: 'You have successfully logged out'
     });
   } catch (error) {
     console.error('Logout error:', error);
     return NextResponse.json(
-      { success: false, message: 'Ошибка при выходе из системы' },
+      { success: false, message: 'Server error' },
       { status: 500 }
     );
   }

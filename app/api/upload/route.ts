@@ -5,6 +5,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { cookies } from 'next/headers';
 import { verifyJWT } from '../utils/auth';
 
+// НЕ ИСПОЛЬЗУЕТСЯ
+
 export async function POST(request: NextRequest) {
   try {
     // Проверяем аутентификацию
@@ -13,7 +15,7 @@ export async function POST(request: NextRequest) {
     
     if (!token) {
       return NextResponse.json(
-        { success: false, message: 'Необходима авторизация' },
+        { success: false, message: 'Authorization required' },
         { status: 401 }
       );
     }
@@ -21,7 +23,7 @@ export async function POST(request: NextRequest) {
     const userData = await verifyJWT(token);
     if (!userData) {
       return NextResponse.json(
-        { success: false, message: 'Недействительный токен' },
+        { success: false, message: 'Invalid token' },
         { status: 401 }
       );
     }
@@ -31,7 +33,7 @@ export async function POST(request: NextRequest) {
     
     if (!file) {
       return NextResponse.json(
-        { success: false, message: 'Файл не найден' },
+        { success: false, message: 'File not found' },
         { status: 400 }
       );
     }
@@ -40,7 +42,7 @@ export async function POST(request: NextRequest) {
     const fileType = file.type;
     if (!fileType.startsWith('image/')) {
       return NextResponse.json(
-        { success: false, message: 'Загружать можно только изображения' },
+        { success: false, message: 'Only images can be uploaded' },
         { status: 400 }
       );
     }
@@ -64,12 +66,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       fileUrl,
-      message: 'Файл успешно загружен'
+      message: 'File uploaded successfully'
     });
   } catch (error) {
     console.error('Error uploading file:', error);
     return NextResponse.json(
-      { success: false, message: 'Ошибка при загрузке файла' },
+      { success: false, message: 'Server error' },
       { status: 500 }
     );
   }

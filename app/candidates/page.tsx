@@ -55,18 +55,18 @@ export default function CandidatesPage() {
       if (data.success) {
         setCandidates(data.candidates);
       } else {
-        setError(data.message || 'Ошибка при получении списка кандидатов');
+        setError(data.message || 'Error fetching candidates list');
       }
     } catch (error) {
-      console.error('Ошибка при получении кандидатов:', error);
-      setError('Произошла ошибка при загрузке данных');
+      console.error('Error fetching candidates:', error);
+      setError('An error occurred while loading data');
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (candidateId: string) => {
-    if (!confirm('Вы уверены, что хотите удалить этого кандидата?')) {
+    if (!confirm('Are you sure you want to delete this candidate?')) {
       return;
     }
     
@@ -85,11 +85,11 @@ export default function CandidatesPage() {
         // Обновляем список кандидатов
         setCandidates(candidates.filter(c => c.id !== candidateId));
       } else {
-        setError(data.message || 'Ошибка при удалении кандидата');
+        setError(data.message || 'Error deleting candidate');
       }
     } catch (error) {
-      console.error('Ошибка при удалении кандидата:', error);
-      setError('Произошла ошибка при удалении кандидата');
+      console.error('Error deleting candidate:', error);
+      setError('An error occurred while deleting candidate');
     }
   };
 
@@ -109,10 +109,10 @@ export default function CandidatesPage() {
     <Container component="main" sx={{ py: 4 }}>
       <Paper elevation={2} sx={{ p: 3, mb: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Сохраненные кандидаты
+          Saved candidates
         </Typography>
         <Typography variant="body1" color="text.secondary" paragraph>
-          Здесь отображаются GitHub-профили, которые вы сохранили для дальнейшего рассмотрения
+          Here you can see GitHub profiles that you have saved for further consideration
         </Typography>
       </Paper>
 
@@ -126,14 +126,14 @@ export default function CandidatesPage() {
         </Paper>
       ) : candidates.length === 0 ? (
         <Paper elevation={2} sx={{ p: 3 }}>
-          <Typography>У вас пока нет сохраненных кандидатов</Typography>
+          <Typography>You have no saved candidates yet</Typography>
           <Button 
             variant="contained" 
             color="primary" 
             sx={{ mt: 2 }}
             onClick={() => router.push('/')}
           >
-            Найти кандидатов
+            Find candidates
           </Button>
         </Paper>
       ) : (
@@ -146,7 +146,7 @@ export default function CandidatesPage() {
                     <Avatar src={candidate.avatarUrl} alt={candidate.githubName} />
                   }
                   title={candidate.githubName}
-                  subheader={`Сохранено: ${format(new Date(candidate.savedAt), 'dd MMMM yyyy', { locale: ru })}`}
+                  subheader={`Saved: ${format(new Date(candidate.savedAt), 'dd MMMM yyyy', { locale: ru })}`}
                 />
                 <CardMedia
                   component="img"
@@ -157,7 +157,7 @@ export default function CandidatesPage() {
                 />
                 <CardContent>
                   <Typography variant="body2" color="text.secondary">
-                    GitHub-профиль кандидата для рассмотрения на позицию разработчика.
+                    GitHub profile of the candidate for consideration for the developer position.
                   </Typography>
                 </CardContent>
                 <CardActions disableSpacing>
@@ -166,10 +166,10 @@ export default function CandidatesPage() {
                     startIcon={<GitHubIcon />}
                     onClick={() => window.open(candidate.githubUrl, '_blank')}
                   >
-                    Открыть GitHub
+                    Open GitHub
                   </Button>
                   <IconButton 
-                    aria-label="удалить" 
+                    aria-label="delete" 
                     sx={{ marginLeft: 'auto' }}
                     onClick={() => handleDelete(candidate.id)}
                   >

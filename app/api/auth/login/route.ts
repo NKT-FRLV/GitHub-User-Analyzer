@@ -12,7 +12,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<AuthRespo
 
     if (!user) {
       return NextResponse.json(
-        { success: false, message: 'Неверное имя пользователя или пароль' },
+        { success: false, message: 'Invalid username or password' },
         { status: 401 }
       );
     }
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<AuthRespo
   } catch (error) {
     console.error('Login error:', error);
     return NextResponse.json(
-      { success: false, message: 'Ошибка сервера' },
+      { success: false, message: 'Server error' },
       { status: 500 }
     );
   }
