@@ -6,7 +6,7 @@ import {
   Avatar, 
   Menu, 
   MenuItem,
-  useMediaQuery,
+  // useMediaQuery,
   Button 
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
@@ -16,14 +16,20 @@ import HomeIcon from '@mui/icons-material/Home';
 import { AuthUser } from '../../types/github';
 import { useAuth } from '../../context/AuthContext';
 
-const UserMenu = () => {
+interface UserMenuProps {
+  initialUser: AuthUser | null;
+}
+
+const UserMenu = ({ initialUser }: UserMenuProps) => {
   const theme = useTheme();
   const router = useRouter();
   const pathname = usePathname();
   const { user, logout } = useAuth();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  // const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
+  const currentUser = user || initialUser;
   
   // Check if the user is on the authentication page
   const isAuthPage = pathname.startsWith('/auth/');
@@ -79,7 +85,7 @@ const UserMenu = () => {
   // Otherwise, display the standard user menu
   return (
     <>
-      {user?.isAuthenticated ? (
+      {currentUser?.isAuthenticated ? (
         <>
           <IconButton
             aria-label="account of current user"
@@ -88,11 +94,11 @@ const UserMenu = () => {
             onClick={handleMenu}
             color="inherit"
           >
-            {user.avatarUrl ? (
-              <Avatar src={user.avatarUrl} alt={user.username} />
+            {currentUser.avatarUrl ? (
+              <Avatar src={currentUser.avatarUrl} alt={currentUser.username} />
             ) : (
               <Avatar>
-                {user.username.charAt(0).toUpperCase()}
+                {currentUser.username.charAt(0).toUpperCase()}
               </Avatar>
             )}
           </IconButton>

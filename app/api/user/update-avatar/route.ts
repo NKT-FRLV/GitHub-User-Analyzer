@@ -72,21 +72,13 @@ export async function POST(request: NextRequest) {
           { status: 500 }
         );
       }
-      
-      // Explicitly get the avatar URL using raw SQL to ensure it's available
-      const result = await prisma.$queryRaw<{avatarUrl: string | null}[]>`
-        SELECT "avatarUrl" FROM "User" WHERE id = ${updatedUser.id}
-      `;
-      const updatedAvatarUrl = result && result.length > 0 ? result[0].avatarUrl : null;
-      
-      console.log('Updated user avatar:', updatedAvatarUrl);
-      
+    
       // Create user response object
       const userResponse: AuthUser = {
         id: updatedUser.id,
         username: updatedUser.username,
         email: updatedUser.email,
-        avatarUrl: updatedAvatarUrl || undefined,
+        avatarUrl: updatedUser.avatarUrl || undefined,
         isAuthenticated: true
       };
       

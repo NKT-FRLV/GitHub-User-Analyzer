@@ -167,18 +167,12 @@ export async function authenticateUser(username: string, password: string): Prom
       return null;
     }
 
-    // Explicitly get the avatar URL using raw SQL
-    const result = await prisma.$queryRaw<{avatarUrl: string | null}[]>`
-      SELECT "avatarUrl" FROM "User" WHERE id = ${user.id}
-    `;
-    const avatarUrl = result && result.length > 0 ? result[0].avatarUrl : null;
-
     // Return user data
     return {
       id: user.id,
       username: user.username,
       email: user.email,
-      avatarUrl: avatarUrl || undefined,
+      avatarUrl: user.avatarUrl || undefined,
       isAuthenticated: true
     };
   } catch (error) {
@@ -275,4 +269,29 @@ export async function clearAuthCookies() {
   const cookieStore = await cookies();
   cookieStore.delete('token');
   cookieStore.delete('refreshToken');
+}
+
+// Получение пользователя из куки
+export async function getUserFromCookie(): Promise<AuthUser | null> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get('token')?.value;
+  
+  if (!token) return null;
+  
+  const userData = await verifyJWT(token);
+  if (!userData) return null;
+  
+  const user = await prisma.user.findUnique({
+    where: { id: userData.id }
+  });
+  
+  if (!user) return null;
+  
+  return {
+    id: user.id,
+    username: user.username,
+    email: user.email,
+    avatarUrl: user.avatarUrl || undefined,
+    isAuthenticated: true
+  };
 } 

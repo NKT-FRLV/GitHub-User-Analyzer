@@ -59,19 +59,13 @@ export async function GET(request: NextRequest): Promise<NextResponse<AuthRespon
           // Set new cookies
           await setAuthCookies(newToken, newRefreshToken);
           
-          // Explicitly get the avatar URL using raw SQL
-          const result = await prisma.$queryRaw<{avatarUrl: string | null}[]>`
-            SELECT "avatarUrl" FROM "User" WHERE id = ${user.id}
-          `;
-          const avatarUrl = result && result.length > 0 ? result[0].avatarUrl : null;
-          
           return NextResponse.json({
             success: true,
             user: {
               id: user.id,
               username: user.username,
               email: user.email,
-              avatarUrl: avatarUrl || undefined,
+              avatarUrl: user.avatarUrl || undefined,
               isAuthenticated: true
             }
           });
@@ -106,12 +100,6 @@ export async function GET(request: NextRequest): Promise<NextResponse<AuthRespon
       );
     }
 
-    // Explicitly get the avatar URL using raw SQL
-    const result = await prisma.$queryRaw<{avatarUrl: string | null}[]>`
-      SELECT "avatarUrl" FROM "User" WHERE id = ${user.id}
-    `;
-    const avatarUrl = result && result.length > 0 ? result[0].avatarUrl : null;
-
     // Return user information
     return NextResponse.json({
       success: true,
@@ -119,7 +107,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<AuthRespon
         id: user.id,
         username: user.username,
         email: user.email,
-        avatarUrl: avatarUrl || undefined,
+        avatarUrl: user.avatarUrl || undefined,
         isAuthenticated: true
       }
     });
