@@ -4,6 +4,7 @@
   --background-paper: #fafafa;
   --neon-primary: #bb86fc;
   --neon-hover: #e0b0ff;
+  --header-height: 72px;
 }
 
 html {
@@ -48,3 +49,7 @@ a {
   color: var(--neon-hover);
   text-shadow: 0 0 8px rgba(187, 134, 252, 0.8), 0 0 12px rgba(187, 134, 252, 0.6);
 }
+
+/* header .MuiToolbar-root {
+  min-height: var(--header-height);
+} */

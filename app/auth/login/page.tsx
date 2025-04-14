@@ -191,6 +191,14 @@ function LoginContent() {
                 No account? Register
               </Link>
               <Link 
+                href="/auth/forgot-password" 
+                className={styles.neonLink} 
+                passHref
+                aria-label="Forgot your password?"
+              >
+                Forgot password?
+              </Link>
+              <Link 
                 href="/" 
                 className={styles.neonLink} 
                 passHref

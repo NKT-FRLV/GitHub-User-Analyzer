@@ -7,14 +7,14 @@ import {
 import Link from 'next/link';
 import styles from './header.module.css';
 import UserMenu from './UserMenu';
-import { getUserFromCookie } from '@/app/api/utils/auth';
+import { getAuthenticatedUser } from '@/app/api/utils/auth';
 
 /**
  * Серверный компонент Header
  * UserMenu импортируется как клиентский компонент с логикой авторизации
  */
 export default async function Header() {
-  const initialUser = await getUserFromCookie();
+  const initialUser = await getAuthenticatedUser();
 
   return (
     <AppBar position="static" sx={{ backgroundColor: '#1a1a1a', borderRadius: 0 }}>

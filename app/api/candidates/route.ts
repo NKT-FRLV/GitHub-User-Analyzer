@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     
     if (!token) {
       return NextResponse.json(
-        { success: false, message: 'Необходима авторизация' },
+        { success: false, message: 'Authorization required' },
         { status: 401 }
       );
     }
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     const userData = await verifyJWT(token);
     if (!userData) {
       return NextResponse.json(
-        { success: false, message: 'Недействительный токен' },
+        { success: false, message: 'Invalid token' },
         { status: 401 }
       );
     }
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
     
     if (!githubName || !githubUrl || !avatarUrl) {
       return NextResponse.json(
-        { success: false, message: 'Отсутствуют обязательные поля' },
+        { success: false, message: 'Missing required fields' },
         { status: 400 }
       );
     }
@@ -70,19 +70,19 @@ export async function POST(request: NextRequest) {
     
     if (!success) {
       return NextResponse.json(
-        { success: false, message: 'Не удалось сохранить кандидата' },
+        { success: false, message: 'Failed to save candidate' },
         { status: 500 }
       );
     }
     
     return NextResponse.json({
       success: true,
-      message: 'Кандидат успешно сохранен'
+      message: 'Candidate saved successfully'
     });
   } catch (error) {
     console.error('Error saving candidate:', error);
     return NextResponse.json(
-      { success: false, message: 'Ошибка сервера' },
+      { success: false, message: 'Server error' },
       { status: 500 }
     );
   }
@@ -96,7 +96,7 @@ export async function DELETE(request: NextRequest) {
     
     if (!token) {
       return NextResponse.json(
-        { success: false, message: 'Необходима авторизация' },
+        { success: false, message: 'Authorization required' },
         { status: 401 }
       );
     }
@@ -104,7 +104,7 @@ export async function DELETE(request: NextRequest) {
     const userData = await verifyJWT(token);
     if (!userData) {
       return NextResponse.json(
-        { success: false, message: 'Недействительный токен' },
+        { success: false, message: 'Invalid token' },
         { status: 401 }
       );
     }
@@ -113,7 +113,7 @@ export async function DELETE(request: NextRequest) {
     
     if (!candidateId) {
       return NextResponse.json(
-        { success: false, message: 'ID кандидата не указан' },
+        { success: false, message: 'Candidate ID not specified' },
         { status: 400 }
       );
     }
@@ -122,19 +122,19 @@ export async function DELETE(request: NextRequest) {
     
     if (!success) {
       return NextResponse.json(
-        { success: false, message: 'Не удалось удалить кандидата' },
+        { success: false, message: 'Failed to delete candidate' },
         { status: 404 }
       );
     }
     
     return NextResponse.json({
       success: true,
-      message: 'Кандидат успешно удален'
+      message: 'Candidate deleted successfully'
     });
   } catch (error) {
     console.error('Error deleting candidate:', error);
     return NextResponse.json(
-      { success: false, message: 'Ошибка сервера' },
+      { success: false, message: 'Server error' },
       { status: 500 }
     );
   }

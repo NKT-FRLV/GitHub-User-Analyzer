@@ -2,7 +2,6 @@ import { SignJWT, jwtVerify } from 'jose';
 import { TokenPayload } from '../types';
 import { cookies } from 'next/headers';
 import { AuthUser } from '@/app/types/github';
-import crypto from 'crypto';
 import { prisma } from '@/app/lib/prisma';
 import { Role } from '../types';
 
@@ -71,19 +70,24 @@ export async function verifyRefreshToken(token: string): Promise<TokenPayload | 
   }
 }
 
-// Хеширование пароля с солью
-export function hashPassword(password: string, salt?: string): { hash: string; salt: string } {
-  const generatedSalt = salt || crypto.randomBytes(16).toString('hex');
-  const hash = crypto
-    .pbkdf2Sync(password, generatedSalt, 1000, 64, 'sha512')
-    .toString('hex');
+// Хеширование пароля
+export async function hashPassword(password: string, salt?: string): Promise<{ hash: string; salt: string }> {
+  const encoder = new TextEncoder();
+  const generatedSalt = salt || Array.from(crypto.getRandomValues(new Uint8Array(16)))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+    
+  const passwordWithSalt = encoder.encode(password + generatedSalt);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', passwordWithSalt);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   
   return { hash, salt: generatedSalt };
 }
 
 // Проверка пароля
-export function verifyPassword(password: string, hash: string, salt: string): boolean {
-  const generatedHash = hashPassword(password, salt).hash;
+export async function verifyPassword(password: string, hash: string, salt: string): Promise<boolean> {
+  const { hash: generatedHash } = await hashPassword(password, salt);
   return generatedHash === hash;
 }
 
@@ -105,7 +109,7 @@ export async function registerUser(username: string, email: string, password: st
     }
 
     // Hash the password
-    const { hash, salt } = hashPassword(password);
+    const { hash, salt } = await hashPassword(password);
 
     // Create a user in the database
     await prisma.user.create({
@@ -138,7 +142,7 @@ export async function authenticateUser(username: string, password: string): Prom
       // Check if this is the administrator
       if (username === 'admin' && password === process.env.ADMIN_PASSWORD && process.env.ADMIN_EMAIL) {
         // Create administrator if they don't exist in the database
-        const { hash, salt } = hashPassword(password);
+        const { hash, salt } = await hashPassword(password);
         
         const adminUser = await prisma.user.create({
           data: {
@@ -161,7 +165,7 @@ export async function authenticateUser(username: string, password: string): Prom
     }
 
     // Verify the password
-    const isPasswordValid = verifyPassword(password, user.passwordHash, user.salt);
+    const isPasswordValid = await verifyPassword(password, user.passwordHash, user.salt);
     
     if (!isPasswordValid) {
       return null;
@@ -294,4 +298,75 @@ export async function getUserFromCookie(): Promise<AuthUser | null> {
     avatarUrl: user.avatarUrl || undefined,
     isAuthenticated: true
   };
+}
+
+export async function getAuthenticatedUser(): Promise<AuthUser | null> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get('token')?.value;
+  const refreshToken = cookieStore.get('refreshToken')?.value;
+
+  // Сначала проверяем access token
+  if (token) {
+    const userData = await verifyJWT(token);
+    if (userData) {
+      const user = await prisma.user.findUnique({
+        where: { id: userData.id }
+      });
+      
+      if (user) {
+        return {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          avatarUrl: user.avatarUrl || undefined,
+          isAuthenticated: true
+        };
+      }
+    }
+  }
+
+  // Если access token невалиден или отсутствует, проверяем refresh token
+  if (refreshToken) {
+    const isValidRefreshToken = await findRefreshToken(refreshToken);
+    if (isValidRefreshToken) {
+      const userData = await verifyRefreshToken(refreshToken);
+      if (userData) {
+        // Создаем новый access token
+        const newToken = await signJWT({
+          id: userData.id,
+          username: userData.username,
+          email: userData.email
+        });
+
+        // Создаем новый refresh token
+        const newRefreshToken = await signRefreshToken({
+          id: userData.id,
+          username: userData.username,
+          email: userData.email
+        });
+
+        // Сохраняем новый refresh token
+        await saveRefreshToken(userData.id, newRefreshToken);
+        
+        // Устанавливаем новые куки
+        await setAuthCookies(newToken, newRefreshToken);
+
+        const user = await prisma.user.findUnique({
+          where: { id: userData.id }
+        });
+
+        if (user) {
+          return {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            avatarUrl: user.avatarUrl || undefined,
+            isAuthenticated: true
+          };
+        }
+      }
+    }
+  }
+
+  return null;
 } 

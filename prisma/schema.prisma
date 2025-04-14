@@ -21,6 +21,7 @@ model User {
   avatarUrl     String?
   candidates    Candidate[]
   refreshTokens RefreshToken[]
+  passwordResets PasswordReset[]
 }
 
 model Candidate {
@@ -39,6 +40,16 @@ model RefreshToken {
   id        String   @id @default(cuid())
   token     String   @unique
   userId    String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model PasswordReset {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  used      Boolean  @default(false)
   createdAt DateTime @default(now())
   expiresAt DateTime
   user      User     @relation(fields: [userId], references: [id])
