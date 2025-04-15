@@ -25,6 +25,7 @@ function LoginContent() {
   const searchParams = useSearchParams();
   const theme = useTheme();
   const { login, user, loading: authLoading } = useAuth();
+  console.log('user in login page', user);
   const [credentials, setCredentials] = useState<LoginCredentials>({
     username: '',
     password: ''

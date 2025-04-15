@@ -1,5 +1,4 @@
 import { prisma } from '@/app/lib/prisma';
-import { AuthUser } from '@/app/types/github';
 
 /**
  * Сохраняет GitHub-пользователя как кандидата

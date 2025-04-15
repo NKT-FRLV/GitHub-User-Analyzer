@@ -17,9 +17,9 @@ import {
   IconButton,
   Avatar
 } from '@mui/material';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/navigation';
-import { Candidate } from '../types/github';
+import { Candidate } from '../../types/github';
 import DeleteIcon from '@mui/icons-material/Delete';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import { format } from 'date-fns';

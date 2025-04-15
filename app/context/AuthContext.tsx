@@ -22,39 +22,41 @@ export const useAuth = () => {
   return context;
 };
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+export const AuthProvider = ({ children }: { children: React.ReactNode}) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Check for user authentication when the application loads
   useEffect(() => {
     const checkAuth = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('/api/auth/verify', {
-          method: 'GET',
-          credentials: 'include',
-        });
-        
-        const data = await response.json();
-        
-        if (data.success && data.user) {
-          // Убедитесь, что все поля пользователя включены
-          setUser({
-            id: data.user.id,
-            username: data.user.username,
-            email: data.user.email,
-            avatarUrl: data.user.avatarUrl,
-            isAuthenticated: true
+      if (!user) {
+        try {
+          setLoading(true);
+          const response = await fetch('/api/auth/verify', {
+            method: 'GET',
+            credentials: 'include',
           });
-        } else {
+          
+          const data = await response.json();
+          
+          if (data.success && data.user) {
+            // Убедитесь, что все поля пользователя включены
+            setUser({
+              id: data.user.id,
+              username: data.user.username,
+              email: data.user.email,
+              avatarUrl: data.user.avatarUrl,
+              isAuthenticated: true
+            });
+          } else {
+            setUser(null);
+          }
+        } catch (error) {
+          console.error('Error checking authentication:', error);
           setUser(null);
+        } finally {
+          setLoading(false);
         }
-      } catch (error) {
-        console.error('Error checking authentication:', error);
-        setUser(null);
-      } finally {
-        setLoading(false);
       }
     };
 

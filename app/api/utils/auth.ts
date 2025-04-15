@@ -1,3 +1,5 @@
+'use server';
+
 import { SignJWT, jwtVerify } from 'jose';
 import { TokenPayload } from '../types';
 import { cookies } from 'next/headers';
@@ -290,6 +292,8 @@ export async function getUserFromCookie(): Promise<AuthUser | null> {
   });
   
   if (!user) return null;
+
+  console.log('got user from cookie');
   
   return {
     id: user.id,
@@ -299,74 +303,3 @@ export async function getUserFromCookie(): Promise<AuthUser | null> {
     isAuthenticated: true
   };
 }
-
-export async function getAuthenticatedUser(): Promise<AuthUser | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get('token')?.value;
-  const refreshToken = cookieStore.get('refreshToken')?.value;
-
-  // Сначала проверяем access token
-  if (token) {
-    const userData = await verifyJWT(token);
-    if (userData) {
-      const user = await prisma.user.findUnique({
-        where: { id: userData.id }
-      });
-      
-      if (user) {
-        return {
-          id: user.id,
-          username: user.username,
-          email: user.email,
-          avatarUrl: user.avatarUrl || undefined,
-          isAuthenticated: true
-        };
-      }
-    }
-  }
-
-  // Если access token невалиден или отсутствует, проверяем refresh token
-  if (refreshToken) {
-    const isValidRefreshToken = await findRefreshToken(refreshToken);
-    if (isValidRefreshToken) {
-      const userData = await verifyRefreshToken(refreshToken);
-      if (userData) {
-        // Создаем новый access token
-        const newToken = await signJWT({
-          id: userData.id,
-          username: userData.username,
-          email: userData.email
-        });
-
-        // Создаем новый refresh token
-        const newRefreshToken = await signRefreshToken({
-          id: userData.id,
-          username: userData.username,
-          email: userData.email
-        });
-
-        // Сохраняем новый refresh token
-        await saveRefreshToken(userData.id, newRefreshToken);
-        
-        // Устанавливаем новые куки
-        await setAuthCookies(newToken, newRefreshToken);
-
-        const user = await prisma.user.findUnique({
-          where: { id: userData.id }
-        });
-
-        if (user) {
-          return {
-            id: user.id,
-            username: user.username,
-            email: user.email,
-            avatarUrl: user.avatarUrl || undefined,
-            isAuthenticated: true
-          };
-        }
-      }
-    }
-  }
-
-  return null;
-} 

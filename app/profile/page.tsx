@@ -1,7 +1,6 @@
-import { Suspense } from 'react';
+// import { Suspense } from 'react';
 import { 
   Container, 
-  Box, 
   Typography,
   Grid,
   Card,
@@ -14,19 +13,19 @@ import {
   TableHead,
   TableRow,
   Avatar,
-  IconButton,
   Link as MuiLink,
 } from '@mui/material';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
-import { Person as PersonIcon, Settings as SettingsIcon, People as PeopleIcon, Star as StarIcon, Archive as ArchiveIcon, Analytics as AnalyticsIcon, Search as SearchIcon, Notifications as NotificationsIcon, GitHub as GitHubIcon, Info as InfoIcon } from '@mui/icons-material';
+import { Person as PersonIcon, Settings as SettingsIcon, People as PeopleIcon, Star as StarIcon, Analytics as AnalyticsIcon, Search as SearchIcon, Notifications as NotificationsIcon, GitHub as GitHubIcon, Info as InfoIcon } from '@mui/icons-material';
 import DashboardLayout, { NavigationItem } from '../components/common/mui_Dashboard/DashboardLayout';
 import { getCandidates } from '@/app/api/utils/candidate';  
-import { ProfileClient } from './ProfileClient';
-import { ProfileSkeleton } from './ProfileSkeleton';
+import { ProfileClient } from './common/ProfileClient';
+// import { ProfileSkeleton } from './ProfileSkeleton';
 import { DeleteCandidateButton } from './DeleteCandidateButton';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { prisma } from '@/app/lib/prisma';
 
 const navigationItems: NavigationItem[] = [
   {
@@ -35,18 +34,18 @@ const navigationItems: NavigationItem[] = [
     path: '/profile',
     children: [
       { text: 'User Info', icon: <InfoIcon />, path: '/profile' },
-      { text: 'Settings', icon: <SettingsIcon />, path: '/profile/settings' },
+      // { text: 'Settings', icon: <SettingsIcon />, path: '/profile/settings' },
     ]
   },
-  {
-    text: 'Candidates',
-    icon: <PeopleIcon />,
-    path: '/candidates',
-    children: [
-      { text: 'Saved', icon: <StarIcon />, path: '/candidates/saved' },
-      { text: 'Favorites', icon: <StarIcon />, path: '/candidates/favorites' },
-    ]
-  },
+  // {
+  //   text: 'Candidates',
+  //   icon: <PeopleIcon />,
+  //   path: '/candidates',
+  //   children: [
+  //     { text: 'Saved', icon: <StarIcon />, path: '/candidates/saved' },
+  //     { text: 'Favorites', icon: <StarIcon />, path: '/candidates/favorites' },
+  //   ]
+  // },
   {
     text: 'Analytics',
     icon: <AnalyticsIcon />,
@@ -55,16 +54,16 @@ const navigationItems: NavigationItem[] = [
       { text: 'Search', icon: <SearchIcon />, path: '/' },
     ]
   },
-  {
-    text: 'Settings',
-    icon: <SettingsIcon />,
-    path: '/settings',
-    children: [
-      { text: 'Account', icon: <PersonIcon />, path: '/settings/account' },
-      { text: 'Notifications', icon: <NotificationsIcon />, path: '/settings/notifications' },
-      { text: 'Integrations', icon: <GitHubIcon />, path: '/settings/integrations' },
-    ]
-  },  
+  // {
+  //   text: 'Settings',
+  //   icon: <SettingsIcon />,
+  //   path: '/settings',
+  //   children: [
+  //     { text: 'Account', icon: <PersonIcon />, path: '/settings/account' },
+  //     { text: 'Notifications', icon: <NotificationsIcon />, path: '/settings/notifications' },
+  //     { text: 'Integrations', icon: <GitHubIcon />, path: '/settings/integrations' },
+  //   ]
+  // },  
 ];
 
 async function ProfilePage() {
@@ -76,6 +75,7 @@ async function ProfilePage() {
   }
 
   const candidates = await getCandidates(userId);
+  const user = await prisma.user.findUnique({ where: { id: userId } });
 
   return (
       <DashboardLayout navigationItems={navigationItems}>
@@ -96,9 +96,7 @@ async function ProfilePage() {
           
           <Grid container spacing={3}>
             {/* Profile section - Client Component */}
-            <Suspense fallback={<ProfileSkeleton />}>
-              <ProfileClient />
-            </Suspense>
+            <ProfileClient user={user} />
 
             {/* Candidates Section - Server Component */}
             <Grid item xs={12}>

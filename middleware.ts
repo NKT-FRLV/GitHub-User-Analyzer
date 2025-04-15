@@ -12,10 +12,7 @@ const authOnlyPaths = [
 // Публичные маршруты (доступны всем)
 const publicPaths = [
   '/',
-  '/about',
-  '/contact',
-  '/terms',
-  '/privacy'
+  '/repos'
 ];
 
 // Защищенные маршруты (требуют авторизации)
@@ -69,25 +66,30 @@ export async function middleware(request: NextRequest) {
   const token = request.cookies.get('token')?.value;
   const isAuthenticated = token ? await verifyJWT(token) : null;
   
+  // Создаем response заранее
+  const response = NextResponse.next();
+  
+  // Если пользователь аутентифицирован, устанавливаем заголовок для всех маршрутов
+  if (isAuthenticated?.id) {
+    response.headers.set('x-user-id', isAuthenticated.id);
+  }
+
   // Проверяем маршруты только для НЕавторизованных
   if (authOnlyPaths.some(path => pathname === path || pathname.startsWith(`${path}/`))) {
     if (isAuthenticated) {
-      // Если пользователь авторизован - редирект на главную
-      const response = NextResponse.redirect(new URL('/', request.url));
-      response.cookies.set('token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/'
-      });
-      return response;
+      const redirectResponse = NextResponse.redirect(new URL('/', request.url));
+      // Копируем заголовки в redirect response
+      if (isAuthenticated.id) {
+        redirectResponse.headers.set('x-user-id', isAuthenticated.id);
+      }
+      return redirectResponse;
     }
-    return NextResponse.next();
+    return response;
   }
   
   // Проверяем публичные маршруты
   if (publicPaths.some(path => pathname === path || pathname.startsWith(`${path}/`))) {
-    return NextResponse.next();
+    return response;
   }
   
   // Проверяем защищенные маршруты
@@ -97,16 +99,10 @@ export async function middleware(request: NextRequest) {
       url.searchParams.set('from', pathname);
       return NextResponse.redirect(url);
     }
-    
-    // Добавляем user ID в заголовки для серверных компонентов
-    const response = NextResponse.next();
-    if (isAuthenticated.id) {
-      response.headers.set('x-user-id', isAuthenticated.id);
-    }
     return response;
   }
   
-  return NextResponse.next();
+  return response;
 }
 
 // Настраиваем пути, которые обрабатывает middleware
@@ -132,9 +128,6 @@ export const config = {
     
     // Публичные маршруты
     '/',
-    '/about',
-    '/contact',
-    '/terms',
-    '/privacy'
+    '/repos'
   ]
 }; 

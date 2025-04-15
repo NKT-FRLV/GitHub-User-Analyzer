@@ -26,12 +26,13 @@ import {
   Alert,
 } from '@mui/material';
 import { AccountCircle, PhotoCamera, Edit } from '@mui/icons-material';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/navigation';
+import { User } from '@prisma/client';
 
-export const ProfileClient = () => {
+export const ProfileClient = ({ user }: { user: User }) => {
   const router = useRouter();
-  const { user, logout, updateAvatar } = useAuth();
+  const { logout, updateAvatar } = useAuth();
   
   const [openDialog, setOpenDialog] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl || '');
