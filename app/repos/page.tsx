@@ -11,7 +11,7 @@ const ReposPage = async ({ searchParams } : {
 }) => {
   // Проверяем, Promise это или нет
   let sParams: SearchParamsObject | undefined;
-  if (searchParams && typeof (searchParams as Promise<any>).then === "function") {
+  if (searchParams && typeof (searchParams as Promise<SearchParamsObject>).then === "function") {
     sParams = await (searchParams as Promise<SearchParamsObject>);
   } else {
     sParams = searchParams as SearchParamsObject;
