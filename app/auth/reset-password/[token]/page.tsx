@@ -15,7 +15,7 @@ export default async function ResetPasswordPage({
 }: ResetPasswordPageProps) {
   // Проверяем, Promise это или нет
   let tokenParams: { token: string };
-  if (params && typeof (params as Promise<any>).then === "function") {
+  if (params && typeof (params as Promise<{ token: string }>).then === "function") {
     tokenParams = await (params as Promise<{ token: string }>);
   } else {
     tokenParams = params as { token: string };
