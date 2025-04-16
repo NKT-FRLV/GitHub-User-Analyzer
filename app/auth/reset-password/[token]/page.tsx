@@ -6,15 +6,17 @@ import { Suspense } from 'react';
 import ResetPasswordContent from './reset-password-content';
 
 interface PageProps {
-  params: {
+  params: Promise<{
     token: string;
-  };
+  }>;
   searchParams: { [key: string]: string | string[] | undefined };
 }
 
 export default async function ResetPasswordPage({ 
   params 
 }: PageProps) {
+  const resolvedParams = await params;
+  
   return (
     <Suspense fallback={
       <Box sx={{ 
@@ -26,7 +28,7 @@ export default async function ResetPasswordPage({
         <CircularProgress color="primary" />
       </Box>
     }>
-      <ResetPasswordContent token={params.token} />
+      <ResetPasswordContent token={resolvedParams.token} />
     </Suspense>
   );
 } 
