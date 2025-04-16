@@ -9,13 +9,15 @@ interface PageProps {
   params: Promise<{
     token: string;
   }>;
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export default async function ResetPasswordPage({ 
-  params 
+  params,
+  searchParams 
 }: PageProps) {
   const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
   
   return (
     <Suspense fallback={
@@ -31,4 +33,4 @@ export default async function ResetPasswordPage({
       <ResetPasswordContent token={resolvedParams.token} />
     </Suspense>
   );
-} 
+}
