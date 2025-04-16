@@ -1,4 +1,3 @@
-
 import { 
   Box, 
   CircularProgress,
@@ -6,11 +5,16 @@ import {
 import { Suspense } from 'react';
 import ResetPasswordContent from './reset-password-content';
 
+interface PageProps {
+  params: {
+    token: string;
+  };
+  searchParams: { [key: string]: string | string[] | undefined };
+}
+
 export default async function ResetPasswordPage({ 
   params 
-}: {
-  params: { token: string }
-}) {
+}: PageProps) {
   return (
     <Suspense fallback={
       <Box sx={{ 
