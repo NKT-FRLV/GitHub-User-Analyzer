@@ -18,8 +18,7 @@ import KeyIcon from '@mui/icons-material/Key';
 import Avatar from '@mui/material/Avatar';
 
 
-
-const ResetPasswordContent = ({ token }: { token: string }) => {
+function ResetPasswordContent({ token }: { token: string }) {
   const router = useRouter();
   const theme = useTheme();
   const [password, setPassword] = useState('');
@@ -175,4 +174,4 @@ const ResetPasswordContent = ({ token }: { token: string }) => {
   );
 }
 
-export default ResetPasswordContent;    
+export default ResetPasswordContent;
