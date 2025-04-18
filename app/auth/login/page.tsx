@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, Suspense, useRef } from 'react';
 import { 
   Container, 
   Box, 
@@ -9,7 +9,7 @@ import {
   Button, 
   Paper, 
   Alert,
-  CircularProgress,
+  // CircularProgress,
   useTheme
 } from '@mui/material';
 import Link from 'next/link';
@@ -18,14 +18,16 @@ import styles from './login.module.css';
 import { LoginCredentials } from '../../types/github';
 import { useAuth } from '../../context/AuthContext';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import FullPageLoader from '../../components/common/FullPageLoader';
 import Avatar from '@mui/material/Avatar';
+import clsx from 'clsx';
 
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const theme = useTheme();
-  const { login, user, loading: authLoading } = useAuth();
-  console.log('user in login page', user);
+  const { login, loading: authLoading } = useAuth();
+  console.log('user in login page');
   const [credentials, setCredentials] = useState<LoginCredentials>({
     username: '',
     password: ''
@@ -33,14 +35,8 @@ function LoginContent() {
   const [error, setError] = useState<string>('');
   const [success, setSuccess] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
-
-  // Если пользователь уже аутентифицирован, перенаправляем на главную
-  useEffect(() => {
-    if (user?.isAuthenticated) {
-      const redirectPath = searchParams.get('from') || '/';
-      router.push(redirectPath);
-    }
-  }, [user, router, searchParams]);
+  const formRef = useRef<HTMLFormElement>(null);
+  const [mounted, setMounted] = useState(false);
 
   // Проверяем, есть ли сообщение об успешной регистрации
   useEffect(() => {
@@ -48,6 +44,13 @@ function LoginContent() {
       setSuccess('Registration successful! Now you can login to the system.');
     }
   }, [searchParams]);
+
+  useEffect(() => {
+    setMounted(true);
+    if (formRef.current) {
+      formRef.current.focus();
+    }
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -75,157 +78,152 @@ function LoginContent() {
       if (success) {
         const redirectPath = searchParams.get('from') || '/';
         router.push(redirectPath);
+        console.log('redirecting to on SUBMIT', redirectPath);
+        return;
       } else {
         setError('Invalid username or password');
       }
     } catch (err) {
       setError('An error occurred while logging in');
       console.error('Login error:', err);
-    } finally {
-      setLoading(false);
     }
+    
+    setLoading(false);
   };
 
-  if (authLoading) {
-    return (
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        flexGrow: 1, 
-        bgcolor: theme.palette.background.default 
-      }}>
-        <CircularProgress color="primary" />
-      </Box>
-    );
-  }
-
   return (
-    <Container component="main" maxWidth="xs" className={styles.loginContainer}>
-      <Paper elevation={2} className={styles.loginPaper}>
-        <Box 
-          sx={{ 
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center'
-          }}
-        >
-          <Avatar sx={{ 
-            m: 1, 
-            bgcolor: 'rgba(84, 110, 122, 0.1)',
-            width: 50,
-            height: 50
-          }}>
-            <LockOutlinedIcon sx={{ color: theme.palette.primary.main }} />
-          </Avatar>
-          
-          <Typography component="h1" variant="h5" className={styles.loginTitle}>
-            Login to system
-          </Typography>
-          
-          {error && (
-            <Alert 
-              severity="error" 
-              className={styles.alert}
-              sx={{ width: '100%' }}
-            >
-              {error}
-            </Alert>
-          )}
-          
-          {success && (
-            <Alert 
-              severity="success" 
-              className={styles.alert}
-              sx={{ width: '100%' }}
-            >
-              {success}
-            </Alert>
-          )}
-          
-          <Box component="form" onSubmit={handleSubmit} className={styles.form}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="username"
-              label="Username"
-              name="username"
-              autoComplete="username"
-              autoFocus
-              value={credentials.username}
-              onChange={handleChange}
-              variant="outlined"
-              size="small"
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              value={credentials.password}
-              onChange={handleChange}
-              variant="outlined"
-              size="small"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              className={styles.submitButton}
-              disabled={loading}
-              sx={{ mt: 2, mb: 2 }}
-            >
-              {loading ? 'Loading...' : 'Login'}
-            </Button>
-            <Box className={styles.links}>
-              <Link 
-                href="/auth/register" 
-                className={styles.neonLink} 
-                passHref
-                aria-label="Go to the registration page"
+    <>
+      <FullPageLoader open={loading} />
+      <Container
+        component="main"
+        maxWidth="xs"
+        className={clsx(styles.loginContainer, mounted && styles.fadeIn)}
+      >
+        <Paper elevation={2} className={styles.loginPaper}>
+          <Box 
+            sx={{ 
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center'
+            }}
+          >
+            <Avatar sx={{ 
+              m: 1, 
+              bgcolor: 'rgba(84, 110, 122, 0.1)',
+              width: 50,
+              height: 50
+            }}>
+              <LockOutlinedIcon sx={{ color: theme.palette.primary.main }} />
+            </Avatar>
+            
+            <Typography component="h1" variant="h5" className={styles.loginTitle}>
+              Login to system
+            </Typography>
+            
+            {error && (
+              <Alert 
+                severity="error" 
+                className={styles.alert}
+                sx={{ width: '100%' }}
               >
-                No account? Register
-              </Link>
-              <Link 
-                href="/auth/forgot-password" 
-                className={styles.neonLink} 
-                passHref
-                aria-label="Forgot your password?"
+                {error}
+              </Alert>
+            )}
+            
+            {success && (
+              <Alert 
+                severity="success" 
+                className={styles.alert}
+                sx={{ width: '100%' }}
               >
-                Forgot password?
-              </Link>
-              <Link 
-                href="/" 
-                className={styles.neonLink} 
-                passHref
-                aria-label="Go to the main page"
+                {success}
+              </Alert>
+            )}
+            
+            <Box
+              ref={formRef}
+              tabIndex={-1}
+              aria-label="Login form"
+              component="form"
+              onSubmit={handleSubmit}
+              className={styles.form }
+            >
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="username"
+                label="Username"
+                name="username"
+                autoComplete="username"
+                // autoFocus
+                value={credentials.username}
+                onChange={handleChange}
+                variant="outlined"
+                size="small"
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                value={credentials.password}
+                onChange={handleChange}
+                variant="outlined"
+                size="small"
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                className={styles.submitButton}
+                disabled={loading}
+                sx={{ mt: 2, mb: 2 }}
               >
-                Back to the main page
-              </Link>
+                {loading ? 'Loading...' : 'Login'}
+              </Button>
+              <Box className={styles.links}>
+                <Link 
+                  href="/auth/register" 
+                  className={styles.neonLink} 
+                  passHref
+                  aria-label="Go to the registration page"
+                >
+                  No account? Register
+                </Link>
+                <Link 
+                  href="/auth/forgot-password" 
+                  className={styles.neonLink} 
+                  passHref
+                  aria-label="Forgot your password?"
+                >
+                  Forgot password?
+                </Link>
+                <Link 
+                  href="/" 
+                  className={styles.neonLink} 
+                  passHref
+                  aria-label="Go to the main page"
+                >
+                  Back to the main page
+                </Link>
+              </Box>
             </Box>
           </Box>
-        </Box>
-      </Paper>
-    </Container>
+        </Paper>
+      </Container>
+    </>
   );
 }
 
 export default function LoginPage() {
   return (
     <Suspense fallback={
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        flexGrow: 1 
-      }}>
-        <CircularProgress color="primary" />
-      </Box>
+      <FullPageLoader open={true} />
     }>
       <LoginContent />
     </Suspense>

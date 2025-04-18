@@ -1,4 +1,6 @@
-// import { Suspense } from 'react';
+'use client';
+import { Suspense, useEffect, useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 import { 
   Container, 
   Typography,
@@ -19,13 +21,12 @@ import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { Person as PersonIcon, Settings as SettingsIcon, People as PeopleIcon, Star as StarIcon, Analytics as AnalyticsIcon, Search as SearchIcon, Notifications as NotificationsIcon, GitHub as GitHubIcon, Info as InfoIcon } from '@mui/icons-material';
 import DashboardLayout, { NavigationItem } from '../components/common/mui_Dashboard/DashboardLayout';
-import { getCandidates } from '@/app/api/utils/candidate';  
+// import { getCandidates } from '@/app/api/utils/candidate';  
 import { ProfileClient } from './common/ProfileClient';
-// import { ProfileSkeleton } from './ProfileSkeleton';
 import { DeleteCandidateButton } from './DeleteCandidateButton';
-import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { prisma } from '@/app/lib/prisma';
+import { ProfileSkeleton } from './ProfileSkeleton';
+import { Candidate } from '@prisma/client';
 
 const navigationItems: NavigationItem[] = [
   {
@@ -66,16 +67,25 @@ const navigationItems: NavigationItem[] = [
   // },  
 ];
 
-async function ProfilePage() {
-  const headersList = await headers();
-  const userId = headersList.get('x-user-id');
+const ProfilePage = () => {
+  const { user, logout, updateAvatar } = useAuth();
+  const [candidates, setCandidates] = useState<Candidate[]>([]);
+
+  useEffect(() => {
+    const fetchCandidates = async () => {
+      const response = await fetch('/api/candidates');
+      const { success, candidates } = await response.json();
+      if (success) {
+        setCandidates(candidates);
+      }
+    };
+    fetchCandidates();
+  }, []);
+
   
-  if (!userId) {
+  if (!user) {
     redirect('/auth/login');
   }
-
-  const candidates = await getCandidates(userId);
-  const user = await prisma.user.findUnique({ where: { id: userId } });
 
   return (
       <DashboardLayout navigationItems={navigationItems}>
@@ -96,7 +106,9 @@ async function ProfilePage() {
           
           <Grid container spacing={3}>
             {/* Profile section - Client Component */}
-            <ProfileClient user={user} />
+            <Suspense fallback={<ProfileSkeleton />}>
+              <ProfileClient user={user} logout={logout} updateAvatar={updateAvatar} />
+            </Suspense>
 
             {/* Candidates Section - Server Component */}
             <Grid item xs={12}>

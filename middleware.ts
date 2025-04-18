@@ -112,11 +112,11 @@ export const config = {
     '/auth/:path*',
     
     // API маршруты
-    '/api/auth/:path*',
-    '/api/github/:path*',
-    '/api/search/:path*',
-    '/api/candidates/:path*',
-    '/api/analytics/:path*',
+    // '/api/auth/:path*',
+    // '/api/github/:path*',
+    // '/api/search/:path*',
+    // '/api/candidates/:path*',
+    // '/api/analytics/:path*',
     
     // Защищенные маршруты
     '/profile/:path*',
@@ -127,7 +127,7 @@ export const config = {
     '/settings/:path*',
     
     // Публичные маршруты
-    '/',
-    '/repos'
+    // '/',
+    // '/repos'
   ]
 }; 

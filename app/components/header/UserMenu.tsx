@@ -33,9 +33,9 @@ const UserMenu = () => {
   };
 
   const handleLogout = () => {
-    logout();
     handleClose();
     router.push('/');
+    logout();
   };
 
   if (isAuthPage) {
@@ -51,7 +51,6 @@ const UserMenu = () => {
         onClose={handleClose}
         onLogout={handleLogout}
         onMenuClick={handleMenu}
-        profileUrl={`/profile?userId=${user.id}`}
       />
     );
   }

@@ -28,20 +28,24 @@ import {
 import { AccountCircle, PhotoCamera, Edit } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/navigation';
-import { User } from '@prisma/client';
+import { AuthUser } from '@/app/types/github';
 
-export const ProfileClient = ({ user }: { user: User }) => {
+interface ProfileClientProps {
+  user: AuthUser;
+  logout: () => Promise<void>;
+  updateAvatar: (avatarUrl: string) => Promise<boolean>;
+}
+
+export const ProfileClient = ({ user, logout, updateAvatar }: ProfileClientProps) => {
   const router = useRouter();
-  const { logout, updateAvatar } = useAuth();
-  
   const [openDialog, setOpenDialog] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl || '');
   const [isUpdating, setIsUpdating] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' });
 
-  const handleLogout = async () => {
-    await logout();
+  const handleLogout = () => {
     router.push('/');
+    logout();
   };
 
   const handleOpenDialog = () => setOpenDialog(true);

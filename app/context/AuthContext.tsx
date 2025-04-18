@@ -22,14 +22,19 @@ export const useAuth = () => {
   return context;
 };
 
-export const AuthProvider = ({ children }: { children: React.ReactNode}) => {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [loading, setLoading] = useState(true);
+interface AuthProviderProps {
+  children: React.ReactNode;
+  initialUser?: AuthUser | null;
+}
 
-  // Check for user authentication when the application loads
+export const AuthProvider = ({ children, initialUser = null }: AuthProviderProps) => {
+  const [user, setUser] = useState<AuthUser | null>(initialUser);
+  const [loading, setLoading] = useState(!initialUser); // Если есть initialUser, не показываем loading
+
   useEffect(() => {
     const checkAuth = async () => {
-      if (!user) {
+      // Проверяем авторизацию только если нет initialUser
+      if (!initialUser) {
         try {
           setLoading(true);
           const response = await fetch('/api/auth/verify', {
@@ -40,7 +45,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode}) => {
           const data = await response.json();
           
           if (data.success && data.user) {
-            // Убедитесь, что все поля пользователя включены
             setUser({
               id: data.user.id,
               username: data.user.username,
@@ -61,7 +65,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode}) => {
     };
 
     checkAuth();
-  }, []);
+  }, [initialUser]);
 
   // Function for logging in
   const login = async (username: string, password: string): Promise<boolean> => {

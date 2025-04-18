@@ -9,7 +9,6 @@ interface AuthenticatedMenuProps {
   onClose: () => void;
   onLogout: () => void;
   onMenuClick: (event: React.MouseEvent<HTMLElement>) => void;
-  profileUrl: string;
 }
 
 const AuthenticatedMenu = ({
@@ -19,12 +18,11 @@ const AuthenticatedMenu = ({
   onClose,
   onLogout,
   onMenuClick,
-  profileUrl
 }: AuthenticatedMenuProps) => {
   const router = useRouter();
 
   const handleProfile = () => {
-    router.push(profileUrl);
+    router.push('/profile');
     onClose();
   };
 

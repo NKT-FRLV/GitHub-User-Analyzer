@@ -6,6 +6,7 @@ import ThemeRegistry from './theme/ThemeRegistry';
 import styles from './page.module.css';
 import Header from './components/header/Header';
 import Footer from './components/footer/footer';
+import { AuthProviderWrapper } from './providers/AuthProviderWrapper';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,13 +32,13 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <ThemeRegistry>
-          <AuthProvider>
-            <div className={styles.page}>
-              <Header />
-              {children}
-              <Footer />              
-            </div>
-          </AuthProvider>
+          <AuthProviderWrapper>
+              <div className={styles.page}>
+                <Header />
+                {children}
+                <Footer />              
+              </div>
+          </AuthProviderWrapper>
         </ThemeRegistry>
       </body>
     </html>

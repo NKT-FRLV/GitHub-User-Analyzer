@@ -293,7 +293,7 @@ export async function getUserFromCookie(): Promise<AuthUser | null> {
   
   if (!user) return null;
 
-  console.log('got user from cookie');
+  console.log('got authenticated user from cookie');
   
   return {
     id: user.id,

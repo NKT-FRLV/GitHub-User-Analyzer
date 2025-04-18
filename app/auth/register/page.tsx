@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, Suspense, useRef } from 'react';
 import { 
   Container, 
   Box, 
@@ -9,7 +9,6 @@ import {
   Button, 
   Paper, 
   Alert,
-  CircularProgress,
   useTheme
 } from '@mui/material';
 import Link from 'next/link';
@@ -19,11 +18,13 @@ import { RegisterCredentials } from '../../types/github';
 import { useAuth } from '../../context/AuthContext';
 import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined';
 import Avatar from '@mui/material/Avatar';
+import FullPageLoader from '../../components/common/FullPageLoader';
+import clsx from 'clsx';
 
 function RegisterContent() {
   const router = useRouter();
   const theme = useTheme();
-  const { register, user, loading: authLoading } = useAuth();
+  const { register, user } = useAuth();
   const [credentials, setCredentials] = useState<RegisterCredentials>({
     username: '',
     email: '',
@@ -32,6 +33,10 @@ function RegisterContent() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  // Состояние для анимации появления
+  const [mounted, setMounted] = useState(false);
 
   // Если пользователь уже аутентифицирован, перенаправляем на главную
   useEffect(() => {
@@ -39,6 +44,13 @@ function RegisterContent() {
       router.push('/');
     }
   }, [user, router]);
+
+  useEffect(() => {
+    setMounted(true);
+    if (formRef.current) {
+      formRef.current.focus();
+    }
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -96,166 +108,162 @@ function RegisterContent() {
       
       if (success) {
         router.push('/auth/login?registered=true');
+        return;
       } else {
         setError('User with this name already exists');
       }
     } catch (err) {
       setError('An error occurred while registering');
       console.error('Registration error:', err);
-    } finally {
-      setLoading(false);
     }
+
+    setLoading(false);
+    
   };
 
-  if (authLoading) {
-    return (
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh', 
-        bgcolor: theme.palette.background.default 
-      }}>
-        <CircularProgress color="primary" />
-      </Box>
-    );
-  }
 
   return (
-    <Container component="main" maxWidth="xs" className={styles.registerContainer}>
-      <Paper elevation={2} className={styles.registerPaper}>
-        <Box 
-          sx={{ 
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center'
-          }}
-        >
-          <Avatar sx={{ 
-            m: 1, 
-            bgcolor: 'rgba(84, 110, 122, 0.1)',
-            width: 50,
-            height: 50
-          }}>
-            <PersonAddAltOutlinedIcon sx={{ color: theme.palette.primary.main }} />
-          </Avatar>
-          
-          <Typography component="h1" variant="h5" className={styles.registerTitle}>
-            Registration
-          </Typography>
-          
-          {error && (
-            <Alert 
-              severity="error" 
-              className={styles.alert}
-              sx={{ width: '100%' }}
-            >
-              {error}
-            </Alert>
-          )}
-          
-          <Box component="form" onSubmit={handleSubmit} className={styles.form}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="username"
-              label="Username"
-              name="username"
-              autoComplete="username"
-              autoFocus
-              value={credentials.username}
-              onChange={handleChange}
-              variant="outlined"
-              size="small"
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email"
-              name="email"
-              autoComplete="email"
-              type="email"
-              value={credentials.email}
-              onChange={handleChange}
-              variant="outlined"
-              size="small"
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="new-password"
-              value={credentials.password}
-              onChange={handleChange}
-              variant="outlined"
-              size="small"
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="confirmPassword"
-              label="Confirm password"
-              type="password"
-              id="confirmPassword"
-              value={confirmPassword}
-              onChange={handleChange}
-              variant="outlined"
-              size="small"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              className={styles.submitButton}
-              disabled={loading}
-              sx={{ mt: 2, mb: 2 }}
-            >
-              {loading ? 'Registration...' : 'Register'}
-            </Button>
-            <Box className={styles.links}>
-              <Link 
-                href="/auth/login" 
-                className={styles.neonLink} 
-                passHref 
-                aria-label="Go to the login page"
+    <>
+      <FullPageLoader open={loading} />
+      <Container
+        maxWidth="xs"
+        className={clsx(styles.registerContainer, mounted && styles.fadeIn)}
+        sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', flexGrow: 1 }}
+      >
+        <Paper elevation={2} className={styles.registerPaper}>
+          <Box 
+            sx={{ 
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center'
+            }}
+          >
+            <Avatar sx={{ 
+              m: 1, 
+              bgcolor: 'rgba(84, 110, 122, 0.1)',
+              width: 50,
+              height: 50
+            }}>
+              <PersonAddAltOutlinedIcon sx={{ color: theme.palette.primary.main }} />
+            </Avatar>
+            
+            <Typography component="h1" variant="h5" className={styles.registerTitle}>
+              Registration
+            </Typography>
+            
+            {error && (
+              <Alert 
+                severity="error" 
+                className={styles.alert}
+                sx={{ width: '100%' }}
               >
-                Already have an account? Login
-              </Link>
-              <Link 
-                href="/" 
-                className={styles.neonLink} 
-                passHref
-                aria-label="Go to the main page"
+                {error}
+              </Alert>
+            )}
+            
+            <Box
+              ref={formRef}
+              tabIndex={-1}
+              aria-label="Registration form"
+              component="form"
+              onSubmit={handleSubmit}
+              className={styles.form}
+            >
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="username"
+                label="Username"
+                name="username"
+                autoComplete="username"
+                // autoFocus
+                value={credentials.username}
+                onChange={handleChange}
+                variant="outlined"
+                size="small"
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Email"
+                name="email"
+                autoComplete="email"
+                type="email"
+                value={credentials.email}
+                onChange={handleChange}
+                variant="outlined"
+                size="small"
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="new-password"
+                value={credentials.password}
+                onChange={handleChange}
+                variant="outlined"
+                size="small"
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="confirmPassword"
+                label="Confirm password"
+                type="password"
+                id="confirmPassword"
+                value={confirmPassword}
+                onChange={handleChange}
+                variant="outlined"
+                size="small"
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                className={styles.submitButton}
+                disabled={loading}
+                sx={{ mt: 2, mb: 2 }}
               >
-                Back to the main page
-              </Link>
+                {loading ? 'Registration...' : 'Register'}
+              </Button>
+              <Box className={styles.links}>
+                <Link 
+                  href="/auth/login" 
+                  className={styles.neonLink} 
+                  passHref 
+                  aria-label="Go to the login page"
+                >
+                  Already have an account? Login
+                </Link>
+                <Link 
+                  href="/" 
+                  className={styles.neonLink} 
+                  passHref
+                  aria-label="Go to the main page"
+                >
+                  Back to the main page
+                </Link>
+              </Box>
             </Box>
           </Box>
-        </Box>
-      </Paper>
-    </Container>
+        </Paper>
+      </Container>
+    </>
   );
 }
 
 export default function RegisterPage() {
   return (
     <Suspense fallback={
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        flexGrow: 1 
-      }}>
-        <CircularProgress color="primary" />
-      </Box>
+      <FullPageLoader open={true} />
     }>
       <RegisterContent />
     </Suspense>
