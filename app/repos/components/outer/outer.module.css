@@ -1,0 +1,25 @@
+
+.reposAndAnalyzerContainer {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: row;
+    padding: 16px;
+    text-align: center;
+}
+
+
+.reposPageContainer {
+    color: black;
+    width: 100vw;
+    background-color: var(--background-paper);
+    position: relative;
+    padding: 16px;
+}
+
+@media (max-width: 600px) {
+
+    .modalContent {
+        font-size: 0.875rem;
+    }
+
+}

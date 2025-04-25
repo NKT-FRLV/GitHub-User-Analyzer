@@ -4,12 +4,12 @@ import React, { useState, Suspense } from 'react';
 import { 
   Container, 
   Box, 
+  CircularProgress,
   Typography, 
   TextField, 
   Button, 
   Paper, 
   Alert,
-  CircularProgress,
   useTheme
 } from '@mui/material';
 import Link from 'next/link';
@@ -277,14 +277,14 @@ function ForgotPasswordContent() {
 export default function ForgotPasswordPage() {
   return (
     <Suspense fallback={
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        flexGrow: 1 
-      }}>
-        <CircularProgress color="primary" />
-      </Box>
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            flexGrow: 1 
+          }}>
+            <CircularProgress color="primary" />
+          </Box>
     }>
       <ForgotPasswordContent />
     </Suspense>

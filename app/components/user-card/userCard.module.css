@@ -78,14 +78,6 @@
   border-radius: 8px;
 }
 
-.reposPageContainer {
-  color: black;
-  width: 100vw;
-  background-color: var(--background-paper);
-  position: relative;
-  padding: 16px;
-}
-
 .closeButton {
   position: absolute !important;
   right: 8px;
@@ -110,6 +102,14 @@
   margin-top: 16px;
 }
 
+.emptyState {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 400;
+  text-align: center;
+  margin-top: 16px;
+}
+
 @media (max-width: 600px) {
 
   .header {
@@ -124,7 +124,7 @@
     gap: 8px;
   }
 
-  .userInfo, .userDetails, .modalContent {
+  .userInfo, .userDetails {
     font-size: 0.875rem;
   }
 

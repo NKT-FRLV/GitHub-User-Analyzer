@@ -12,7 +12,7 @@ const octokit = new Octokit({
  * @param username - GitHub username
  * @returns GitHubUser или null в случае ошибки
  */
-export const getUserData = async (username: string): Promise<GitHubUser | null> => {
+export const getCandidateData = async (username: string): Promise<GitHubUser | null> => {
   try {
     const response = await octokit.request("GET /users/{username}", { username });
     if (response.status !== 200) {

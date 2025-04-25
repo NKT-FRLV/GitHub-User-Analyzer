@@ -24,10 +24,11 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
+import FullPageLoader from '@/app/components/common/FullPageLoader';
 
 export default function CandidatesPage() {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingCandidates, setLoadingCandidates] = useState(true);
   const [error, setError] = useState('');
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
@@ -48,7 +49,7 @@ export default function CandidatesPage() {
 
   const fetchCandidates = async () => {
     try {
-      setLoading(true);
+      setLoadingCandidates(true);
       const response = await fetch('/api/candidates');
       const data = await response.json();
       
@@ -61,7 +62,7 @@ export default function CandidatesPage() {
       console.error('Error fetching candidates:', error);
       setError('An error occurred while loading data');
     } finally {
-      setLoading(false);
+      setLoadingCandidates(false);
     }
   };
 
@@ -93,22 +94,16 @@ export default function CandidatesPage() {
     }
   };
 
-  if (authLoading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '70vh' }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-
   if (!user?.isAuthenticated) {
     return null; // Перенаправление произойдет в useEffect
   }
 
   return (
-    <Container component="main" sx={{ py: 4 }}>
-      <Paper elevation={2} sx={{ p: 3, mb: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
+    <>
+      <FullPageLoader open={authLoading} />
+      <Container component="main" sx={{ py: 4 }}>
+        <Paper elevation={2} sx={{ p: 3, mb: 4 }}>
+          <Typography variant="h4" component="h1" gutterBottom>
           Saved candidates
         </Typography>
         <Typography variant="body1" color="text.secondary" paragraph>
@@ -116,7 +111,7 @@ export default function CandidatesPage() {
         </Typography>
       </Paper>
 
-      {loading ? (
+      {loadingCandidates ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
           <CircularProgress />
         </Box>
@@ -179,8 +174,9 @@ export default function CandidatesPage() {
               </Card>
             </Grid>
           ))}
-        </Grid>
-      )}
-    </Container>
+          </Grid>
+        )}
+      </Container>
+    </>
   );
 } 

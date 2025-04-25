@@ -14,6 +14,7 @@
   align-items: center;
   max-height: calc(100vh - 140px); /* Учитываем высоту header и footer */
   overflow-y: auto;
+  opacity: 0; /* for fadeIn animation */
 }
 
 .main ol {
@@ -172,4 +173,12 @@ a.secondary {
     justify-content: center;
     padding: 0.8rem;
   }
+}
+
+.fadeIn {
+  animation: fadeIn 0.7s ease forwards;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
 }

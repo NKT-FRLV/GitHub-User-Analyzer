@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { headers } from 'next/headers';
-import { getUserData } from './api/API';
+import { getCandidateData } from './api/API';
 import ClientPage from './ClientPage';
 
 /**
@@ -24,10 +24,10 @@ export default async function Page({
   const params = await searchParams;
 
   if (params?.search) {
-    initialUser = await getUserData(params.search);
+    initialUser = await getCandidateData(params.search);
   } else {
     // дефолтный юзер
-    initialUser = await getUserData('NKT-FRLV');
+    initialUser = await getCandidateData('NKT-FRLV');
   }
 
   return (

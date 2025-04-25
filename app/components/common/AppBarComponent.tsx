@@ -16,34 +16,32 @@ import {
   ToggleButtonGroup,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { useRepoStore } from "../../store/repos/store";
+
 interface AppBarComponentProps {
-  onFilterByLanguage: (language: string) => void;
-  onFilterByRecentCommit: () => void;
-  onFilterByDevelopmentTime: () => void;
   onClose: () => void;
   availableLanguages: string[];
-  setPage: (page: 'ai' | 'list') => void;
-  page: 'ai' | 'list';
 }
 
 const AppBarComponent: React.FC<AppBarComponentProps> = ({
-  onFilterByLanguage,
-  onFilterByRecentCommit,
-  onFilterByDevelopmentTime,
   onClose,
   availableLanguages,
-  setPage,
-  page,
 }) => {
-  const [selectedLanguage, setSelectedLanguage] = useState("All Langs");
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const isSmallScreen = useMediaQuery('(max-width: 950px)');
 
+  console.log('AppBarComponent rendered');
+  
+  const selectedLanguage = useRepoStore((state) => state.selectedLanguage);
+  const selectedPage = useRepoStore((state) => state.selectedPage);
+  const filterByLanguage = useRepoStore((state) => state.filterByLanguage);
+  const sortByRecentCommit = useRepoStore((state) => state.sortByRecentCommit);
+  const sortByDevelopmentTime = useRepoStore((state) => state.sortByDevelopmentTime);
+  const setSelectedPage = useRepoStore((state) => state.setSelectedPage);
 
   const handleLanguageChange = (event: SelectChangeEvent<string>) => {
     const language = event.target.value as string;
-    setSelectedLanguage(language);
-    onFilterByLanguage(language);
+    filterByLanguage(language);
   };
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -59,7 +57,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
     newPage: 'ai' | 'list',
   ) => {
     if (newPage !== null) {
-      setPage(newPage);
+      setSelectedPage(newPage);
     }
   };
 
@@ -73,11 +71,10 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
         backgroundColor: "grey.200",
         color: "grey.800",
         "&.MuiPaper-root": {
-          paddingRight: "16px !important", // ✅ Фиксируем `padding-right`!! что бы не скакал.
+          paddingRight: "16px !important",
           paddingLeft: "16px !important",
-    },
+        },
       }}
-      
     >
       <Toolbar
         sx={{
@@ -86,7 +83,6 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
           padding: isSmallScreen ? 1 : 2,
           gap: isSmallScreen ? 1 : 2,
         }}
-
       >
         {!isSmallScreen && <Typography sx={{ ml: 2, flex: 1, minWidth: '80px' }} variant="h6" component="div">
           Tool Bar
@@ -99,7 +95,6 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
             justifyContent: isSmallScreen ? 'center' : 'flex-end',
           }}
         >
-
           <FormControl variant="outlined" sx={{ minWidth: 120 }} size="small">
             <InputLabel>Language</InputLabel>
             <Select
@@ -129,7 +124,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
           >
             <MenuItem
               onClick={() => {
-                onFilterByRecentCommit();
+                sortByRecentCommit();
                 handleMenuClose();
               }}
             >
@@ -137,7 +132,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
             </MenuItem>
             <MenuItem
               onClick={() => {
-                onFilterByDevelopmentTime();
+                sortByDevelopmentTime();
                 handleMenuClose();
               }}
             >
@@ -156,19 +151,19 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
           </Button>
         </Box>
         {isSmallScreen && (
-            <ToggleButtonGroup
-              size="small"
-              sx={{ display: 'flex', alignItems: 'center', width: '100%' }}
-              color='secondary'
-              value={page}
-              exclusive
-              onChange={handlePageChange}
-              aria-label="page toggler"
-            >
-              <ToggleButton sx={{ flex: 1, fontWeight: 'bold' }} value="list">List</ToggleButton>
-              <ToggleButton sx={{ flex: 1, fontWeight: 'bold' }}  value="ai">AI</ToggleButton>
-            </ToggleButtonGroup>
-          )}
+          <ToggleButtonGroup
+            size="small"
+            sx={{ display: 'flex', alignItems: 'center', width: '100%' }}
+            color='secondary'
+            value={selectedPage}
+            exclusive
+            onChange={handlePageChange}
+            aria-label="page toggler"
+          >
+            <ToggleButton sx={{ flex: 1, fontWeight: 'bold' }} value="list">List</ToggleButton>
+            <ToggleButton sx={{ flex: 1, fontWeight: 'bold' }}  value="ai">AI</ToggleButton>
+          </ToggleButtonGroup>
+        )}
       </Toolbar>
     </AppBar>
   );

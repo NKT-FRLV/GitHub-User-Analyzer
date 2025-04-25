@@ -1,48 +1,44 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
   Box,
-  Typography,
-  Dialog,
-  IconButton,
-  Button,
   Divider,
   Card,
   CardContent,
-  Avatar,
-  CircularProgress,
-  Backdrop
 } from "@mui/material";
 import { useMediaQuery } from "@mui/material";
-import Image from "next/image";
 import { FS, AvatarSize } from "../../types/enums";
-import CloseIcon from "@mui/icons-material/Close";
 import styles from "./userCard.module.css";
 import { UserCardProps } from "../../types/github";
-import UserAnalytics from "../user-analitics/UserAnalitics";
-import TextInfo from "../common/TextInfo";
-import { Add, BarChart, Folder, BookmarkAdd } from "@mui/icons-material";
 import { useAuth } from '../../context/AuthContext';
+import FullPageLoader from "../common/FullPageLoader";
+import UserCardHeader from "./UserCardHeader";
+import UserCardStats from "./UserCardStats";
+import UserCardActions from "./UserCardActions";
 
-const UserCard = ({ user, error, isMobile: serverIsMobile, userInteracted }: UserCardProps & { isMobile: boolean, userInteracted: boolean }) => {
-  const [avatarOpen, setAvatarOpen] = React.useState(false);
-  const [analiticsOpen, setAnaliticsOpen] = React.useState(false);
-  const modalButtonRef = useRef<HTMLButtonElement>(null);
-  const avatarRef = useRef<HTMLDivElement>(null);
-  const [isLoading, setIsLoading] = React.useState(false);
+const UserCard = ({ 
+  user: githubCandidate, 
+  error, 
+  isMobile: serverIsMobile, 
+  userInteracted 
+}: UserCardProps & { 
+  isMobile: boolean, 
+  userInteracted: boolean 
+}) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [isMobileView, setIsMobileView] = useState(serverIsMobile);
 
   const router = useRouter();
-  const { user: authUser } = useAuth();
+  const { user } = useAuth(); 
 
-  const handleRepos = () => {    
+  const handleRepos = useCallback(() => {    
     setIsLoading(true);
-    if (user) {
-      router.push(`/repos?url=${user.repos_url}`);
+    if (githubCandidate) {
+      router.push(`/repos?url=${githubCandidate.repos_url}`);
     }
-  }
+  }, [githubCandidate, router]);
 
   const clientIsMobile = useMediaQuery("(max-width: 768px)");
 
@@ -58,32 +54,9 @@ const UserCard = ({ user, error, isMobile: serverIsMobile, userInteracted }: Use
   const adaptiveFontSize1 = isMobileView ? FS.L : FS.XL;
   const adaptiveFontSize2 = isMobileView ? FS.M : FS.X;
 
-  const closeAnalitics = () => {
-    setAnaliticsOpen(false);
-    if (modalButtonRef.current) {
-      modalButtonRef.current.focus();
-    }
-  };
-
-  const handleAvatarClose = () => {
-    setAvatarOpen(false);
-    if (avatarRef.current) {
-      avatarRef.current.focus();
-    }
-  };
-
-  const buttonStyle = { 
-    backgroundColor: "grey.900", 
-    fontSize: buttonFontSize,
-    cursor: "pointer",
-    "&:hover": {
-      backgroundColor: "grey.800"
-    }
-  }
-
   // Функция для сохранения кандидата
-  const handleSaveCandidate = async () => {
-    if (!user || !authUser?.isAuthenticated) {
+  const handleSaveCandidate = useCallback( async () => {
+    if (!githubCandidate || !user?.isAuthenticated) {
       // Если пользователь не авторизован, перенаправляем на страницу логина
       router.push('/auth/login?from=/');
       return;
@@ -96,9 +69,9 @@ const UserCard = ({ user, error, isMobile: serverIsMobile, userInteracted }: Use
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          githubName: user.login,
-          githubUrl: user.html_url,
-          avatarUrl: user.avatar_url
+          githubName: githubCandidate.login,
+          githubUrl: githubCandidate.html_url,
+          avatarUrl: githubCandidate.avatar_url
         }),
       });
       
@@ -106,199 +79,60 @@ const UserCard = ({ user, error, isMobile: serverIsMobile, userInteracted }: Use
       
       if (data.success) {
         // Показать уведомление об успешном сохранении
-        alert('Кандидат успешно сохранен');
+        alert('Candidate saved successfully ');
       } else {
-        console.error('Ошибка при сохранении кандидата:', data.message);
+        console.error('Error saving candidate:', data.message);
       }
     } catch (error) {
-      console.error('Ошибка при отправке запроса:', error);
+      console.error('Error sending request:', error);
     }
-  };
+  }, [githubCandidate, user?.isAuthenticated, router]);
 
   if (error) {
     return (
-      <Typography color="error" className={styles.error}>
+      <div className={styles.error}>
         {error}
-      </Typography>
+      </div>
     );
   }
 
-  if (!user) {
+  if (!githubCandidate) {
     return (
-      <Typography color="white" variant="h4" component="p">
+      <div className={styles.emptyState}>
         Try to input GitHub username
-      </Typography>
+      </div>
     );
   }
 
   return (
     <>
+      <FullPageLoader open={isLoading} />
       <Card elevation={3} className={styles.container} component="article">
         <CardContent className={styles.userInfo}>
-            <Box className={styles.header}>
-              <Avatar
-                className={styles.avatarContainer}
-                aria-label="Avatar modal"
-                src={authUser?.isAuthenticated && user.login === authUser.username 
-                  ? authUser.avatarUrl || user.avatar_url  // Use avatar from profile if available
-                  : user.avatar_url
-                }
-                alt={user.login}
-                sx={{ width: avatarSize, height: avatarSize, cursor: "pointer" }}
-                ref={avatarRef}
-                onClick={() => setAvatarOpen(true)}
-              />
-            <Box className={styles.userDetails}>
-              <Box
-                display="flex"
-                flexDirection="row"
-                gap={1}
-                alignItems="baseline"
-                my={1}
-              >
-                <TextInfo text={
-                    <Typography
-                      variant="subtitle1"
-                      sx={{ fontWeight: "bold", color: "grey.600", fontSize: adaptiveFontSize1 }}
-                    >
-                      Name:
-                    </Typography>
-                  }
-                  value={user.name}
-                  isSmallScreen={isMobileView}
-                  fsMax="1.5rem"
-                  fsMin="1rem" 
-                  spacing={false}
-                />
-              </Box>
-              <Box
-                display="flex"
-                flexDirection="row"
-                gap={1}
-                alignItems="baseline"
-              >
-                <TextInfo text={
-                    <Typography
-                      variant="subtitle1"
-                      sx={{ fontWeight: "bold", color: "grey.600", fontSize: adaptiveFontSize1 }}
-                    >
-                      Login:
-                    </Typography>
-                  }
-                  value={user.login}
-                  isSmallScreen={isMobileView}
-                  fsMax="1.5rem"
-                  fsMin="1rem" 
-                  spacing={false}
-                />
-              </Box>
+          <UserCardHeader 
+            githubCandidate={githubCandidate} 
+            user={user}
+            avatarSize={avatarSize}
+            isMobileView={isMobileView}
+            adaptiveFontSize1={adaptiveFontSize1}
+            adaptiveFontSize2={adaptiveFontSize2}
+          />
 
-              <Typography variant="body1" sx={{ mb: 1, mt: 2, fontSize: adaptiveFontSize2 }}>
-                {user.bio || "No bio available"}
-              </Typography>
-            </Box>
-          </Box>
-
-          <Box className={styles.statsBox} my={2}>
-            <TextInfo text="Followers" value={user.followers} isSmallScreen={isMobileView} fsMax="1rem" fsMin="0.8rem" />
-            <TextInfo text="Following" value={user.following} isSmallScreen={isMobileView} fsMax="1rem" fsMin="0.8rem" />
-          </Box>
+          <UserCardStats 
+            githubCandidate={githubCandidate}
+            isMobileView={isMobileView}
+          />
 
           <Divider />
-          <Box className={styles.buttonContainer}>
-            <Box className={styles.buttonGroup}>
-              <Button
-                variant="contained"
-                sx={buttonStyle}
-                startIcon={<Folder sx={{ fontSize: buttonFontSize }} />}
-                onClick={handleRepos}
-              >
-                Repos: {user.public_repos}
-              </Button>
-              <Button
-                variant="contained"
-                ref={modalButtonRef}
-                sx={buttonStyle}
-                startIcon={<BarChart sx={{ fontSize: buttonFontSize }} />}
-                onClick={() => setAnaliticsOpen(true)}
-              >
-                Languages
-              </Button>
-            </Box>
-            <Button
-              variant="contained"
-              onClick={handleSaveCandidate}
-              sx={buttonStyle}
-              startIcon={<BookmarkAdd sx={{ fontSize: buttonFontSize }} />}
-            >
-              Save candidate
-            </Button>
-          </Box>
-          <Dialog
-            open={avatarOpen}
-            onClose={handleAvatarClose}
-            // maxWidth="md"
-            slotProps={{
-              paper: {
-                className: styles.modalPaper,
-              },
-            }}
-          >
-            <IconButton
-              onClick={handleAvatarClose}
-              className={styles.closeButton}
-            >
-              <CloseIcon />
-            </IconButton>
-
-            <Box className={styles.modalContent}>
-              <Image
-                src={user.avatar_url}
-                alt={user.login}
-                width={400}
-                height={400}
-                className={styles.modalImage}
-              />
-              <Typography variant="h4" sx={{ mt: 2 }}>
-                {user.login}
-              </Typography>
-              {user.bio && (
-                <Typography variant="body1" sx={{ mt: 1, color: "grey.600" }}>
-                  {user.bio}
-                </Typography>
-              )}
-            </Box>
-          </Dialog>
-
-          <Dialog
-            open={analiticsOpen}
-            onClose={closeAnalitics}
-            onTransitionExited={closeAnalitics}
-            aria-label="Analitics modal"
-            // maxWidth="md"
-            slotProps={{
-              paper: {
-                className: styles.modalPaper,
-              },
-            }}
-          >
-            <IconButton onClick={closeAnalitics} className={styles.closeButton}>
-              <CloseIcon />
-            </IconButton>
-            <Box className={styles.modalContent}>
-              <UserAnalytics reposUrl={user.repos_url} />
-            </Box>
-          </Dialog>
+          
+          <UserCardActions 
+            githubCandidate={githubCandidate}
+            handleRepos={handleRepos}
+            handleSaveCandidate={handleSaveCandidate}
+            buttonFontSize={buttonFontSize}
+          />
         </CardContent>
       </Card>
-
-      <Backdrop
-        sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
-        open={isLoading}
-        onClick={() => {}}
-      >
-        <CircularProgress color="inherit" />
-      </Backdrop>
     </>
   );
 };

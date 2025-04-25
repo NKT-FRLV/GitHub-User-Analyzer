@@ -26,7 +26,6 @@ import {
   Alert,
 } from '@mui/material';
 import { AccountCircle, PhotoCamera, Edit } from '@mui/icons-material';
-import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { AuthUser } from '@/app/types/github';
 

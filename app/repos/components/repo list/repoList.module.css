@@ -1,8 +1,3 @@
-.repoList {
-  margin-top: 16px;
-  display: flex;
-  flex-direction: row;
-}
 
 .repoListItems {
   list-style-type: none;

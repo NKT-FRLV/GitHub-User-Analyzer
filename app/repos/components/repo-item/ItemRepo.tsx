@@ -6,93 +6,56 @@ import {
   Typography,
   Box,
   Link,
-  Button,
-  CircularProgress,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ShowChartIcon from "@mui/icons-material/ShowChart";
 import { Repository } from "../../../types/github";
 import { formatDistanceStrict } from "date-fns";
-import TextInfo from "../../common/TextInfo";
+import RepoButton from "./RepoButton";
+import CommitInfo from "./Commit-info";
+import TextInfo from "../../../components/common/TextInfo";
+import { useRepoStore } from "../../../store/repos/store";
+// import { shallow } from 'zustand/shallow';
+
 interface RepoItemProps {
-  loadingLangs: boolean;
-  error: string | null;
   repo: Repository;
-  expanded: boolean;
-  selectedRepo: Repository | null;
   isSmallScreen: boolean;
-  onChange: (isExpanded: boolean) => void;
-  fetchLanguages: (url: string, repo: Repository) => void;
 }
 
 const RepoItem: FC<RepoItemProps> = ({
-  loadingLangs,
-  error,
   repo,
-  expanded,
-  selectedRepo,
   isSmallScreen,
-  onChange,
-  fetchLanguages,
 }) => {
-  const [commitCount, setCommitCount] = useState<number | null>(null);
+  
+  console.log("Rendered", repo.name);
+  
+  const expanded = useRepoStore(state => state.expandedRepoId === repo.id);
+
+  const setExpandedRepoId = useRepoStore(state => state.setExpandedRepoId);
+
 
   const getDevelopmentTime = () => {
     const createdAt = new Date(repo.created_at);
     const lastPush = new Date(repo.pushed_at);
-
     return formatDistanceStrict(createdAt, lastPush);
   };
 
-  const fetchCommitCount = useCallback(async () => {
-    try {
-      const response = await fetch(`${repo.url}/commits?per_page=1`);
-      const link = response.headers.get("link");
-      if (link) {
-        const match = link.match(/page=(\d+)>; rel="last"/);
-        if (match) {
-          setCommitCount(parseInt(match[1]));
-        }
-      }
-    } catch (error) {
-      console.error("Error fetching commit count:", error);
-    }
-  }, [repo.url]);
+  
 
-  useEffect(() => {
-    let isMounted = true;
+  const handleAccordionChange = useCallback((_, isExpanded: boolean) => {
+    setExpandedRepoId(isExpanded ? repo.id : null);
+  }, [repo.id, setExpandedRepoId]);
 
-    const fetchData = async () => {
-      if (expanded && !commitCount) {
-        try {
-          await fetchCommitCount();
-        } catch (error) {
-          if (isMounted) {
-            console.error("Error fetching commit count:", error);
-          }
-        }
-      }
-    };
+  
 
-    fetchData();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [expanded, fetchCommitCount, commitCount]);
-
-  // Здесь рендерим аккордеон
   return (
     <Accordion
       component='li'
       sx={{ listStyle: 'none' }}
       expanded={expanded}
-      onChange={(_, isExpanded) => {
-        onChange(isExpanded);
-      }}
+      slotProps={{ transition: { unmountOnExit: true } }}
+      onChange={handleAccordionChange}
     >
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        {/* Основная информация о репе */}
         <Typography
           variant="subtitle1"
           sx={{ fontWeight: "bold", fontSize: isSmallScreen ? "0.8rem" : "1rem" }}
@@ -136,7 +99,6 @@ const RepoItem: FC<RepoItemProps> = ({
             <TextInfo text="Open Issues" value={repo.open_issues_count} isSmallScreen={isSmallScreen} fsMax="1rem" fsMin="0.8rem" />
           </Box>
 
-          {/* Информация о времени разработки */}
           <Box
             sx={{
               display: "flex",
@@ -148,22 +110,10 @@ const RepoItem: FC<RepoItemProps> = ({
             <TextInfo text="Created" value={new Date(repo.created_at).toLocaleDateString()} isSmallScreen={isSmallScreen} fsMax="1rem" fsMin="0.8rem" />
             <TextInfo text="Development time" value={getDevelopmentTime()} isSmallScreen={isSmallScreen} fsMax="1rem" fsMin="0.8rem" />
             <TextInfo text="Last activity" value={new Date(repo.pushed_at).toLocaleDateString()} isSmallScreen={isSmallScreen} fsMax="1rem" fsMin="0.8rem" />
-            <TextInfo text="Total commits" value={commitCount || "Loading..."} isSmallScreen={isSmallScreen} fsMax="1rem" fsMin="0.8rem" />
+            <CommitInfo repoUrl={repo.url} expanded={expanded} isSmallScreen={isSmallScreen} />
           </Box>
 
-          <Button
-            variant="contained"
-            endIcon={<ShowChartIcon sx={{ fontSize: isSmallScreen ? "1rem" : "1.2rem" }} />}
-            onClick={() => fetchLanguages(repo.languages_url, repo)}
-            sx={{
-              backgroundColor: selectedRepo?.id === repo.id ? "success.main" : "black",
-              color: "white",
-              fontSize: isSmallScreen ? "0.8rem" : "1rem",
-            }}
-          >
-            {loadingLangs ? <CircularProgress size={24} /> : "Analyze this repo"}
-          </Button>
-          {error && <Typography color="error">{error}</Typography>}
+          <RepoButton repo={repo} />
         </Box>
       </AccordionDetails>
     </Accordion>

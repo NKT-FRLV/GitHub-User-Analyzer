@@ -1,12 +1,12 @@
-import React from 'react';
 import { CircularProgress, Box, Backdrop } from '@mui/material';
+import { FC } from 'react';
 
 type FullPageLoaderProps = {
   open: boolean;
   text?: string;
 };
 
-const FullPageLoader: React.FC<FullPageLoaderProps> = ({ open, text }) => (
+const FullPageLoader: FC<FullPageLoaderProps> = ({ open, text }) => (
   <Backdrop
     open={open}
     sx={{

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, memo } from "react";
 import { CostInfo } from "@/app/types/types";
 
 import { Box, Typography} from "@mui/material";
@@ -21,8 +21,7 @@ interface AiFeedbackChatProps {
   isSmallScreen: boolean;
 }
 
-
-export default function AiFeedbackChat({ owner, repoName, isSmallScreen }: AiFeedbackChatProps) {
+const AIFeedbackChat = ({ owner, repoName, isSmallScreen }: AiFeedbackChatProps) => {
   const [fileContent, setFileContent] = useState("");
   const [fileType, setFileType] = useState("plaintext");
   const [costInfo, setCostInfo] = useState<CostInfo | null>(null);
@@ -36,6 +35,8 @@ export default function AiFeedbackChat({ owner, repoName, isSmallScreen }: AiFee
   const [isSpeechAllowed, setIsSpeechAllowed] = useState<boolean>(false);
   const [isCostInfoDialogOpen, setIsCostInfoDialogOpen] = useState(false);
 
+  console.log("AIFeedbackChat rendered");
+
   useEffect(() => {
     setFileContent("");
     setDone(false);
@@ -47,7 +48,7 @@ export default function AiFeedbackChat({ owner, repoName, isSmallScreen }: AiFee
    * 1) делает запрос к API `/api/analyze` (или другой ваш эндпоинт).
    * 2) получает итоговый текст и "печатает" его с анимацией.
    */
-  const handleAskAi = async (callback: React.Dispatch<React.SetStateAction<string>>) => {
+  const handleAskAi = useCallback(async (callback: React.Dispatch<React.SetStateAction<string>>) => {
     if (!repoName) {
       callback("No repo selected");
       return;
@@ -102,7 +103,12 @@ export default function AiFeedbackChat({ owner, repoName, isSmallScreen }: AiFee
       setLoading(false);
       setDone(true);
     }
-  };
+  }, [repoName, owner, selectedSkills, selectedLanguage, selectedFile, isSpeechAllowed]);
+
+  const handleOpenFileDialog = useCallback(() => setOpenFileDialog(true), []);
+  const handleCloseFileDialog = useCallback(() => setOpenFileDialog(false), []);
+  const handleOpenCostInfoDialog = useCallback(() => setIsCostInfoDialogOpen(true), []);
+  const handleCloseCostInfoDialog = useCallback(() => setIsCostInfoDialogOpen(false), []);
 
   return (
     <Box display='flex' flexDirection='column' sx={{ mt: 2 }}>
@@ -138,16 +144,18 @@ export default function AiFeedbackChat({ owner, repoName, isSmallScreen }: AiFee
             done={done}
             repoName={repoName}
             isSmallScreen={isSmallScreen}
-            setOpenFileDialog={() => setOpenFileDialog(true)}
-            handleAskAi={(callback: React.Dispatch<React.SetStateAction<string>>) => handleAskAi(callback)}
-            setOpenCostInfoDialog={() => setIsCostInfoDialogOpen(true)}
+            setOpenFileDialog={handleOpenFileDialog}
+            handleAskAi={handleAskAi}
+            setOpenCostInfoDialog={handleOpenCostInfoDialog}
         />
 
         {/* Analyzed file content MODAL */}
-        <FilePreviewModal isOpen={openFileDialog} setClose={() => setOpenFileDialog(false)} fileType={fileType} fileContent={fileContent} />
+        <FilePreviewModal isOpen={openFileDialog} setClose={handleCloseFileDialog} fileType={fileType} fileContent={fileContent} />
 
         {/* Cost Info MODAL */}
-        <CostInfoModal isOpen={isCostInfoDialogOpen} setClose={() => setIsCostInfoDialogOpen(false)} costInfo={costInfo} isSmallScreen={isSmallScreen} />
+        <CostInfoModal isOpen={isCostInfoDialogOpen} setClose={handleCloseCostInfoDialog} costInfo={costInfo} isSmallScreen={isSmallScreen} />
     </Box>
   );
-}
+};
+
+export default AIFeedbackChat;
