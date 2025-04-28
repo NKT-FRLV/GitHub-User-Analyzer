@@ -6,7 +6,7 @@ import RepoItem from "../repo-item/ItemRepo";
 import { useRepoStore } from "../../../store/repos/store";
 
 interface RepoListProps {
-  repOwner: GitHubUser;
+  repOwner: string;
 }
 
 const RepoList: React.FC<RepoListProps> = ({ repOwner }) => {
@@ -44,7 +44,7 @@ const RepoList: React.FC<RepoListProps> = ({ repOwner }) => {
   return (
     <Box display='flex' sx={{ flexDirection: 'column', width: isSmallScreen ? '100%' : '50%'}}>
       <Typography variant="h6" sx={{ mt: 2, fontWeight: "bold", fontSize: isSmallScreen ? "1rem" : "1.2rem" }}>
-        Repositories of {repOwner.login}:
+        Repositories of {repOwner}:
       </Typography>
       <Box mt={1} component="ul">
         {reposToShow.map((repo) => (

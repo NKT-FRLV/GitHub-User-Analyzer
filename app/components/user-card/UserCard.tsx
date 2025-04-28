@@ -29,7 +29,6 @@ const UserCard = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isMobileView, setIsMobileView] = useState(serverIsMobile);
-
   const router = useRouter();
   const { user } = useAuth(); 
 

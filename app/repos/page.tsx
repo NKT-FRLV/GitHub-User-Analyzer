@@ -17,17 +17,17 @@ const ReposPage = async ({ searchParams } : {
     return <div>No `url` query param found</div>;
   }
 
-  const reposData: Repository[] | null = await fetchReposApi(reposUrl);
+  // const reposData: Repository[] | null = await fetchReposApi(reposUrl);
   
-  if (!reposData) {
-    return <div>Error fetching data</div>;
-  }
+  // if (!reposData) {
+  //   return <div>Error fetching data</div>;
+  // }
 
-  const userData: GitHubUser = reposData[0].owner;
+  // const userData: GitHubUser = reposData[0].owner;
 
 
   return (
-    <RepoListModal repos={reposData} user={userData} />
+    <RepoListModal url={reposUrl} />
   );
 };
 

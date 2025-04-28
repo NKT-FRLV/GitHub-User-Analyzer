@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { RepoStore, RepoState } from './types'
-
+import { fetchReposApi } from '@/app/api/API'
 
 const initialState: RepoState = {
   repos: [],
@@ -26,6 +26,18 @@ export const useRepoStore = create<RepoStore>((set, get) => ({
   setError: (error) => set({ error: error }),
   setSelectedPage: (page) => set({ selectedPage: page }),
   setSelectedLanguage: (lang) => set({ selectedLanguage: lang }),
+
+  fetchRepos: async (url: string) => {
+    set({ loading: true })
+    try {
+      const repos = await fetchReposApi(url)
+      set({ repos: repos })
+    } catch (error) {
+      set({ error: error })
+    } finally {
+      set({ loading: false })
+    }
+  },
 
   filterByLanguage: (language) => {
     const { repos } = get()

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   AppBar,
   Toolbar,
@@ -19,17 +20,17 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useRepoStore } from "../../store/repos/store";
 
 interface AppBarComponentProps {
-  onClose: () => void;
+  // onClose: () => void;
   availableLanguages: string[];
 }
 
 const AppBarComponent: React.FC<AppBarComponentProps> = ({
-  onClose,
+  // onClose,
   availableLanguages,
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const isSmallScreen = useMediaQuery('(max-width: 950px)');
-
+  const router = useRouter();
   console.log('AppBarComponent rendered');
   
   const selectedLanguage = useRepoStore((state) => state.selectedLanguage);
@@ -51,6 +52,8 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
+
+  
 
   const handlePageChange = (
     event: React.MouseEvent<HTMLElement>,
@@ -145,7 +148,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
             variant="contained"
             size="small"
             sx={{ backgroundColor: "grey.900", color: "grey.200" }}
-            onClick={onClose}
+            onClick={() => router.push('/')}
           >
             <CloseIcon sx={{ color: "grey.200" }} />
           </Button>

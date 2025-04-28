@@ -30,6 +30,9 @@ export interface RepoActions {
   sortByDevelopmentTime: () => void
   setLoading: (loading: boolean) => void
 
+  // Fetch actions
+  fetchRepos: (url: string) => void
+
 }
 
 export type RepoStore = RepoState & RepoActions 

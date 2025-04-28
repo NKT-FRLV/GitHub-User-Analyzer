@@ -1,13 +1,11 @@
-import PieComponent from '@/app/components/common/PieComponent';
 import AIFeedbackChat from './AIFeedbackChat';
 import { Box, useMediaQuery } from '@mui/material';
 import React from 'react'
-import { GitHubUser } from '@/app/types/github';
 import { useRepoStore } from '@/app/store/repos/store';
 import Diagram from './diagram/Diagram';
 
 interface AIAnalyzerProps {
-  repOwner: GitHubUser;
+  repOwner: string;
 }
 
 const AIAnalyzer = ({ repOwner }: AIAnalyzerProps) => {
@@ -21,7 +19,7 @@ const AIAnalyzer = ({ repOwner }: AIAnalyzerProps) => {
   return (
     <Box display='flex' sx={{ flexDirection: 'column', width: isSmallScreen ? '100%' : '50%'}}>
         <Diagram selectedRepo={selectedRepo} />
-        <AIFeedbackChat owner={repOwner.login} repoName={selectedRepo?.name || null} isSmallScreen={isSmallScreen} />
+        <AIFeedbackChat owner={repOwner} repoName={selectedRepo?.name || null} isSmallScreen={isSmallScreen} />
     </Box>
   )
 }
