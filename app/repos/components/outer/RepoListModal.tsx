@@ -15,6 +15,8 @@ import { useCandidateStore } from '../../../store/canditade/store';
 const WithConditionRepoList = withCondition('list', RepoList);
 const WithConditionAIAnalyzer = withCondition('ai', AIAnalyzer);
 
+const usernameRegex = /users\/([^\/]+)\/repos/;
+
 interface RepoListPageProps {
     // repos: Repository[];
     // user: GitHubUser;
@@ -24,43 +26,32 @@ interface RepoListPageProps {
 const RepoListPage = ({ url }: RepoListPageProps) => {
 
   const repos = useRepoStore((state) => state.repos)
-  const reposUrl = useRepoStore((state) => state.reposUrl)
+  const githubUsername = useRepoStore((state) => state.githubUsername)
   const fetchRepos = useRepoStore((state) => state.fetchRepos)
-  const setReposUrl = useRepoStore((state) => state.setReposUrl)
+  const setGithubUsername = useRepoStore((state) => state.setGithubUsername)
   
   const ownerLogin = repos.length > 0 ? repos[0].owner.login : 'No owner'
 
 
     console.log("RepoListPage rendered")
 
-    // Set initial repos in store
-    // TODO: GET REPOS FROM API AND SET IN STORE directly
-    useEffect(() => {
-      if (!repos.length || reposUrl !== url) {
-        fetchRepos(url)
-        setReposUrl(url)
-      }
-    }, [url, fetchRepos, repos, reposUrl, setReposUrl])
+    const usernameMatch = url.match(usernameRegex);
+    const username = usernameMatch ? usernameMatch[1] : null;
 
-    const availableLanguages = useMemo(() => {
-      console.log("availableLanguages rendered")
-      return [
-        "All Langs",
-        ...Array.from(
-          new Set(
-            repos
-              .map((repo) => repo.language)
-              .filter((lang): lang is string => typeof lang === "string")
-          )
-        ),
-      ];
-    }, [repos]);
+    // Set initial or updated repos in store
+    // Set githubUsername in store
+    useEffect(() => {
+      if (!repos.length || githubUsername !== username) {
+        fetchRepos(url)
+        setGithubUsername(url)
+      }
+    }, [url, fetchRepos, repos, githubUsername, setGithubUsername, username])
+
+    
 
     return (
         <Box className={styles.reposPageContainer} >
-            <AppBarComponent
-                availableLanguages={availableLanguages}
-            />
+            <AppBarComponent />
 
             <Box className={styles.reposAndAnalyzerContainer} gap={4}>
               <WithConditionRepoList repOwner={ownerLogin} />

@@ -4,9 +4,9 @@ import {
   Typography, 
   Box
 } from '@mui/material';
-import Link from 'next/link';
 import styles from './header.module.css';
 import UserMenu from './UserMenu';
+import LogoLink from './LogoLink';
 // import { prisma } from '@/app/lib/prisma';
 // import { headers } from 'next/headers';
 // import { AuthProvider } from '@/app/context/AuthContext';
@@ -30,9 +30,8 @@ export default async function Header() {
             fontSize: { xs: '1.1rem', sm: '1.25rem', md: '1.5rem' }
           }}
         >
-          <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-            GitHub User Analyzer
-          </Link>
+          {/* Клиентский компонент  */}
+          <LogoLink textLogo="GitHub User Analyzer" />
         </Typography>
         
         {/* Меню пользователя (клиентский компонент) */}

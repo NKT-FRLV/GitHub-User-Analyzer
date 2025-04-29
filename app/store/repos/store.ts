@@ -2,9 +2,11 @@ import { create } from 'zustand'
 import { RepoStore, RepoState } from './types'
 import { fetchReposApi } from '@/app/api/API'
 
+const usernameRegex = /users\/([^\/]+)\/repos/;
+
 const initialState: RepoState = {
   repos: [],
-  reposUrl: '',
+  githubUsername: '',
   filteredRepos: [],
   selectedRepo: null,
   expandedRepoId: null,
@@ -19,7 +21,11 @@ const initialState: RepoState = {
 export const useRepoStore = create<RepoStore>((set, get) => ({
   ...initialState,
 
-  setReposUrl: (url: string) => set({ reposUrl: url }),
+  setGithubUsername: (url: string) => {
+    const usernameMatch = url.match(usernameRegex);
+    const username = usernameMatch ? usernameMatch[1] : null;
+    set({ githubUsername: username })
+  },
   setFilteredRepos: (repos) => set({ filteredRepos: repos }),
   setSelectedRepo: (repo) => set({ selectedRepo: repo }),
   setExpandedRepoId: (id) => set({ expandedRepoId: id }),

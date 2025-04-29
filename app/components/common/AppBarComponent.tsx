@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   AppBar,
@@ -19,17 +19,9 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { useRepoStore } from "../../store/repos/store";
 
-interface AppBarComponentProps {
-  // onClose: () => void;
-  availableLanguages: string[];
-}
 
-const usernameRegex = /users\/([^\/]+)\/repos/;
 
-const AppBarComponent: React.FC<AppBarComponentProps> = ({
-  // onClose,
-  availableLanguages,
-}) => {
+const AppBarComponent: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   
@@ -38,17 +30,16 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
   const router = useRouter();
 
   console.log('AppBarComponent rendered');
+
+  const repos = useRepoStore((state) => state.repos);
  
-  const reposUrl = useRepoStore((state) => state.reposUrl);
+  const githubUsername = useRepoStore((state) => state.githubUsername);
   const selectedLanguage = useRepoStore((state) => state.selectedLanguage);
   const selectedPage = useRepoStore((state) => state.selectedPage);
   const filterByLanguage = useRepoStore((state) => state.filterByLanguage);
   const sortByRecentCommit = useRepoStore((state) => state.sortByRecentCommit);
   const sortByDevelopmentTime = useRepoStore((state) => state.sortByDevelopmentTime);
   const setSelectedPage = useRepoStore((state) => state.setSelectedPage);
-
-  const usernameMatch = reposUrl.match(usernameRegex);
-  const username = usernameMatch ? usernameMatch[1] : null;
 
   const handleBackToMainPage = (githubUsername: string) => {
     router.push(`/?search=${githubUsername}`);
@@ -67,8 +58,6 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
     setAnchorEl(null);
   };
 
-  
-
   const handlePageChange = (
     event: React.MouseEvent<HTMLElement>,
     newPage: 'ai' | 'list',
@@ -77,6 +66,19 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
       setSelectedPage(newPage);
     }
   };
+
+  const availableLanguages = useMemo(() => {
+    return [
+      "All Langs",
+      ...Array.from(
+        new Set(
+          repos
+            .map((repo) => repo.language)
+            .filter((lang): lang is string => typeof lang === "string")
+        )
+      ),
+    ];
+  }, [repos]);
 
   return (
     <AppBar
@@ -162,7 +164,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
             variant="contained"
             size="small"
             sx={{ backgroundColor: "grey.900", color: "grey.200" }}
-            onClick={() => handleBackToMainPage(username)}
+            onClick={() => handleBackToMainPage(githubUsername)}
           >
             <CloseIcon sx={{ color: "grey.200" }} />
           </Button>
