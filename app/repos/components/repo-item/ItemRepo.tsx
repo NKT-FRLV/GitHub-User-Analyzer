@@ -26,7 +26,7 @@ const RepoItem: FC<RepoItemProps> = ({
   isSmallScreen,
 }) => {
   
-  console.log("Rendered", repo.name);
+  // console.log("Rendered", repo.name);
   
   const expanded = useRepoStore(state => state.expandedRepoId === repo.id);
 

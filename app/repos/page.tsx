@@ -1,8 +1,8 @@
 'use server'
 
-import { fetchReposApi } from '../api/API';
+// import { fetchReposApi } from '../api/API';
 import RepoListModal from './components/outer/RepoListModal';
-import { Repository, GitHubUser } from '../types/github';
+// import { Repository, GitHubUser } from '../types/github';
 
 type SearchParamsObject = { url?: string };
 
@@ -10,8 +10,9 @@ const ReposPage = async ({ searchParams } : {
   searchParams: Promise<SearchParamsObject>
 }) => {
 
-  const sParams: SearchParamsObject = await searchParams
-  const reposUrl = sParams?.url;
+  const { url: reposUrl }: SearchParamsObject = await searchParams
+
+  console.log('reposUrl', reposUrl)
 
   if (!reposUrl) {
     return <div>No `url` query param found</div>;

@@ -7,9 +7,9 @@ import {
 import Link from 'next/link';
 import styles from './header.module.css';
 import UserMenu from './UserMenu';
-import { prisma } from '@/app/lib/prisma';
-import { headers } from 'next/headers';
-import { AuthProvider } from '@/app/context/AuthContext';
+// import { prisma } from '@/app/lib/prisma';
+// import { headers } from 'next/headers';
+// import { AuthProvider } from '@/app/context/AuthContext';
 // import { getUserFromCookie } from '@/app/api/utils/auth';
 
 /**
@@ -17,22 +17,6 @@ import { AuthProvider } from '@/app/context/AuthContext';
  * UserMenu импортируется как клиентский компонент с логикой авторизации
  */
 export default async function Header() {
-  // const initialUser = await getUserFromCookie();
-  // const headersList = await headers();
-  // const userId = headersList.get('x-user-id');
-
-  // console.log('userId', userId);
-  // const user = userId ? await prisma.user.findUnique({ where: { id: userId } }) : null;
-  
-  // const authUser =  user ? {
-  //   id: user?.id,
-  //   username: user?.username,
-  //   email: user?.email,
-  //   avatarUrl: user?.avatarUrl,
-  //   isAuthenticated: true
-  // } : null;
-
-  // console.log('authUser', authUser);
 
   return (
     <AppBar position="static" sx={{ backgroundColor: '#1a1a1a', borderRadius: 0 }}>

@@ -27,13 +27,13 @@ const UserCard = ({
   isMobile: boolean, 
   userInteracted: boolean 
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
   const [isMobileView, setIsMobileView] = useState(serverIsMobile);
   const router = useRouter();
   const { user } = useAuth(); 
 
   const handleRepos = useCallback(() => {    
-    setIsLoading(true);
+    // setIsLoading(true);
     if (githubCandidate) {
       router.push(`/repos?url=${githubCandidate.repos_url}`);
     }
@@ -105,7 +105,7 @@ const UserCard = ({
 
   return (
     <>
-      <FullPageLoader open={isLoading} />
+      {/* <FullPageLoader open={isLoading} /> */}
       <Card elevation={3} className={styles.container} component="article">
         <CardContent className={styles.userInfo}>
           <UserCardHeader 

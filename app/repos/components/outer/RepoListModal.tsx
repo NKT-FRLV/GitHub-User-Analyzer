@@ -24,7 +24,9 @@ interface RepoListPageProps {
 const RepoListPage = ({ url }: RepoListPageProps) => {
 
   const repos = useRepoStore((state) => state.repos)
+  const reposUrl = useRepoStore((state) => state.reposUrl)
   const fetchRepos = useRepoStore((state) => state.fetchRepos)
+  const setReposUrl = useRepoStore((state) => state.setReposUrl)
   
   const ownerLogin = repos.length > 0 ? repos[0].owner.login : 'No owner'
 
@@ -34,10 +36,11 @@ const RepoListPage = ({ url }: RepoListPageProps) => {
     // Set initial repos in store
     // TODO: GET REPOS FROM API AND SET IN STORE directly
     useEffect(() => {
-      if (!repos.length) {
+      if (!repos.length || reposUrl !== url) {
         fetchRepos(url)
+        setReposUrl(url)
       }
-    }, [url, fetchRepos, repos])
+    }, [url, fetchRepos, repos, reposUrl, setReposUrl])
 
     const availableLanguages = useMemo(() => {
       console.log("availableLanguages rendered")

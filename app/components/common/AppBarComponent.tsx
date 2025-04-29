@@ -24,21 +24,35 @@ interface AppBarComponentProps {
   availableLanguages: string[];
 }
 
+const usernameRegex = /users\/([^\/]+)\/repos/;
+
 const AppBarComponent: React.FC<AppBarComponentProps> = ({
   // onClose,
   availableLanguages,
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const isSmallScreen = useMediaQuery('(max-width: 950px)');
-  const router = useRouter();
-  console.log('AppBarComponent rendered');
+
   
+  const isSmallScreen = useMediaQuery('(max-width: 950px)');
+
+  const router = useRouter();
+
+  console.log('AppBarComponent rendered');
+ 
+  const reposUrl = useRepoStore((state) => state.reposUrl);
   const selectedLanguage = useRepoStore((state) => state.selectedLanguage);
   const selectedPage = useRepoStore((state) => state.selectedPage);
   const filterByLanguage = useRepoStore((state) => state.filterByLanguage);
   const sortByRecentCommit = useRepoStore((state) => state.sortByRecentCommit);
   const sortByDevelopmentTime = useRepoStore((state) => state.sortByDevelopmentTime);
   const setSelectedPage = useRepoStore((state) => state.setSelectedPage);
+
+  const usernameMatch = reposUrl.match(usernameRegex);
+  const username = usernameMatch ? usernameMatch[1] : null;
+
+  const handleBackToMainPage = (githubUsername: string) => {
+    router.push(`/?search=${githubUsername}`);
+  }
 
   const handleLanguageChange = (event: SelectChangeEvent<string>) => {
     const language = event.target.value as string;
@@ -148,7 +162,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
             variant="contained"
             size="small"
             sx={{ backgroundColor: "grey.900", color: "grey.200" }}
-            onClick={() => router.push('/')}
+            onClick={() => handleBackToMainPage(username)}
           >
             <CloseIcon sx={{ color: "grey.200" }} />
           </Button>

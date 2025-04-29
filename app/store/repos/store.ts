@@ -4,6 +4,7 @@ import { fetchReposApi } from '@/app/api/API'
 
 const initialState: RepoState = {
   repos: [],
+  reposUrl: '',
   filteredRepos: [],
   selectedRepo: null,
   expandedRepoId: null,
@@ -18,6 +19,7 @@ const initialState: RepoState = {
 export const useRepoStore = create<RepoStore>((set, get) => ({
   ...initialState,
 
+  setReposUrl: (url: string) => set({ reposUrl: url }),
   setFilteredRepos: (repos) => set({ filteredRepos: repos }),
   setSelectedRepo: (repo) => set({ selectedRepo: repo }),
   setExpandedRepoId: (id) => set({ expandedRepoId: id }),

@@ -3,6 +3,7 @@ export type SelectedPage = 'ai' | 'list'
 
 export interface RepoState {
   repos: Repository[]
+  reposUrl: string
   filteredRepos: Repository[]
   selectedRepo: Repository | null
   expandedRepoId: number | null
@@ -15,6 +16,7 @@ export interface RepoState {
 }
 
 export interface RepoActions {
+  setReposUrl: (url: string) => void
   setFilteredRepos: (repos: Repository[]) => void
   setSelectedRepo: (repo: Repository | null) => void
   setExpandedRepoId: (id: number | null) => void
