@@ -25,25 +25,28 @@ import {
   Snackbar,
   Alert,
 } from '@mui/material';
+import { useRepoStore } from '@/app/store/repos/store';
 import { AccountCircle, PhotoCamera, Edit } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
-import { AuthUser } from '@/app/types/github';
+import { useAuth } from '@/app/context/AuthContext';
 
-interface ProfileClientProps {
-  user: AuthUser;
-  logout: () => Promise<void>;
-  updateAvatar: (avatarUrl: string) => Promise<boolean>;
-}
+export const ProfileClient = () => {
 
-export const ProfileClient = ({ user, logout, updateAvatar }: ProfileClientProps) => {
+  const { user, logout, updateAvatar } = useAuth();
+
   const router = useRouter();
+
+  const githubUsername = useRepoStore((state) => state.githubUsername)
+
   const [openDialog, setOpenDialog] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl || '');
   const [isUpdating, setIsUpdating] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' });
 
   const handleLogout = () => {
-    router.push('/');
+    const href = githubUsername ? `/?search=${githubUsername}` : '/';
+    // console.log(href);
+    router.push(href);
     logout();
   };
 

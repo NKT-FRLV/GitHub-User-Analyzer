@@ -1,5 +1,5 @@
 import { Container } from "@mui/material";
-import { ProfileSkeleton } from "./ProfileSkeleton";
+import { ProfileSkeleton } from "./common/ProfileSkeleton";
 
 
 export default function loading() {
