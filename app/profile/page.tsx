@@ -1,17 +1,12 @@
 
-import { Suspense } from 'react';
-import { 
-  Container, 
-  Typography,
-  Grid,
-} from '@mui/material';
-import { Person as PersonIcon, Analytics as AnalyticsIcon, Search as SearchIcon, Info as InfoIcon } from '@mui/icons-material';
-import DashboardLayout, { NavigationItem } from '../components/common/mui_Dashboard/DashboardLayout';
-import { ProfileClient } from './common/ProfileClient';
-import { ProfileSkeleton } from './common/ProfileSkeleton';
-import Candidates from './candidate-list/Candidates';
+import { ProfileDashboard } from './components/ProfileDashboard';
+import { ProfileContent } from './components/ProfileContent';
 
-const navigationItems: NavigationItem[] = [
+import { Person as PersonIcon, Analytics as AnalyticsIcon, Search as SearchIcon, Info as InfoIcon } from '@mui/icons-material';
+import { NavigationItem } from '../components/common/mui_Dashboard/DashboardLayout';
+
+
+export const profileNavigationItems: NavigationItem[] = [
   {
     text: 'Profile',
     icon: <PersonIcon />,
@@ -29,43 +24,37 @@ const navigationItems: NavigationItem[] = [
       { text: 'Search', icon: <SearchIcon />, path: '/' },
     ]
   },
-];
+]; 
 
-const ProfilePage = () => {
+/**
+ * Асинхронная функция для получения данных пользователя (заглушка)
+ * В реальном приложении здесь будет запрос к API
+ */
+async function getUserProfile() {
+  // Имитируем задержку запроса к API
+  await new Promise(resolve => setTimeout(resolve, 100));
+  return {
+    // Возвращаем данные профиля
+  };
+}
+
+/**
+ * Серверный компонент страницы профиля
+ * Использует композицию компонентов для разделения ответственности
+ */
+export default async function ProfilePage() {
+  // Получаем данные пользователя асинхронно
+  // В реальном коде здесь можно использовать cookies, headers и другие API Next.js
+  // const userData = await getUserProfile();
   
-  // if (!user) {
+  // Проверка авторизации может быть выполнена здесь
+  // if (!userData) {
   //   redirect('/auth/login');
   // }
 
   return (
-      <DashboardLayout navigationItems={navigationItems}>
-        <Container maxWidth="md" component="main">
-          <Typography 
-            variant="h4" 
-            component="h1" 
-            gutterBottom 
-            sx={{ 
-              my: 2, 
-              fontWeight: 600,
-              color: 'text.primary',
-              textAlign: 'center' 
-            }}
-          >
-            User Profile
-          </Typography>
-          
-          <Grid container spacing={3}>
-            {/* Profile section - Client Component */}
-            <Suspense fallback={<ProfileSkeleton />}>
-              <ProfileClient />
-            </Suspense>
-            {/* Candidates List - Client Component */}
-            <Candidates />
-
-          </Grid>
-        </Container>
-      </DashboardLayout>
+    <ProfileDashboard navigationItems={profileNavigationItems}>
+      <ProfileContent />
+    </ProfileDashboard>
   );
-}
-
-export default ProfilePage; 
+} 
