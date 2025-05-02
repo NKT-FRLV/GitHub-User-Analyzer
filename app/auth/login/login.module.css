@@ -39,8 +39,15 @@
 .submitButton {
   margin: 16px 0 10px !important;
   padding: 10px !important;
-  background-color: #546E7A !important;
+  background-color: #000000 !important;
   transition: all 0.2s ease !important;
+}
+
+.buttonLoading {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  opacity: 0.9 !important;
+  pointer-events: none !important;
 }
 
 .submitButton:hover {

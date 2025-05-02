@@ -39,7 +39,8 @@
 .submitButton {
   margin: 16px 0 10px !important;
   padding: 10px !important;
-  background-color: #546E7A !important;
+  background-color: #171717 !important;
+  color: #ffffff !important;
   transition: all 0.2s ease !important;
 }
 

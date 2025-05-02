@@ -1,12 +1,10 @@
-
 import { ProfileDashboard } from './components/ProfileDashboard';
 import { ProfileContent } from './components/ProfileContent';
-
 import { Person as PersonIcon, Analytics as AnalyticsIcon, Search as SearchIcon, Info as InfoIcon } from '@mui/icons-material';
 import { NavigationItem } from '../components/common/mui_Dashboard/DashboardLayout';
 
-
-export const profileNavigationItems: NavigationItem[] = [
+// Теперь это константа без экспорта, используемая только внутри этого файла
+const navigationItems: NavigationItem[] = [
   {
     text: 'Profile',
     icon: <PersonIcon />,
@@ -53,7 +51,7 @@ export default async function ProfilePage() {
   // }
 
   return (
-    <ProfileDashboard navigationItems={profileNavigationItems}>
+    <ProfileDashboard navigationItems={navigationItems}>
       <ProfileContent />
     </ProfileDashboard>
   );
