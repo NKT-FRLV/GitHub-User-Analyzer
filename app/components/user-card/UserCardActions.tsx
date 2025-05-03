@@ -21,8 +21,14 @@ const UserCardActions: React.FC<UserCardActionsProps> = ({
   handleSaveCandidate,
   buttonFontSize,
 }) => {
+  const [isDisabled, setIsDisabled] = useState(false);
   const [analiticsOpen, setAnaliticsOpen] = useState(false);
   const modalButtonRef = useRef<HTMLButtonElement>(null);
+
+  const onSaveCandidate = async () => {
+    await handleSaveCandidate();
+    // setIsDisabled(true);
+  };
 
   const closeAnalitics = () => {
     setAnaliticsOpen(false);
@@ -64,7 +70,8 @@ const UserCardActions: React.FC<UserCardActionsProps> = ({
         </Box>
         <Button
           variant="contained"
-          onClick={handleSaveCandidate}
+          onClick={onSaveCandidate}
+          disabled={isDisabled}
           sx={buttonStyle}
           startIcon={<BookmarkAdd sx={{ fontSize: buttonFontSize }} />}
         >

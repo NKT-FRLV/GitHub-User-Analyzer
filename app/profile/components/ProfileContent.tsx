@@ -14,7 +14,7 @@ import { CandidatesSection } from './CandidatesSection';
  */
 export const ProfileContent = () => {
   return (
-    <Container maxWidth="md" component="main">
+    <Container maxWidth="md" component="div">
       <Typography 
         variant="h4" 
         component="h1" 

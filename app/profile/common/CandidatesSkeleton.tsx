@@ -13,30 +13,38 @@ const CandidatesSkeleton = () => {
   return (
     <>
         {skeletonRows.map((index) => (
-            <TableRow key={index}>
+            <TableRow key={`skeleton-${index}`}>
             <TableCell>
                 <Skeleton 
-                variant="circular" 
-                width={40} 
-                height={40} 
+                  variant="circular" 
+                  width={40} 
+                  height={40} 
                 />
             </TableCell>
-            <TableCell>
+            <TableCell align="center">
                 <Skeleton 
-                variant="text" 
-                width={100} 
-                sx={{ display: 'flex', alignItems: 'center' }} 
+                  variant="text" 
+                  width={100} 
+                  sx={{ mx: 'auto' }} 
                 />
             </TableCell>
-            <TableCell>
-                <Skeleton variant="text" width={80} />
+            <TableCell align="center">
+                <Skeleton variant="text" sx={{ mx: 'auto' }} width={80} />
             </TableCell>
-            <TableCell align="right">
+            <TableCell align="center">
                 <Skeleton 
-                variant="circular" 
-                width={25} 
-                height={25} 
-                sx={{ ml: 'auto' }} 
+                  variant="circular" 
+                  width={25} 
+                  height={25} 
+                  sx={{ mx: 'auto' }} 
+                />
+            </TableCell>
+            <TableCell >
+                <Skeleton 
+                  variant="circular" 
+                  width={25} 
+                  height={25} 
+                  sx={{ ml: 'auto' }} 
                 />
             </TableCell>
             </TableRow>

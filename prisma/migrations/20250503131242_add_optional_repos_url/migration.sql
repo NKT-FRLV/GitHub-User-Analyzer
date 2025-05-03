@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Candidate" ALTER COLUMN "reposUrl" DROP NOT NULL,
+ALTER COLUMN "reposUrl" DROP DEFAULT;

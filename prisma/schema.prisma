@@ -30,6 +30,7 @@ model Candidate {
   githubUrl  String
   avatarUrl  String
   savedAt    DateTime @default(now())
+  reposUrl   String?
   userId     String
   user       User     @relation(fields: [userId], references: [id])
 

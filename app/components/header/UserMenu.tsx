@@ -1,14 +1,12 @@
 "use client";
 
-import { useState, useLayoutEffect } from 'react';
+import { useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { AuthUser } from '../../types/github';
 import { useAuth } from '../../context/AuthContext';
 import HomeButton from './HomeButton';
 import AuthenticatedMenu from './AuthenticatedMenu';
 import GuestMenu from './GuestMenu';
-import { prisma } from '@/app/lib/prisma';
-import { User } from '@prisma/client';
+
 // interface UserMenuProps {
 //   initialUser: AuthUser | null;
 // }

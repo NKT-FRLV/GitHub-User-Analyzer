@@ -1,6 +1,9 @@
 import { IconButton, Avatar, Menu, MenuItem } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { AuthUser } from '../../types/github';
+import { useState, useEffect } from 'react';
+import { useAnimationStore } from '@/app/store/animation-events/store';
+import styles from './header.module.css';
 
 interface AuthenticatedMenuProps {
   user: AuthUser;
@@ -20,6 +23,9 @@ const AuthenticatedMenu = ({
   onMenuClick,
 }: AuthenticatedMenuProps) => {
   const router = useRouter();
+  
+  const isAnimating = useAnimationStore((state) => state.isAnimating);
+
 
   const handleProfile = () => {
     router.push('/profile');
@@ -37,9 +43,15 @@ const AuthenticatedMenu = ({
         size="small"
       >
         {user.avatarUrl ? (
-          <Avatar src={user.avatarUrl} alt={user.username} />
+          <Avatar 
+            src={user.avatarUrl} 
+            alt={user.username} 
+            className={isAnimating ? styles.avatarSpringAnimation : ''}
+          />
         ) : (
-          <Avatar>
+          <Avatar
+            className={isAnimating ? styles.avatarSpringAnimation : ''}
+          >
             {user.username.charAt(0).toUpperCase()}
           </Avatar>
         )}

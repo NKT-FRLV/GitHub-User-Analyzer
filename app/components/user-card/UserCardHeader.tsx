@@ -79,6 +79,13 @@ const UserCardHeader: React.FC<UserCardHeaderProps> = ({
                 </Typography>
               }
               value={githubCandidate.name}
+              propsTypography={{
+                // display: "inline-block",
+                maxWidth: isMobileView ? 100 : 200,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
               isSmallScreen={isMobileView}
               fsMax="1.5rem"
               fsMin="1rem"
@@ -105,6 +112,13 @@ const UserCardHeader: React.FC<UserCardHeaderProps> = ({
                 </Typography>
               }
               value={githubCandidate.login}
+              propsTypography={{
+                // display: "inline-block",
+                maxWidth: isMobileView ? 100 : 200,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
               isSmallScreen={isMobileView}
               fsMax="1.5rem"
               fsMin="1rem"
@@ -114,7 +128,17 @@ const UserCardHeader: React.FC<UserCardHeaderProps> = ({
 
           <Typography
             variant="body1"
-            sx={{ mb: 1, mt: 2, fontSize: adaptiveFontSize2 }}
+            sx={{ 
+              mb: 1, 
+              mt: 2, 
+              fontSize: adaptiveFontSize2, 
+              maxWidth: isMobileView ? 200 : 300,
+              display: "-webkit-box",
+              WebkitBoxOrient: "vertical",
+              WebkitLineClamp: 3,
+              overflow: "hidden",
+              textOverflow: "ellipsis"
+            }}
           >
             {githubCandidate.bio || "No bio available"}
           </Typography>

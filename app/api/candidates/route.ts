@@ -57,16 +57,16 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const { githubName, githubUrl, avatarUrl } = await request.json();
+    const { githubName, githubUrl, avatarUrl, reposUrl } = await request.json();
     
-    if (!githubName || !githubUrl || !avatarUrl) {
+    if (!githubName || !githubUrl || !avatarUrl || !reposUrl) {
       return NextResponse.json(
         { success: false, message: 'Missing required fields' },
         { status: 400 }
       );
     }
     
-    const success = await saveCandidate(githubName, githubUrl, avatarUrl, userData.id);
+    const success = await saveCandidate(githubName, githubUrl, avatarUrl, reposUrl, userData.id);
     
     if (!success) {
       return NextResponse.json(

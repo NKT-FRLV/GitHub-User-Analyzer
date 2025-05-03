@@ -1,14 +1,18 @@
 'use client'
-import { Avatar, TableBody, TableRow, TableHead, TableCell, Table, TableContainer, Divider, Typography, CardContent, Card, Grid, Link as MuiLink, Box } from '@mui/material'
+import { Avatar, TableBody, TableRow, TableHead, TableCell, Table, TableContainer, Divider, Typography, CardContent, Card, Grid, Link as MuiLink, Box, Button, IconButton } from '@mui/material'
 import { DeleteCandidateButton } from '../common/DeleteCandidateButton'
 import CandidatesSkeleton from '../common/CandidatesSkeleton'
-import { ru } from 'date-fns/locale'
+import { useRouter } from 'next/navigation'
+import { enGB } from 'date-fns/locale'
 import { format } from 'date-fns'
 import { Candidate } from '@prisma/client';
+import SearchIcon from '@mui/icons-material/Search'
 import GitHubIcon from '@mui/icons-material/GitHub'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import styles from '../profile.module.css'
 
 const Candidates = () => {
+    const router = useRouter()
     const [candidates, setCandidates] = useState<Candidate[]>([])
     const [loading, setLoading] = useState(true)
 
@@ -31,6 +35,18 @@ const Candidates = () => {
       fetchCandidates()
     }, [])
 
+    const handleDelete = useCallback((candidateId: string) => {
+        setCandidates(prevCandidates => prevCandidates.filter(candidate => candidate.id !== candidateId))
+    }, [])
+
+    const handleReposAnalyze = (reposUrl: string) => {    
+      // setIsLoading(true);
+      if (reposUrl) {
+        router.push(`/repos?url=${reposUrl}`);
+      }
+    };
+
+
     const renderCandidatesList = () => {
       return candidates.map((candidate) => (
         <TableRow key={candidate.id}>
@@ -39,24 +55,35 @@ const Candidates = () => {
               src={candidate.avatarUrl}
               alt={candidate.githubName}
               sx={{ width: 40, height: 40 }}
+              className={styles.candidateListAvatar}
+              // onClick={() => handleAvatarClick(candidate.reposUrl)}
             />
           </TableCell>
-          <TableCell>
+          <TableCell align="center">
             <MuiLink
               href={candidate.githubUrl}
               target="_blank"
               rel="noopener noreferrer"
-              sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+              sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}
             >
               <GitHubIcon fontSize="small" />
               {candidate.githubName}
             </MuiLink>
           </TableCell>
-          <TableCell>
-            {format(new Date(candidate.savedAt), 'dd MMMM yyyy', { locale: ru })}
+          <TableCell align="center">
+            {format(new Date(candidate.savedAt), 'dd MMMM yyyy', { locale: enGB })}
+          </TableCell>
+          <TableCell align="center">
+            <IconButton
+              onClick={() => handleReposAnalyze(candidate.reposUrl)}
+              sx={{ color: 'green' }}
+              size="small"
+            >
+              <SearchIcon />
+            </IconButton>
           </TableCell>
           <TableCell align="right">
-            <DeleteCandidateButton candidateId={candidate.id} />
+            <DeleteCandidateButton candidateId={candidate.id} deleteCandidate={handleDelete} />
           </TableCell>
         </TableRow>
       ))
@@ -67,13 +94,14 @@ const Candidates = () => {
       if (loading) {
         return (
           <TableContainer>
-            <Table>
+            <Table sx={{ tableLayout: 'fixed' }}>
               <TableHead>
                 <TableRow>
-                  <TableCell>Avatar</TableCell>
-                  <TableCell>GitHub Username</TableCell>
-                  <TableCell>Saved Date</TableCell>
-                  <TableCell align="right">Actions</TableCell>
+                  <TableCell width={80} >Avatar</TableCell>
+                  <TableCell align="center">GitHub Username</TableCell>
+                  <TableCell align="center">Saved Date</TableCell>
+                  <TableCell width={100} align="center">Analyze</TableCell>
+                  <TableCell width={100} align="right">Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -98,13 +126,14 @@ const Candidates = () => {
       // Если есть данные, показываем таблицу с кандидатами
       return (
         <TableContainer>
-          <Table>
+          <Table sx={{ tableLayout: 'fixed' }}>
             <TableHead>
               <TableRow>
-                <TableCell>Avatar</TableCell>
-                <TableCell>GitHub Username</TableCell>
-                <TableCell>Saved Date</TableCell>
-                <TableCell align="right">Actions</TableCell>
+                <TableCell width={80} >Avatar</TableCell>
+                <TableCell align="center">GitHub Username</TableCell>
+                <TableCell align="center">Saved Date</TableCell>
+                <TableCell width={100} align="center">Analyze</TableCell>
+                <TableCell width={100} align="right">Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
