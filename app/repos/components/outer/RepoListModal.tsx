@@ -7,9 +7,8 @@ import AppBarComponent from '../../../components/common/AppBarComponent';
 import { withCondition } from '../../../lib/hoc';
 import RepoList from '../repo list/RepoList';
 import AIAnalyzer from '../AI-feedback/AI-Analyzer';
-import { Repository, GitHubUser } from '../../../types/github';
 import { useRepoStore } from '../../../store/repos/store';
-import { useCandidateStore } from '../../../store/canditade/store';
+
 
 // HOCs
 const WithConditionRepoList = withCondition('list', RepoList);

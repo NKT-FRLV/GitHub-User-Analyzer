@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { AuthUser } from '../types/github';
 
 interface AuthContextType {
@@ -29,7 +29,7 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children, initialUser = null }: AuthProviderProps) => {
   const [user, setUser] = useState<AuthUser | null>(initialUser);
-  const [loading, setLoading] = useState(!initialUser); // Если есть initialUser, не показываем loading
+  const [loading, setLoading] = useState(false); // Если есть initialUser, не показываем loading
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -68,7 +68,7 @@ export const AuthProvider = ({ children, initialUser = null }: AuthProviderProps
   }, [initialUser]);
 
   // Function for logging in
-  const login = async (username: string, password: string): Promise<boolean> => {
+  const login = useCallback(async (username: string, password: string): Promise<boolean> => {
     setLoading(true);
     try {
       const response = await fetch('/api/auth/login', {
@@ -93,10 +93,10 @@ export const AuthProvider = ({ children, initialUser = null }: AuthProviderProps
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Function for registration
-  const register = async (username: string, email: string, password: string): Promise<boolean> => {
+  const register = useCallback(async (username: string, email: string, password: string): Promise<boolean> => {
     setLoading(true);
     try {
       const response = await fetch('/api/auth/register', {
@@ -116,10 +116,10 @@ export const AuthProvider = ({ children, initialUser = null }: AuthProviderProps
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Function for updating the user's avatar
-  const updateAvatar = async (avatarUrl: string): Promise<boolean> => {
+  const updateAvatar = useCallback(async (avatarUrl: string): Promise<boolean> => {
     if (!user) {
       console.log('Cannot update avatar: user is not authenticated');
       return false;
@@ -166,10 +166,10 @@ export const AuthProvider = ({ children, initialUser = null }: AuthProviderProps
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
   // Function for logging out
-  const logout = async (): Promise<void> => {
+  const logout = useCallback(async (): Promise<void> => {
     try {
       await fetch('/api/auth/logout', {
         method: 'POST',
@@ -180,7 +180,7 @@ export const AuthProvider = ({ children, initialUser = null }: AuthProviderProps
     } catch (error) {
       console.error('Error during logout:', error);
     }
-  };
+  }, []);
 
   const value = {
     user,

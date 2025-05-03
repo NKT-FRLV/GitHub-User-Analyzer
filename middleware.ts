@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyJWT } from './app/api/utils/auth';
 
 // Маршруты только для НЕавторизованных пользователей
-const authOnlyPaths = [
+const guestOnlyPaths = [
   '/auth/login',
   '/auth/register',
   '/auth/reset-password',
@@ -19,42 +19,12 @@ const publicPaths = [
 const protectedPaths = [
   // Пользовательские маршруты
   '/profile',
-  '/profile/settings',
-  '/profile/notifications',
-  
-  // Поиск и результаты
-  '/search',
-  '/search/history',
-  '/search/saved',
-  '/search/results',
-  
-  // GitHub интеграция
-  '/github',
-  '/github/repositories',
-  '/github/stars',
-  '/github/following',
-  
-  // Управление кандидатами
-  '/candidates',
-  '/candidates/saved',
-  '/candidates/archived',
-  '/candidates/favorites',
-  
-  // Аналитика и статистика
-  '/analytics',
-  '/analytics/search',
-  '/analytics/github',
-  
-  // Настройки
-  '/settings',
-  '/settings/account',
-  '/settings/preferences',
-  '/settings/notifications',
-  '/settings/integrations'
 ];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Логирую присутствие 
   console.log('middleware');
   
   // Пропускаем API маршруты
@@ -65,6 +35,8 @@ export async function middleware(request: NextRequest) {
   // Проверяем токен
   const token = request.cookies.get('token')?.value;
   const isAuthenticated = token ? await verifyJWT(token) : null;
+
+  console.log('middleware pathname: ', pathname, 'isAuthenticated: ', isAuthenticated);
   
   // Создаем response заранее
   const response = NextResponse.next();
@@ -75,7 +47,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Проверяем маршруты только для НЕавторизованных
-  if (authOnlyPaths.some(path => pathname === path || pathname.startsWith(`${path}/`))) {
+  if (guestOnlyPaths.some(path => pathname === path || pathname.startsWith(`${path}/`))) {
     if (isAuthenticated) {
       const redirectResponse = NextResponse.redirect(new URL('/', request.url));
       // Копируем заголовки в redirect response
@@ -112,21 +84,12 @@ export const config = {
     '/auth/:path*',
     
     // API маршруты
-    // '/api/auth/:path*',
-    // '/api/github/:path*',
-    // '/api/search/:path*',
-    // '/api/candidates/:path*',
-    // '/api/analytics/:path*',
+    '/api/:path*',
     
     // Защищенные маршруты
     '/profile/:path*',
-    '/search/:path*',
-    '/github/:path*',
-    '/candidates/:path*',
-    '/analytics/:path*',
-    '/settings/:path*',
     
-    // Публичные маршруты
+    // Публичные маршруты НЕ должны обрабатываться middleware
     // '/',
     // '/repos'
   ]

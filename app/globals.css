@@ -32,21 +32,3 @@ a {
   color: inherit;
   text-decoration: none;
 }
-
-/* Глобальные стили для неоновых ссылок */
-.neon-link {
-  color: var(--neon-primary);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  transition: all 0.3s ease;
-  position: relative;
-}
-
-.neon-link:hover {
-  color: var(--neon-hover);
-  text-shadow: 0 0 8px rgba(187, 134, 252, 0.8), 0 0 12px rgba(187, 134, 252, 0.6);
-}
-
-/* header .MuiToolbar-root {
-  min-height: var(--header-height);
-} */
