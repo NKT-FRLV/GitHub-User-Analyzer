@@ -3,7 +3,7 @@ import { TextField } from '@mui/material';
 import { Box } from '@mui/material';
 import React, { Dispatch, SetStateAction, useState } from 'react'
 import { useRouter } from 'next/navigation';
-import styles from './reset-password.module.css';
+import styles from '../reset-password.module.css';
 
 interface ResetPasswordFormProps {
     token: string;
