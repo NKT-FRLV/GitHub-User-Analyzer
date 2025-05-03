@@ -26,13 +26,13 @@ const LoginForm: React.FC<LoginFormProps> = ({
     password: ''
   });
 
-  const formRef = useRef<HTMLFormElement>(null);
+//   const formRef = useRef<HTMLFormElement>(null);
 
-  useEffect(() => {
-    if (formRef.current) {
-      formRef.current.focus();
-    }
-  }, []);
+//   useEffect(() => {
+//     if (formRef.current) {
+//       formRef.current.focus();
+//     }
+//   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -55,7 +55,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
 
   return (
     <Box
-      ref={formRef}
+    //   ref={formRef}
       tabIndex={-1}
       aria-label="Login form"
       component="form"

@@ -20,14 +20,7 @@ const DynamicCandidates = dynamic(
  */
 export const CandidatesSection = () => {
   return (
-    <Suspense 
-      fallback={
-        <Grid item xs={12} display="flex" justifyContent="center">
-          <CircularProgress />
-        </Grid>
-      }
-    >
+
       <DynamicCandidates />
-    </Suspense>
   );
 }; 
