@@ -37,10 +37,10 @@
 }
 
 .submitButton {
-  margin: 16px 0 10px !important;
-  padding: 10px !important;
-  background-color: #546E7A !important;
-  transition: all 0.2s ease !important;
+  margin: 16px 0 10px;
+  padding: 10px;
+  background-color: #546E7A;
+  transition: all 0.2s ease;
 }
 
 .submitButton:hover {
