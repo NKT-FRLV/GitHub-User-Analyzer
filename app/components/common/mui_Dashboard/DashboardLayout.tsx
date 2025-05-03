@@ -145,7 +145,7 @@ export default function DashboardLayout({ children, navigationItems }: Dashboard
   };
 
   return (
-    <Box sx={{ position: 'relative', display: 'flex', flexGrow: 1, overflow: 'hidden' }}>
+    <Box sx={{ position: 'relative', display: 'flex', flexGrow: 1 }}>
       <CssBaseline />
       <StyledAppBar 
         position="absolute" 

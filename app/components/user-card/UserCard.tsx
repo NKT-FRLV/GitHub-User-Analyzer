@@ -3,7 +3,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
-  Box,
   Divider,
   Card,
   CardContent,
@@ -13,10 +12,11 @@ import { FS, AvatarSize } from "../../types/enums";
 import styles from "./userCard.module.css";
 import { UserCardProps } from "../../types/github";
 import { useAuth } from '../../context/AuthContext';
-import FullPageLoader from "../common/FullPageLoader";
 import UserCardHeader from "./UserCardHeader";
 import UserCardStats from "./UserCardStats";
 import UserCardActions from "./UserCardActions";
+import { useAnimationStore } from "@/app/store/animation-events/store";
+import clsx from "clsx";
 
 const UserCard = ({ 
   user: githubCandidate, 
@@ -28,6 +28,8 @@ const UserCard = ({
   userInteracted: boolean 
 }) => {
   // const [isLoading, setIsLoading] = useState(false);
+  const isAnimating = useAnimationStore((state) => state.isAnimating);
+  const triggerAnimation = useAnimationStore((state) => state.triggerAnimation);
   const [isMobileView, setIsMobileView] = useState(serverIsMobile);
   const router = useRouter();
   const { user } = useAuth(); 
@@ -53,6 +55,10 @@ const UserCard = ({
   const adaptiveFontSize1 = isMobileView ? FS.L : FS.XL;
   const adaptiveFontSize2 = isMobileView ? FS.M : FS.X;
 
+  // const mockFn = () => {
+  //   triggerAnimation();
+  // }
+
   // Функция для сохранения кандидата
   const handleSaveCandidate = useCallback( async () => {
     if (!githubCandidate || !user?.isAuthenticated) {
@@ -70,22 +76,24 @@ const UserCard = ({
         body: JSON.stringify({
           githubName: githubCandidate.login,
           githubUrl: githubCandidate.html_url,
-          avatarUrl: githubCandidate.avatar_url
+          avatarUrl: githubCandidate.avatar_url,
+          reposUrl: githubCandidate.repos_url
         }),
       });
       
       const data = await response.json();
       
       if (data.success) {
-        // Показать уведомление об успешном сохранении
-        alert('Candidate saved successfully ');
+        // Instead of alert, call by Zustand store, to User Avatar animation
+        triggerAnimation();
+
       } else {
         console.error('Error saving candidate:', data.message);
       }
     } catch (error) {
       console.error('Error sending request:', error);
     }
-  }, [githubCandidate, user?.isAuthenticated, router]);
+  }, [githubCandidate, user?.isAuthenticated, router, triggerAnimation]);
 
   if (error) {
     return (
@@ -105,33 +113,45 @@ const UserCard = ({
 
   return (
     <>
-      {/* <FullPageLoader open={isLoading} /> */}
-      <Card elevation={3} className={styles.container} component="article">
-        <CardContent className={styles.userInfo}>
-          <UserCardHeader 
-            githubCandidate={githubCandidate} 
-            user={user}
-            avatarSize={avatarSize}
-            isMobileView={isMobileView}
-            adaptiveFontSize1={adaptiveFontSize1}
-            adaptiveFontSize2={adaptiveFontSize2}
-          />
+      <div className={styles.cardContainer3d}>
+        <div className={clsx(styles.cardWrapper, isAnimating && styles.flipCard)}>
+          <div className={styles.cardFront}>
+            <Card elevation={3} className={styles.card} component="article">
+              <CardContent className={styles.userInfo}>
+                <UserCardHeader 
+                  githubCandidate={githubCandidate} 
+                  user={user}
+                  avatarSize={avatarSize}
+                  isMobileView={isMobileView}
+                  adaptiveFontSize1={adaptiveFontSize1}
+                  adaptiveFontSize2={adaptiveFontSize2}
+                />
 
-          <UserCardStats 
-            githubCandidate={githubCandidate}
-            isMobileView={isMobileView}
-          />
+                <UserCardStats 
+                  githubCandidate={githubCandidate}
+                  isMobileView={isMobileView}
+                />
 
-          <Divider />
-          
-          <UserCardActions 
-            githubCandidate={githubCandidate}
-            handleRepos={handleRepos}
-            handleSaveCandidate={handleSaveCandidate}
-            buttonFontSize={buttonFontSize}
-          />
-        </CardContent>
-      </Card>
+                <Divider />
+                
+                <UserCardActions 
+                  githubCandidate={githubCandidate}
+                  handleRepos={handleRepos}
+                  handleSaveCandidate={handleSaveCandidate}
+                  buttonFontSize={buttonFontSize}
+                />
+              </CardContent>
+            </Card>
+          </div>
+          <div className={styles.cardBack}>
+            <Card elevation={3} className={styles.cardBackInner} component="article">
+              <CardContent className={styles.thankYouContent}>
+                <h3>Thank You from {githubCandidate.name}!</h3>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
     </>
   );
 };

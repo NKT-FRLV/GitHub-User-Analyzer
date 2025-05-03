@@ -1,7 +1,80 @@
-.container {
+.card {
   background-color: var(--background-paper);
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  width: 100%;
+  height: 100%;
+}
+
+/* 3D Card Container and Animation styles */
+.cardContainer3d {
+  perspective: 1400px;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.cardWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.7s;
+  transform-style: preserve-3d;
+}
+
+.flipCard {
+  transform: rotateY(180deg);
+}
+
+.cardFront,
+.cardBack {
+  position: absolute;
+  top: 7%;
+  left: 50%;
+  min-width: 40%;
+  min-height: 80%;
+  -webkit-backface-visibility: hidden; /* Safari */
+  backface-visibility: hidden;
+  /* display: flex; */
+}
+
+.cardFront {
+  transform: translateX(-50%);
+}
+
+.cardBack {
+  height: 80%;
+  transform: translateX(-50%) rotateY(180deg);
+}
+
+.cardBackInner {
+  width: 100%;
+  height: 100%;
+}
+
+.thankYouContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 24px;
+  text-align: center;
+  color: var(--text-primary);
+}
+
+.thankYouContent h3 {
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+  color: var(--primary-main);
+}
+
+.thankYouContent p {
+  margin-bottom: 8px;
 }
 
 .searchBox {

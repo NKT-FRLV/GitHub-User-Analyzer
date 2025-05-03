@@ -12,6 +12,7 @@ export async function saveCandidate(
   githubName: string,
   githubUrl: string,
   avatarUrl: string,
+  reposUrl: string,
   userId: string
 ): Promise<boolean> {
   try {
@@ -34,6 +35,7 @@ export async function saveCandidate(
         data: {
           githubUrl,
           avatarUrl,
+          reposUrl,
           savedAt: new Date() // Обновляем время сохранения
         }
       });
@@ -46,6 +48,7 @@ export async function saveCandidate(
         githubName,
         githubUrl,
         avatarUrl,
+        reposUrl,
         userId
       }
     });

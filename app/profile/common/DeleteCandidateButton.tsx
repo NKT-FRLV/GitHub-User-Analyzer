@@ -7,9 +7,10 @@ import { useRouter } from 'next/navigation';
 
 interface DeleteCandidateButtonProps {
   candidateId: string;
+  deleteCandidate: (id: string) => void;
 }
 
-export const DeleteCandidateButton = ({ candidateId }: DeleteCandidateButtonProps) => {
+export const DeleteCandidateButton = ({ candidateId, deleteCandidate }: DeleteCandidateButtonProps) => {
   const router = useRouter();
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' });
 
@@ -31,7 +32,7 @@ export const DeleteCandidateButton = ({ candidateId }: DeleteCandidateButtonProp
           message: 'Candidate successfully deleted',
           severity: 'success'
         });
-        router.refresh();
+        deleteCandidate(candidateId);
       } else {
         throw new Error('Failed to delete candidate');
       }

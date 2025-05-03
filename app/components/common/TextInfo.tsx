@@ -17,10 +17,11 @@ const TextInfo = ({ text, value, isSmallScreen, propsBox, propsTypography, fsMax
   return (
     <Box display={"flex"} alignItems={"center"} gap={1} {...propsBox}>
       {text}{spacing ? ": " : ""}
-      <Typography sx={{ 
-        fontWeight: "bold", 
-        fontSize: isSmallScreen ? fsMin : fsMax, 
-        ...propsTypography 
+      <Typography
+        sx={{ 
+          fontWeight: "bold",
+          fontSize: isSmallScreen ? fsMin : fsMax, 
+          ...propsTypography 
         }}
       >
         {value || "0"}

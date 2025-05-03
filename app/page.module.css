@@ -1,18 +1,18 @@
 .page {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100%;
   background-color: #F5F5F5;
 }
 
 .main {
-  flex: 1;
-  padding: 2rem 0;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  max-height: calc(100vh - 140px); /* Учитываем высоту header и footer */
+  height: 100%;
+  padding: 2rem 0;
+  /* height: calc(100%- 140px); */
   overflow-y: auto;
   opacity: 0; /* for fadeIn animation */
 }
