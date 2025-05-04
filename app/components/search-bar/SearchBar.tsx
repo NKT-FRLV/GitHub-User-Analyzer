@@ -149,7 +149,7 @@ function SearchBar({ onSearch, isLoading = false }: SearchBarProps) {
       >
         {/* Большие кнопочки с текстом */}
         {presets.map((preset) => (
-          (isExpanded && !isMobile) ? (
+          (!isMobile && isExpanded) ? (
             <Zoom
               in={isExpanded}
               key={`${preset.query}-big`}
@@ -174,8 +174,9 @@ function SearchBar({ onSearch, isLoading = false }: SearchBarProps) {
               />
             </Zoom>
           ) : (
+            //  Маленькие кнопочки
             <Zoom
-              in={!isExpanded}
+              in={!isExpanded || isMobile}
               key={`${preset.query}-small`}
               unmountOnExit
               timeout={300}
