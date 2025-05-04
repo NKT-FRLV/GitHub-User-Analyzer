@@ -1,18 +1,15 @@
 "use client";
 
-import React, { useRef, useState } from "react";
 import { 
   Box, 
   Typography, 
-  Avatar, 
-  Dialog, 
-  IconButton 
+  Avatar
 } from "@mui/material";
-import Image from "next/image";
-import CloseIcon from "@mui/icons-material/Close";
 import TextInfo from "../common/TextInfo";
+import AvatarModal from "../common/modals/Avatar-Modal/Avatar-Modal";
 import styles from "./userCard.module.css";
 import { AuthUser, GitHubUser } from "../../types/github";
+import { useModalsOpenStore } from "@/app/store/modals-open/store";
 
 interface UserCardHeaderProps {
   githubCandidate: GitHubUser;
@@ -31,15 +28,17 @@ const UserCardHeader: React.FC<UserCardHeaderProps> = ({
   adaptiveFontSize1,
   adaptiveFontSize2
 }) => {
-  const [avatarOpen, setAvatarOpen] = useState(false);
-  const avatarRef = useRef<HTMLDivElement>(null);
 
-  const handleAvatarClose = () => {
-    setAvatarOpen(false);
-    if (avatarRef.current) {
-      avatarRef.current.focus();
-    }
-  };
+  const handleAvatarOpen = useModalsOpenStore((state) => state.handleAvatarOpen);
+  
+  // const avatarRef = useRef<HTMLDivElement>(null);
+
+  // const handleAvatarClose = () => {
+  //   setAvatarOpen(false);
+  //   if (avatarRef.current) {
+  //     avatarRef.current.focus();
+  //   }
+  // };
 
   return (
     <>
@@ -54,8 +53,8 @@ const UserCardHeader: React.FC<UserCardHeaderProps> = ({
           }
           alt={githubCandidate.login}
           sx={{ width: avatarSize, height: avatarSize, cursor: "pointer" }}
-          ref={avatarRef}
-          onClick={() => setAvatarOpen(true)}
+          // ref={avatarRef}
+          onClick={() => handleAvatarOpen(githubCandidate)}
         />
         <Box className={styles.userDetails}>
           <Box
@@ -146,37 +145,8 @@ const UserCardHeader: React.FC<UserCardHeaderProps> = ({
       </Box>
 
       {/* Avatar Modal */}
-      <Dialog
-        open={avatarOpen}
-        onClose={handleAvatarClose}
-        slotProps={{
-          paper: {
-            className: styles.modalPaper,
-          },
-        }}
-      >
-        <IconButton onClick={handleAvatarClose} className={styles.closeButton}>
-          <CloseIcon />
-        </IconButton>
-
-        <Box className={styles.modalContent}>
-          <Image
-            src={githubCandidate.avatar_url}
-            alt={githubCandidate.login}
-            width={400}
-            height={400}
-            className={styles.modalImage}
-          />
-          <Typography variant="h4" sx={{ mt: 2 }}>
-            {githubCandidate.login}
-          </Typography>
-          {githubCandidate.bio && (
-            <Typography variant="body1" sx={{ mt: 1, color: "grey.600" }}>
-              {githubCandidate.bio}
-            </Typography>
-          )}
-        </Box>
-      </Dialog>
+      <AvatarModal />
+      
     </>
   );
 };

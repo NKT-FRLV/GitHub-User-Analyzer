@@ -1,12 +1,3 @@
-.card {
-  background-color: var(--background-paper);
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-width: 600px;
-  width: 100%;
-  height: 100%;
-}
-
 /* 3D Card Container and Animation styles */
 .cardContainer3d {
   perspective: 1400px;
@@ -48,6 +39,15 @@
 .cardBack {
   height: 80%;
   transform: translateX(-50%) rotateY(180deg);
+}
+
+.card {
+  background-color: var(--background-paper);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  width: 100%;
+  height: 100%;
 }
 
 .cardBackInner {
@@ -141,32 +141,6 @@
   display: flex;
   justify-content: space-between;
   margin-top: 16px;
-}
-
-.modalPaper {
-  /* color: black;
-  width: 100vw; */
-  background-color: var(--background-paper);
-  padding: 16px;
-  border-radius: 8px;
-}
-
-.closeButton {
-  position: absolute !important;
-  right: 8px;
-  top: 8px;
-  color: rgba(0, 0, 0, 0.5) !important;
-}
-
-.modalContent {
-  padding: 16px;
-  text-align: center;
-}
-
-.modalImage {
-  border-radius: 8px;
-  max-width: 100%;
-  height: auto;
 }
 
 .error {

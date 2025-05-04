@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Box,
   Drawer,
@@ -95,13 +95,7 @@ export default function DashboardLayout({ children, navigationItems }: Dashboard
   const pathname = usePathname();
   const [openSubMenus, setOpenSubMenus] = useState<{ [key: string]: boolean }>({});
   
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  
-  useEffect(() => {
-    if (isMobile && open) {
-      setOpen(false);
-    }
-  }, [pathname, isMobile]);
+  const isMobile = useMediaQuery('(max-width: 600px)');
 
   const handleDrawerOpen = () => setOpen(true);
   const handleDrawerClose = () => setOpen(false);
