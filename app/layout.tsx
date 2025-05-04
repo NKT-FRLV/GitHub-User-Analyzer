@@ -36,10 +36,12 @@ export default function RootLayout({
 
   
   return (
-    
+    // Strange but it works
+    <ScopedCssBaseline>
+
       <html lang="en">
         <body className={`${geistSans.variable} ${geistMono.variable}`}>
-          <ScopedCssBaseline>
+          
             <ThemeRegistry>
               <AuthProviderWrapper>
                   <div className={styles.page}>
@@ -49,9 +51,9 @@ export default function RootLayout({
                   </div>
               </AuthProviderWrapper>
             </ThemeRegistry>
-          </ScopedCssBaseline>
+          
         </body>
       </html>
-    
+    </ScopedCssBaseline>
   );
 }
