@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from './context/AuthContext';
+// import { AuthProvider } from './context/AuthContext';
+import ScopedCssBaseline from '@mui/material/ScopedCssBaseline';
+// import CssBaseline from '@mui/material/CssBaseline';
 import ThemeRegistry from './theme/ThemeRegistry';
 import styles from './page.module.css';
 import Header from './components/header/Header';
@@ -34,18 +36,22 @@ export default function RootLayout({
 
   
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <ThemeRegistry>
-          <AuthProviderWrapper>
-              <div className={styles.page}>
-                <Header />
-                {children}
-                <Footer />              
-              </div>
-          </AuthProviderWrapper>
-        </ThemeRegistry>
-      </body>
-    </html>
+    
+      <html lang="en">
+        <body className={`${geistSans.variable} ${geistMono.variable}`}>
+          <ScopedCssBaseline>
+            <ThemeRegistry>
+              <AuthProviderWrapper>
+                  <div className={styles.page}>
+                    <Header />
+                    {children}
+                    <Footer />              
+                  </div>
+              </AuthProviderWrapper>
+            </ThemeRegistry>
+          </ScopedCssBaseline>
+        </body>
+      </html>
+    
   );
 }

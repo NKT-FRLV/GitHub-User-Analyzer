@@ -9,12 +9,16 @@ import { Candidate } from '@prisma/client';
 import SearchIcon from '@mui/icons-material/Search'
 import GitHubIcon from '@mui/icons-material/GitHub'
 import { useState, useEffect, useCallback } from 'react'
+import { useModalsOpenStore } from '@/app/store/modals-open/store' 
+import AvatarModal from '@/app/components/common/modals/Avatar-Modal/Avatar-Modal'
 import styles from '../profile.module.css'
 
 const Candidates = () => {
     const router = useRouter()
     const [candidates, setCandidates] = useState<Candidate[]>([])
     const [loading, setLoading] = useState(true)
+    const handleAvatarOpen = useModalsOpenStore(state => state.handleAvatarOpen)
+
 
     useEffect(() => {
       const fetchCandidates = async () => {
@@ -56,7 +60,7 @@ const Candidates = () => {
               alt={candidate.githubName}
               sx={{ width: 40, height: 40 }}
               className={styles.candidateListAvatar}
-              // onClick={() => handleAvatarClick(candidate.reposUrl)}
+              onClick={() => handleAvatarOpen(candidate)}
             />
           </TableCell>
           <TableCell align="center">
@@ -145,6 +149,7 @@ const Candidates = () => {
     }
 
     return (
+      <>
       <Grid item xs={12}>
         <Card elevation={3}>
           <CardContent>
@@ -156,6 +161,8 @@ const Candidates = () => {
           </CardContent>
         </Card>
       </Grid>
+      <AvatarModal />
+      </>
     )
 }
 
