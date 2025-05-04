@@ -2,7 +2,7 @@
 
 import { ReactNode } from 'react';
 import DashboardLayout from '../../components/common/mui_Dashboard/DashboardLayout';
-import { NavigationItem } from '../../components/common/mui_Dashboard/DashboardLayout';
+import type { NavigationItem } from '../../components/common/mui_Dashboard/types';
 
 interface ProfileDashboardProps {
   children: ReactNode;

@@ -111,9 +111,9 @@ export const ProfileClient = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
-  if (!user) {
-    return null;
-  }
+  // if (!user) {
+  //   return null;
+  // }
 
   return (
     <>

@@ -49,18 +49,18 @@ const ClientPage = ({ initialUser, isMobile }: initialServerUser) => {
         <Container component="main" className={clsx(styles.main, mounted && styles.fadeIn)}>
             <Box 
               sx={{ 
-                maxWidth: 600, 
-                mb: 3, 
+                // maxWidth: 600, 
+                // mb: 3, 
                 mx: 'auto',
                 px: { xs: 2, sm: 0 },
-                mt: 2
+                mt: { xs: 1, md: 2 }
               }}
             >
-              <SearchBar onSearch={handleSearch} />
+              <SearchBar onSearch={handleSearch} isLoading={loading} />
             </Box>
             <UserCard user={candidate} error={error} isMobile={isMobile} userInteracted={userInteracted} />
         </Container>
-        <FullPageLoader open={loading} />
+        {/* <FullPageLoader open={loading} /> */}
       </>
     );
 }

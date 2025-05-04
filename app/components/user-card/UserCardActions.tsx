@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Box, Button} from "@mui/material";
+import { Box, Button, styled } from "@mui/material";
 import { BarChart, Folder, BookmarkAdd } from "@mui/icons-material";
 
 import styles from "./userCard.module.css";
@@ -74,7 +74,14 @@ const UserCardActions: React.FC<UserCardActionsProps> = ({
           variant="contained"
           onClick={onSaveCandidate}
           disabled={isDisabled}
-          sx={buttonStyle}
+          sx={{
+            ...buttonStyle,
+            '&.Mui-disabled': {
+              bgcolor: (theme) => theme.palette.success.main,
+              color: '#fff',
+              opacity: 0.9,
+            },
+          }}
           startIcon={<BookmarkAdd sx={{ fontSize: buttonFontSize }} />}
         >
           Save candidate
