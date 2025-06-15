@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { Box, Button, styled } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Box, Button, CircularProgress, styled } from "@mui/material";
 import { BarChart, Folder, BookmarkAdd } from "@mui/icons-material";
 
 import styles from "./userCard.module.css";
@@ -13,6 +13,8 @@ interface UserCardActionsProps {
   handleRepos: () => void;
   handleSaveCandidate: () => void;
   buttonFontSize: string;
+  isChecking: boolean;
+  isSaved: boolean;
 }
 
 const UserCardActions: React.FC<UserCardActionsProps> = ({
@@ -20,11 +22,19 @@ const UserCardActions: React.FC<UserCardActionsProps> = ({
   handleRepos,
   handleSaveCandidate,
   buttonFontSize,
+  isChecking,
+  isSaved,
 }) => {
-  const [isDisabled, setIsDisabled] = useState(false);
+  const [isDisabled, setIsDisabled] = useState<boolean>(isSaved);
   const handleAnaliticsOpen = useModalsOpenStore((state) => state.handleAnaliticsOpen);
-  
-  
+
+  useEffect(() => {
+	if (isChecking) {
+		setIsDisabled(false);
+	} else {
+		setIsDisabled(isSaved);
+	}
+  }, [isSaved, isChecking]);
 
   const onSaveCandidate = async () => {
     await handleSaveCandidate();
@@ -81,10 +91,11 @@ const UserCardActions: React.FC<UserCardActionsProps> = ({
               color: '#fff',
               opacity: 0.9,
             },
+			transition: 'background-color 1s ease',
           }}
-          startIcon={<BookmarkAdd sx={{ fontSize: buttonFontSize }} />}
+          startIcon={isChecking ? <CircularProgress size={20} /> : <BookmarkAdd sx={{ fontSize: buttonFontSize }} />}
         >
-          Save candidate
+          {isChecking ? "Checking..." : isDisabled ? "Saved" : "Save candidate"}
         </Button>
       </Box>
 

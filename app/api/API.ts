@@ -15,6 +15,7 @@ const octokit = new Octokit({
 export const getCandidateData = async (username: string): Promise<GitHubUser | null> => {
   try {
     const response = await octokit.request("GET /users/{username}", { username });
+
     if (response.status !== 200) {
       console.error(`GitHub API Error: ${response.status}`);
       return null;

@@ -27,12 +27,35 @@ const UserCard = ({
   isMobile: boolean, 
   userInteracted: boolean 
 }) => {
-  // const [isLoading, setIsLoading] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [isChecking, setIsChecking] = useState(false);
   const isAnimating = useAnimationStore((state) => state.isAnimating);
   const triggerAnimation = useAnimationStore((state) => state.triggerAnimation);
   const [isMobileView, setIsMobileView] = useState(serverIsMobile);
   const router = useRouter();
-  const { user } = useAuth(); 
+  const { user } = useAuth();
+
+  useEffect(() => {
+	if (!user?.id || !githubCandidate) {
+		return;
+	}
+
+    const checkCandidate = async () => {
+		setIsChecking(true);
+		console.log('githubCandidate', githubCandidate);
+		console.log('user', user);
+
+      const response = await fetch('/api/checkCandidate', {
+        method: 'POST',
+        body: JSON.stringify({ githubName: githubCandidate.login, userId: user.id }),
+      });
+      const data = await response.json();
+	  console.log('data', data);
+      setIsSaved(data.isSaved);
+	  setIsChecking(false);
+    };
+    checkCandidate();
+  }, [githubCandidate, user]);
 
   const handleRepos = useCallback(() => {    
     // setIsLoading(true);
@@ -66,7 +89,12 @@ const UserCard = ({
       router.push('/auth/login?from=/');
       return;
     }
-    
+
+	if (isSaved) {
+		console.log('Candidate already saved');
+		return;
+	}
+
     try {
       const response = await fetch('/api/candidates', {
         method: 'POST',
@@ -93,7 +121,7 @@ const UserCard = ({
     } catch (error) {
       console.error('Error sending request:', error);
     }
-  }, [githubCandidate, user?.isAuthenticated, router, triggerAnimation]);
+  }, [githubCandidate, user?.isAuthenticated, router, triggerAnimation, isSaved]);
 
   if (error) {
     return (
@@ -139,6 +167,8 @@ const UserCard = ({
                   handleRepos={handleRepos}
                   handleSaveCandidate={handleSaveCandidate}
                   buttonFontSize={buttonFontSize}
+				  isChecking={isChecking}
+                  isSaved={isSaved}
                 />
               </CardContent>
             </Card>

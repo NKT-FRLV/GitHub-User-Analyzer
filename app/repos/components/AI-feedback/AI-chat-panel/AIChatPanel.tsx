@@ -3,6 +3,9 @@ import { Box, Typography, CircularProgress } from '@mui/material'
 import CodeIcon from '@mui/icons-material/Code';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import Button from '@mui/material/Button'
+import Markdown from 'react-markdown'
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter'
+import {dark} from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 
 interface AIChatPanelProps {
@@ -71,15 +74,17 @@ const AIChatPanel = ({ fileContent, loading, done, repoName, isSmallScreen, setO
         >
             <Typography
                 component="pre"
-                sx={{ whiteSpace: "pre-wrap", fontFamily: "Roboto", fontWeight: 'bold' }}
+                sx={{ whiteSpace: "pre-wrap", fontFamily: "Roboto", fontWeight: 'bold', p: 2 }}
             >
-                {aiMessage || (
-                  <Box display="flex" alignItems="center" justifyContent="center" gap={2}>
-                    <CircularProgress size={24} />
+                {aiMessage ? <Markdown>{aiMessage}</Markdown> : (
+                  <>
+                    <Box display="flex" alignItems="center" justifyContent="center" gap={2}>
+                      <CircularProgress size={24} />
                     <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
                       AI is thinking...
                     </Typography>
                   </Box>
+                </>
                 )}
             </Typography>
         </Box>

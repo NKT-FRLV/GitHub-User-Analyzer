@@ -113,3 +113,18 @@ export async function deleteCandidate(candidateId: string, userId: string): Prom
     return false;
   }
 } 
+
+
+export async function isCandidateSaved(githubName: string, userId: string) {
+	const candidate = await prisma.candidate.findUnique({
+		where: {
+			githubName_userId: {
+				githubName,
+				userId
+			}
+		}
+	});
+
+	return !!candidate;
+
+}

@@ -20,12 +20,11 @@ export default async function Page({
     headers(),
     getCandidateData(search || 'NKT-FRLV'),
   ]);
-
+  // console.log('user initial', initialUser)
+  
   // Определяем мобильное устройство
   const userAgent = headersList.get('user-agent') || '';
   const isMobile = /Mobi|Android/i.test(userAgent);
-
-  console.log('searchParams', search);
 
   return (
     <Suspense>

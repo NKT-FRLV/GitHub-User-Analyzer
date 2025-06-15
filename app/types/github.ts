@@ -23,7 +23,7 @@ export interface RegisterCredentials extends LoginCredentials {
 }
 
 export interface initialServerUser {
-  initialUser: GitHubUser | unknown;
+  initialUser: GitHubUser;
   isMobile: boolean;
 }
 
