@@ -30,15 +30,6 @@ const UserCardHeader: React.FC<UserCardHeaderProps> = ({
 }) => {
 
   const handleAvatarOpen = useModalsOpenStore((state) => state.handleAvatarOpen);
-  
-  // const avatarRef = useRef<HTMLDivElement>(null);
-
-  // const handleAvatarClose = () => {
-  //   setAvatarOpen(false);
-  //   if (avatarRef.current) {
-  //     avatarRef.current.focus();
-  //   }
-  // };
 
   return (
     <>
@@ -52,8 +43,7 @@ const UserCardHeader: React.FC<UserCardHeaderProps> = ({
               : githubCandidate.avatar_url
           }
           alt={githubCandidate.login}
-          sx={{ width: avatarSize, height: avatarSize, cursor: "pointer" }}
-          // ref={avatarRef}
+          sx={{ width: avatarSize, height: avatarSize }}
           onClick={() => handleAvatarOpen(githubCandidate)}
         />
         <Box className={styles.userDetails}>

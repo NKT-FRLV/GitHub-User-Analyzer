@@ -17,6 +17,8 @@ import UserCardStats from "./UserCardStats";
 import UserCardActions from "./UserCardActions";
 import { useAnimationStore } from "@/app/store/animation-events/store";
 import clsx from "clsx";
+import { useCandidateStore } from "@/app/store/canditade/store";
+import { useShallow } from "zustand/react/shallow";
 
 const UserCard = ({ 
   user: githubCandidate, 
@@ -27,35 +29,24 @@ const UserCard = ({
   isMobile: boolean, 
   userInteracted: boolean 
 }) => {
-  const [isSaved, setIsSaved] = useState(false);
-  const [isChecking, setIsChecking] = useState(false);
   const isAnimating = useAnimationStore((state) => state.isAnimating);
   const triggerAnimation = useAnimationStore((state) => state.triggerAnimation);
   const [isMobileView, setIsMobileView] = useState(serverIsMobile);
   const router = useRouter();
   const { user } = useAuth();
-
+	const { isSaved, checkSaved } = useCandidateStore(
+		useShallow((state) => ({
+			isSaved: state.isSaved,
+			checkSaved: state.checkSaved,
+		}))
+	);
   useEffect(() => {
 	if (!user?.id || !githubCandidate) {
 		return;
 	}
 
-    const checkCandidate = async () => {
-		setIsChecking(true);
-		console.log('githubCandidate', githubCandidate);
-		console.log('user', user);
-
-      const response = await fetch('/api/checkCandidate', {
-        method: 'POST',
-        body: JSON.stringify({ githubName: githubCandidate.login, userId: user.id }),
-      });
-      const data = await response.json();
-	  console.log('data', data);
-      setIsSaved(data.isSaved);
-	  setIsChecking(false);
-    };
-    checkCandidate();
-  }, [githubCandidate, user]);
+    checkSaved(githubCandidate.login, user.id);
+  }, [githubCandidate, user, checkSaved]);
 
   const handleRepos = useCallback(() => {    
     // setIsLoading(true);
@@ -90,11 +81,6 @@ const UserCard = ({
       return;
     }
 
-	if (isSaved) {
-		console.log('Candidate already saved');
-		return;
-	}
-
     try {
       const response = await fetch('/api/candidates', {
         method: 'POST',
@@ -121,7 +107,7 @@ const UserCard = ({
     } catch (error) {
       console.error('Error sending request:', error);
     }
-  }, [githubCandidate, user?.isAuthenticated, router, triggerAnimation, isSaved]);
+  }, [githubCandidate, user?.isAuthenticated, router, triggerAnimation]);
 
   if (error) {
     return (
@@ -167,7 +153,6 @@ const UserCard = ({
                   handleRepos={handleRepos}
                   handleSaveCandidate={handleSaveCandidate}
                   buttonFontSize={buttonFontSize}
-				  isChecking={isChecking}
                   isSaved={isSaved}
                 />
               </CardContent>

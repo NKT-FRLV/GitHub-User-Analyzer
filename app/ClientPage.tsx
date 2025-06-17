@@ -10,6 +10,7 @@ import { useUserInteraction } from "./hooks/useUserInteraction";
 import { Container, Box } from "@mui/material";
 import styles from "./page.module.css";
 import clsx from "clsx";
+import Image from "next/image";
 
 const ClientPage = ({ initialUser, isMobile }: initialServerUser) => {
 	const { candidate, loading, error, setCandidate, fetchCandidate } =

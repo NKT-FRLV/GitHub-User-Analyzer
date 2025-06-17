@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Box, Button, CircularProgress, styled } from "@mui/material";
+import React, { useState, useEffect, useMemo } from "react";
+import { Box, Button } from "@mui/material";
 import { BarChart, Folder, BookmarkAdd } from "@mui/icons-material";
-
 import styles from "./userCard.module.css";
 import { GitHubUser } from "../../types/github";
 import AnalitycModal from "../common/modals/Analityc-Modal/Analityc-Modal";
@@ -13,7 +12,6 @@ interface UserCardActionsProps {
   handleRepos: () => void;
   handleSaveCandidate: () => void;
   buttonFontSize: string;
-  isChecking: boolean;
   isSaved: boolean;
 }
 
@@ -22,32 +20,20 @@ const UserCardActions: React.FC<UserCardActionsProps> = ({
   handleRepos,
   handleSaveCandidate,
   buttonFontSize,
-  isChecking,
   isSaved,
 }) => {
-  const [isDisabled, setIsDisabled] = useState<boolean>(isSaved);
-  const handleAnaliticsOpen = useModalsOpenStore((state) => state.handleAnaliticsOpen);
+	const [isDisabled, setIsDisabled] = useState(isSaved);
 
-  useEffect(() => {
-	if (isChecking) {
-		setIsDisabled(false);
-	} else {
+	useEffect(() => {
 		setIsDisabled(isSaved);
-	}
-  }, [isSaved, isChecking]);
+	}, [isSaved]);
+
+  const handleAnaliticsOpen = useModalsOpenStore((state) => state.handleAnaliticsOpen);
 
   const onSaveCandidate = async () => {
     await handleSaveCandidate();
-    setIsDisabled(true);
+	setIsDisabled(true);
   };
-  // const modalButtonRef = useRef<HTMLButtonElement>(null);
-
-  // const closeAnalitics = () => {
-  //   setAnaliticsOpen(false);
-  //   if (modalButtonRef.current) {
-  //     modalButtonRef.current.focus();
-  //   }
-  // };
 
   const buttonStyle = {
     backgroundColor: "grey.900",
@@ -72,7 +58,6 @@ const UserCardActions: React.FC<UserCardActionsProps> = ({
           </Button>
           <Button
             variant="contained"
-            // ref={modalButtonRef}
             sx={buttonStyle}
             startIcon={<BarChart sx={{ fontSize: buttonFontSize }} />}
             onClick={handleAnaliticsOpen}
@@ -93,9 +78,9 @@ const UserCardActions: React.FC<UserCardActionsProps> = ({
             },
 			transition: 'background-color 1s ease',
           }}
-          startIcon={isChecking ? <CircularProgress size={20} /> : <BookmarkAdd sx={{ fontSize: buttonFontSize }} />}
+          startIcon={<BookmarkAdd sx={{ fontSize: buttonFontSize }} />}
         >
-          {isChecking ? "Checking..." : isDisabled ? "Saved" : "Save candidate"}
+          {isDisabled ? "Saved" : "Save candidate"}
         </Button>
       </Box>
 

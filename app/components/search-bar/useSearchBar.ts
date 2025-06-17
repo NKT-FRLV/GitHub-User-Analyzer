@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 
-export const useSearchBar = (onSearch: (query: string) => void) => {
+export const useSearchBar = (onSearch: (query: string) => void ) => {
 	const [query, setQuery] = useState("");
 	const [isExpanded, setIsExpanded] = useState(false);
 

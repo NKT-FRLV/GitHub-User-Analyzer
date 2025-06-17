@@ -4,6 +4,7 @@ export interface CandidateState {
     candidate: GitHubUser | null;
     loading: boolean;
     error: string | null;
+	isSaved: boolean;
 }
 
 export interface CandidateStore extends CandidateState {
@@ -12,4 +13,5 @@ export interface CandidateStore extends CandidateState {
     setError: (error: string | null) => void;
     fetchCandidate: (username: string) => Promise<void>;
     resetState: () => void;
+	checkSaved: (username: string, userId: string) => Promise<void>;
 }

@@ -6,6 +6,7 @@ const initialState: CandidateState = {
     candidate: null,
     loading: false,
     error: null,
+	isSaved: false,
 }
 
 export const useCandidateStore = create<CandidateStore>((set) => ({
@@ -33,6 +34,14 @@ export const useCandidateStore = create<CandidateStore>((set) => ({
         set({ loading: false });
       }
     },
+	checkSaved: async (username, userId) => {
+		const response = await fetch('/api/checkCandidate', {
+			method: 'POST',
+			body: JSON.stringify({ githubName: username, userId }),
+		});
+		const data = await response.json();
+		set({ isSaved: data.isSaved });
+	},
     
     resetState: () => set(initialState),
 }))
