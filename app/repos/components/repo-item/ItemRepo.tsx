@@ -1,4 +1,4 @@
-import { useState, useEffect, FC, useCallback } from "react";
+import { FC, useCallback } from "react";
 import {
   Accordion,
   AccordionSummary,
@@ -14,7 +14,6 @@ import RepoButton from "./RepoButton";
 import CommitInfo from "./Commit-info";
 import TextInfo from "../../../components/common/TextInfo";
 import { useRepoStore } from "../../../store/repos/store";
-// import { shallow } from 'zustand/shallow';
 
 interface RepoItemProps {
   repo: Repository;
@@ -25,8 +24,6 @@ const RepoItem: FC<RepoItemProps> = ({
   repo,
   isSmallScreen,
 }) => {
-  
-  // console.log("Rendered", repo.name);
   
   const expanded = useRepoStore(state => state.expandedRepoId === repo.id);
 

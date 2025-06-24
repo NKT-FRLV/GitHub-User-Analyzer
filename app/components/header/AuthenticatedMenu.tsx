@@ -23,13 +23,13 @@ const AuthenticatedMenu = ({
 }: AuthenticatedMenuProps) => {
 	const router = useRouter();
 	const pathname = usePathname();
-	const isHomePage = pathname === "/";
+	const isProfilePage = pathname === "/profile";
+	const isAnalyzePage = pathname === "/repos";
 
 	const isAnimating = useAnimationStore((state) => state.isAnimating);
 
-	const handleNavigate = () => {
-		const navigateTo = isHomePage ? "/profile" : "/";
-		router.push(navigateTo);
+	const handleNavigate = ({ path }: { path: string }) => {
+		router.push(path);
 		onClose();
 	};
 
@@ -76,9 +76,13 @@ const AuthenticatedMenu = ({
 				open={open}
 				onClose={onClose}
 			>
-				<MenuItem onClick={handleNavigate}>
-					{isHomePage ? "Profile" : "Home"}
+				{isAnalyzePage && (
+					<MenuItem onClick={() => handleNavigate({ path: "/" })}>Home</MenuItem>
+				)}
+				<MenuItem onClick={() => handleNavigate({ path: isProfilePage ? "/" : "/profile" })}>
+					{isProfilePage ? "Home" : "Profile"}
 				</MenuItem>
+
 				<MenuItem onClick={onLogout}>Logout</MenuItem>
 			</Menu>
 		</>

@@ -9,7 +9,7 @@ export async function AuthProviderWrapper({
 }) {
   // Получаем пользователя на сервере
   const initialUser = await getUserFromCookie();
-  console.log('initialUser', initialUser);
+  console.log('Initial User _from Cookie_ to AuthProvider: ', initialUser);
 
   // Гидратируем клиентский AuthProvider начальными данными
   return (

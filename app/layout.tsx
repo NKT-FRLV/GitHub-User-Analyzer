@@ -87,7 +87,8 @@ export default function RootLayout({
 
   
   return (
-    // Strange but it works
+    // CSS baseline is used to reset the CSS to the default values
+	// Important for MUI to work properly
     <ScopedCssBaseline>
 
       <html lang="en">

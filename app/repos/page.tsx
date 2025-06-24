@@ -15,7 +15,7 @@ const ReposPage = async ({ searchParams } : {
   console.log('reposUrl', reposUrl)
 
   if (!reposUrl) {
-    return <div>No `url` query param found</div>;
+    return <div>No url query param found</div>;
   }
 
   // const reposData: Repository[] | null = await fetchReposApi(reposUrl);
