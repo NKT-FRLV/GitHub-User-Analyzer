@@ -41,6 +41,30 @@
   transform: scale(1.1);
 }
 
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tableWrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.tableWrapper::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.tableWrapper::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+
+.tableWrapper::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
 @media (max-width: 600px) {
   .main {
     padding: 1rem 0;
@@ -54,5 +78,26 @@
   .avatar {
     width: 80px;
     height: 80px;
+  }
+
+  .tableWrapper {
+    margin: 0 -8px;
+    padding: 0 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main {
+    padding: 0.5rem 0;
+  }
+  
+  .profileTitle {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .tableWrapper {
+    margin: 0 -16px;
+    padding: 0 16px;
   }
 } 

@@ -54,39 +54,67 @@ const Candidates = () => {
     const renderCandidatesList = () => {
       return candidates.map((candidate) => (
         <TableRow key={candidate.id}>
-          <TableCell>
+          <TableCell sx={{ minWidth: { xs: 60, sm: 80 } }}>
             <Avatar
               src={candidate.avatarUrl}
               alt={candidate.githubName}
-              sx={{ width: 40, height: 40 }}
+              sx={{ width: { xs: 32, sm: 40 }, height: { xs: 32, sm: 40 } }}
               className={styles.candidateListAvatar}
               onClick={() => handleAvatarOpen(candidate)}
             />
           </TableCell>
-          <TableCell align="center">
+          <TableCell align="center" sx={{ minWidth: { xs: 120, sm: 150 } }}>
             <MuiLink
               href={candidate.githubUrl}
               target="_blank"
               rel="noopener noreferrer"
-              sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}
+              sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                gap: { xs: 0.5, sm: 1 },
+                fontSize: { xs: '0.875rem', sm: '1rem' }
+              }}
             >
               <GitHubIcon fontSize="small" />
-              {candidate.githubName}
+              <Box component="span" sx={{ 
+                wordBreak: 'break-word',
+                display: { xs: 'none', sm: 'inline' }
+              }}>
+                {candidate.githubName}
+              </Box>
+              <Box component="span" sx={{ 
+                display: { xs: 'inline', sm: 'none' },
+                maxWidth: '80px',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+              }}>
+                {candidate.githubName}
+              </Box>
             </MuiLink>
           </TableCell>
-          <TableCell align="center">
-            {format(new Date(candidate.savedAt), 'dd MMMM yyyy', { locale: enGB })}
+          <TableCell align="center" sx={{ 
+            minWidth: { xs: 100, sm: 120 },
+            fontSize: { xs: '0.75rem', sm: '0.875rem' }
+          }}>
+            <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+              {format(new Date(candidate.savedAt), 'dd MMMM yyyy', { locale: enGB })}
+            </Box>
+            <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
+              {format(new Date(candidate.savedAt), 'dd/MM/yy', { locale: enGB })}
+            </Box>
           </TableCell>
-          <TableCell align="center">
+          <TableCell align="center" sx={{ minWidth: { xs: 60, sm: 80 } }}>
             <IconButton
               onClick={() => handleReposAnalyze(candidate.reposUrl)}
               sx={{ color: 'green' }}
               size="small"
             >
-              <SearchIcon />
+              <SearchIcon fontSize="small" />
             </IconButton>
           </TableCell>
-          <TableCell align="right">
+          <TableCell align="right" sx={{ minWidth: { xs: 60, sm: 80 } }}>
             <DeleteCandidateButton candidateId={candidate.id} deleteCandidate={handleDelete} />
           </TableCell>
         </TableRow>
@@ -97,22 +125,24 @@ const Candidates = () => {
       // Если идет загрузка, показываем таблицу со скелетоном
       if (loading) {
         return (
-          <TableContainer>
-            <Table sx={{ tableLayout: 'fixed' }}>
-              <TableHead>
-                <TableRow>
-                  <TableCell width={80} >Avatar</TableCell>
-                  <TableCell align="center">GitHub Username</TableCell>
-                  <TableCell align="center">Saved Date</TableCell>
-                  <TableCell width={100} align="center">Analyze</TableCell>
-                  <TableCell width={100} align="right">Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                <CandidatesSkeleton />
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <Box className={styles.tableWrapper}>
+            <TableContainer sx={{ overflowX: 'auto' }}>
+              <Table sx={{ minWidth: { xs: 400, sm: 600 } }}>
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ minWidth: { xs: 60, sm: 80 } }}>Avatar</TableCell>
+                    <TableCell align="center" sx={{ minWidth: { xs: 120, sm: 150 } }}>GitHub Username</TableCell>
+                    <TableCell align="center" sx={{ minWidth: { xs: 100, sm: 120 } }}>Saved Date</TableCell>
+                    <TableCell align="center" sx={{ minWidth: { xs: 60, sm: 80 } }}>Analyze</TableCell>
+                    <TableCell align="right" sx={{ minWidth: { xs: 60, sm: 80 } }}>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <CandidatesSkeleton />
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
         )
       }
       
@@ -129,22 +159,24 @@ const Candidates = () => {
       
       // Если есть данные, показываем таблицу с кандидатами
       return (
-        <TableContainer>
-          <Table sx={{ tableLayout: 'fixed' }}>
-            <TableHead>
-              <TableRow>
-                <TableCell width={80} >Avatar</TableCell>
-                <TableCell align="center">GitHub Username</TableCell>
-                <TableCell align="center">Saved Date</TableCell>
-                <TableCell width={100} align="center">Analyze</TableCell>
-                <TableCell width={100} align="right">Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {renderCandidatesList()}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <Box className={styles.tableWrapper}>
+          <TableContainer sx={{ overflowX: 'auto' }}>
+            <Table sx={{ minWidth: { xs: 400, sm: 600 } }}>
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ minWidth: { xs: 60, sm: 80 } }}>Avatar</TableCell>
+                  <TableCell align="center" sx={{ minWidth: { xs: 120, sm: 150 } }}>GitHub Username</TableCell>
+                  <TableCell align="center" sx={{ minWidth: { xs: 100, sm: 120 } }}>Saved Date</TableCell>
+                  <TableCell align="center" sx={{ minWidth: { xs: 60, sm: 80 } }}>Analyze</TableCell>
+                  <TableCell align="right" sx={{ minWidth: { xs: 60, sm: 80 } }}>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {renderCandidatesList()}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
       )
     }
 
@@ -152,7 +184,7 @@ const Candidates = () => {
       <>
       <Grid item xs={12}>
         <Card elevation={3}>
-          <CardContent>
+          <CardContent sx={{ padding: { xs: 1, sm: 2 } }}>
             <Typography variant="h6" gutterBottom>
               Saved Candidates
             </Typography>
