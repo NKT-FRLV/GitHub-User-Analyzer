@@ -13,6 +13,12 @@ export interface RepoState {
   error: string | null
   selectedPage: SelectedPage
   selectedLanguage: string
+  selectedFile: {
+    path: string
+    content: string
+    type: string
+  } | null
+  isFileSelectionModalOpen: boolean
 }
 
 export interface RepoActions {
@@ -25,6 +31,8 @@ export interface RepoActions {
   setError: (error: string | null) => void
   setSelectedPage: (page: SelectedPage) => void
   setSelectedLanguage: (lang: string) => void
+  setSelectedFile: (file: { path: string; content: string; type: string } | null) => void
+  setFileSelectionModalOpen: (isOpen: boolean) => void
   
   // Filter actions
   filterByLanguage: (language: string) => void

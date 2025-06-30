@@ -15,7 +15,9 @@ const initialState: RepoState = {
   loading: true,
   error: null,
   selectedPage: 'list',
-  selectedLanguage: 'All Langs'
+  selectedLanguage: 'All Langs',
+  selectedFile: null,
+  isFileSelectionModalOpen: false
 }
 
 export const useRepoStore = create<RepoStore>((set, get) => ({
@@ -34,6 +36,8 @@ export const useRepoStore = create<RepoStore>((set, get) => ({
   setError: (error) => set({ error: error }),
   setSelectedPage: (page) => set({ selectedPage: page }),
   setSelectedLanguage: (lang) => set({ selectedLanguage: lang }),
+  setSelectedFile: (file) => set({ selectedFile: file }),
+  setFileSelectionModalOpen: (isOpen) => set({ isFileSelectionModalOpen: isOpen }),
 
   fetchRepos: async (url: string) => {
     set({ loading: true })

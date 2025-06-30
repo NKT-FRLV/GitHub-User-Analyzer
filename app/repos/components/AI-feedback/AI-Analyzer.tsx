@@ -17,7 +17,7 @@ const AIAnalyzer = ({ repOwner }: AIAnalyzerProps) => {
   const selectedRepo = useRepoStore(state => state.selectedRepo);
   
   return (
-    <Box display='flex' sx={{ flexDirection: 'column', width: isSmallScreen ? '100%' : '50%'}}>
+    <Box display='flex' sx={{ flexDirection: 'column', width: isSmallScreen ? '100%' : '50%', position: 'relative'}}>
         <Diagram selectedRepo={selectedRepo} />
         <AIFeedbackChat owner={repOwner} repoName={selectedRepo?.name || null} isSmallScreen={isSmallScreen} />
     </Box>

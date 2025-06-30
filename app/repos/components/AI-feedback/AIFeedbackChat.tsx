@@ -3,12 +3,14 @@
 import React, { useEffect, useState, useCallback, memo } from "react";
 import { CostInfo } from "@/app/types/types";
 
-import { Box, Typography} from "@mui/material";
+import { Box, Typography, Button} from "@mui/material";
 import AIChatPanel from "./AI-chat-panel/AIChatPanel";
 
 import PromptSettings from "./Prompt-Settings/PromptSettings";
 import CostInfoModal from "./modals/CostInfoModal";
 import FilePreviewModal from "./modals/FilePreviewModal";
+import FileSelectionModal from "./modals/FileSelectionModal";
+import { useRepoStore } from "@/app/store/repos/store";
 /**
  * Пример компонента: Chat-окно,
  * где при нажатии на кнопку запрашивается AI и
@@ -35,6 +37,12 @@ const AIFeedbackChat = ({ owner, repoName, isSmallScreen }: AiFeedbackChatProps)
   const [isSpeechAllowed, setIsSpeechAllowed] = useState<boolean>(false);
   const [isCostInfoDialogOpen, setIsCostInfoDialogOpen] = useState(false);
 
+  // Стор для работы с выбранным файлом
+  const selectedFileFromStore = useRepoStore(state => state.selectedFile);
+  const isFileSelectionModalOpen = useRepoStore(state => state.isFileSelectionModalOpen);
+  const setFileSelectionModalOpen = useRepoStore(state => state.setFileSelectionModalOpen);
+  const setSelectedFileInStore = useRepoStore(state => state.setSelectedFile);
+
   console.log("AIFeedbackChat rendered");
 
   useEffect(() => {
@@ -43,22 +51,48 @@ const AIFeedbackChat = ({ owner, repoName, isSmallScreen }: AiFeedbackChatProps)
   }, [repoName, owner, selectedSkills, selectedLanguage, selectedFile]);
 
 
+
+  // Обработчик выбора файла из модалки
+  const handleFileSelection = useCallback((filePath: string, content: string, type: string) => {
+    setSelectedFileInStore({ path: filePath, content, type });
+    setFileSelectionModalOpen(false);
+  }, [setSelectedFileInStore, setFileSelectionModalOpen]);
+
+
   /**
-   * Функция, которая:
-   * 1) делает запрос к API `/api/analyze` (или другой ваш эндпоинт).
-   * 2) получает итоговый текст и "печатает" его с анимацией.
+   * Функция, которая открывает модалку выбора файлов или сразу запускает анализ, если файл уже выбран
    */
   const handleAskAi = useCallback(async (callback: React.Dispatch<React.SetStateAction<string>>) => {
     if (!repoName) {
       callback("No repo selected");
       return;
     }
+
+    // Если уже есть выбранный файл, анализируем его
+    if (selectedFileFromStore) {
+      performAiAnalysis(selectedFileFromStore.path, selectedFileFromStore.content, selectedFileFromStore.type, callback);
+    } else {
+      // Иначе открываем модалку выбора файлов
+      setFileSelectionModalOpen(true);
+    }
+  }, [repoName, selectedFileFromStore, setFileSelectionModalOpen]);
+
+  /**
+   * Функция, которая выполняет анализ выбранного файла
+   */
+  const performAiAnalysis = useCallback(async (
+    filePath: string, 
+    content: string, 
+    type: string, 
+    callback?: React.Dispatch<React.SetStateAction<string>>
+  ) => {
+    if (!callback) return;
+    
     callback("");
     setLoading(true);
 
     try {
-        // Запрос с Клиента на Серверный Роут /api/analyzeAI, 
-        // который обращается к API OpenAI
+      // Запрос с выбранным файлом
       const response = await fetch("/api/analyzeAI", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -67,8 +101,10 @@ const AIFeedbackChat = ({ owner, repoName, isSmallScreen }: AiFeedbackChatProps)
           repoName,
           skills: selectedSkills,
           language: selectedLanguage,
-          file: selectedFile,
-          isSpeechAllowed
+          file: "SelectedFile", // Новый тип для анализа конкретного файла
+          isSpeechAllowed,
+          selectedFilePath: filePath,
+          selectedFileContent: content
         }),
       });
 
@@ -103,58 +139,97 @@ const AIFeedbackChat = ({ owner, repoName, isSmallScreen }: AiFeedbackChatProps)
       setLoading(false);
       setDone(true);
     }
-  }, [repoName, owner, selectedSkills, selectedLanguage, selectedFile, isSpeechAllowed]);
+  }, [owner, repoName, selectedSkills, selectedLanguage, isSpeechAllowed]);
 
   const handleOpenFileDialog = useCallback(() => setOpenFileDialog(true), []);
   const handleCloseFileDialog = useCallback(() => setOpenFileDialog(false), []);
   const handleOpenCostInfoDialog = useCallback(() => setIsCostInfoDialogOpen(true), []);
   const handleCloseCostInfoDialog = useCallback(() => setIsCostInfoDialogOpen(false), []);
+  const handleResetSelectedFile = useCallback(() => {
+    setSelectedFileInStore(null);
+  }, [setSelectedFileInStore]);
 
   return (
-    <Box display='flex' flexDirection='column' sx={{ mt: 2 }}>
-        <Typography variant="h5" sx={{ fontWeight: "bold", fontSize: isSmallScreen ? 18 : 24 }}>
-            Ask AI feedback about project
-        </Typography>
-        
-        {audioUrl && (
-        <audio controls style={{ marginTop: "10px" }}>
-          <source src={audioUrl} type="audio/mpeg" />
-          Your browser does not support the audio element.
-        </audio>
-      )}
+	<Box sx={{ border: '1px solid #e0e0e0',
+			mt: 2,
+				borderRadius: 2,
+				padding: 1,
+				boxShadow: 24,
+				overflow: "hidden", }}>
+		<Box display='flex' flexDirection='column' sx={{  padding: 4,  border: '1px solid #e0e0e0',
+					borderRadius: 2,
+					boxShadow: 4,
+					overflow: "hidden", }}>
+			<Typography variant="h5" sx={{ fontWeight: "bold", fontSize: isSmallScreen ? 18 : 24 }}>
+				Ask AI feedback about project
+			</Typography>
 
-        {/* Prompt Settings */}
-        <PromptSettings
-            selectedLanguage={selectedLanguage}
-            setSelectedLanguage={setSelectedLanguage}
-            selectedFile={selectedFile}
-            setSelectedFile={setSelectedFile}
-            selectedSkills={selectedSkills}
-            setSelectedSkills={setSelectedSkills}
-            isSmallScreen={isSmallScreen}
-            loading={loading}
-            isSpeechAllowed={isSpeechAllowed}
-            setSpeechAllowed={setIsSpeechAllowed}
-        />
+			{/* Показываем информацию о выбранном файле */}
+			{selectedFileFromStore && (
+				<Box sx={{ mt: 2, p: 2, backgroundColor: '#f5f5f5', borderRadius: 1 }}>
+					<Typography variant="body2" color="primary">
+						Выбранный файл: <strong>{selectedFileFromStore.path}</strong>
+					</Typography>
+					<Button 
+						size="small" 
+						onClick={handleResetSelectedFile}
+						sx={{ mt: 1 }}
+					>
+						Выбрать другой файл
+					</Button>
+				</Box>
+			)}
+			
+			{audioUrl && (
+			<audio controls style={{ marginTop: "10px" }}>
+			<source src={audioUrl} type="audio/mpeg" />
+			Your browser does not support the audio element.
+			</audio>
+		)}
 
-        {/* AI Chat Panel */}
-        <AIChatPanel
-            fileContent={fileContent}
-            loading={loading}
-            done={done}
-            repoName={repoName}
-            isSmallScreen={isSmallScreen}
-            setOpenFileDialog={handleOpenFileDialog}
-            handleAskAi={handleAskAi}
-            setOpenCostInfoDialog={handleOpenCostInfoDialog}
-        />
+			{/* Prompt Settings */}
+			<PromptSettings
+				selectedLanguage={selectedLanguage}
+				setSelectedLanguage={setSelectedLanguage}
+				selectedFile={selectedFile}
+				setSelectedFile={setSelectedFile}
+				selectedSkills={selectedSkills}
+				setSelectedSkills={setSelectedSkills}
+				isSmallScreen={isSmallScreen}
+				loading={loading}
+				isSpeechAllowed={isSpeechAllowed}
+				setSpeechAllowed={setIsSpeechAllowed}
+			/>
 
-        {/* Analyzed file content MODAL */}
-        <FilePreviewModal isOpen={openFileDialog} setClose={handleCloseFileDialog} fileType={fileType} fileContent={fileContent} />
+			{/* AI Chat Panel */}
+			<AIChatPanel
+				fileContent={fileContent}
+				loading={loading}
+				done={done}
+				repoName={repoName}
+				isSmallScreen={isSmallScreen}
+				setOpenFileDialog={handleOpenFileDialog}
+				handleAskAi={handleAskAi}
+				setOpenCostInfoDialog={handleOpenCostInfoDialog}
+			/>
 
-        {/* Cost Info MODAL */}
-        <CostInfoModal isOpen={isCostInfoDialogOpen} setClose={handleCloseCostInfoDialog} costInfo={costInfo} isSmallScreen={isSmallScreen} />
-    </Box>
+			{/* Analyzed file content MODAL */}
+			<FilePreviewModal isOpen={openFileDialog} setClose={handleCloseFileDialog} fileType={fileType} fileContent={fileContent} />
+
+			{/* Cost Info MODAL */}
+			<CostInfoModal isOpen={isCostInfoDialogOpen} setClose={handleCloseCostInfoDialog} costInfo={costInfo} isSmallScreen={isSmallScreen} />
+
+			{/* File Selection MODAL */}
+			<FileSelectionModal
+				isOpen={isFileSelectionModalOpen}
+				onClose={() => setFileSelectionModalOpen(false)}
+				onSelectFile={handleFileSelection}
+				owner={owner}
+				repoName={repoName || ''}
+				isSmallScreen={isSmallScreen}
+			/>
+		</Box>
+	</Box>
   );
 };
 

@@ -53,7 +53,13 @@ const RepoList: React.FC<RepoListProps> = ({ repOwner }) => {
 			>
 				Repositories of {repOwner}:
 			</Typography>
-			<Box mt={1} component="ul">
+			<Box mt={1} component="ul" sx={{
+				border: '1px solid #e0e0e0',
+				borderRadius: 2,
+				padding: 1,
+				boxShadow: 24,
+				overflow: "hidden",
+			}}>
 				{currentItems.map((repo) => (
 					<RepoItem
 						key={repo.id}

@@ -13,7 +13,7 @@ const openai = new OpenAI({
 export async function POST(req: Request): Promise<NextResponse> {
   try {
     
-    const { owner, repoName, skills, language, file, isSpeechAllowed } = await req.json();
+    const { owner, repoName, skills, language, file, isSpeechAllowed, selectedFilePath, selectedFileContent } = await req.json();
     const isJoking = jokeLanguages.includes(language);
     let fileResponse: Response;
     let readme = "";
@@ -37,8 +37,12 @@ export async function POST(req: Request): Promise<NextResponse> {
         }
         readme = await fileResponse.text();
         fileType = "markdown";
+    } else if (file === "SelectedFile" && !isJoking) {
+        // 2. Если analyzeWhat === "SelectedFile", используем переданный файл
+        fileContent = selectedFileContent;
+        fileType = selectedFilePath?.split('.').pop() || "plaintext";
     } else if (file === "Code" && !isJoking) {
-        // 2. Если analyzeWhat === "code", ищем biggest code file
+        // 3. Если analyzeWhat === "code", ищем biggest code file
         // a) Получаем default_branch
         const repoRes = await fetch(`https://api.github.com/repos/${owner}/${repoName}`);
         if (!repoRes.ok) {
@@ -107,10 +111,10 @@ export async function POST(req: Request): Promise<NextResponse> {
                 Its README.md file:\n${readme}\nAnalyze the programmer's stack, his experience and skills, which he could have gained in the current project.\n
                 Give a short summary (up to 200 words) for the recruiter, in ${language} language, highlighting the strong and weak sides of the programmer, and is it a good match for selected skills.
                 `;
-    } else if (file === "Code" && !isJoking) {
+    } else if ((file === "Code" || file === "SelectedFile") && !isJoking) {
         systemPrompt = `You are a code reviewer AI, you should review the code and give feedback to the recruiter, make a smoll resume of the programmer's skills and code base quality.`;
         userPrompt = `
-                Please review the following code snippet. Recrutier looks for the following skills: ${skills}.
+                Please review the following code snippet from file ${selectedFilePath || 'auto-selected file'}. Recrutier looks for the following skills: ${skills}.
 
                 **Goals**:
                 1. Describe the purpose or functionality of this file.

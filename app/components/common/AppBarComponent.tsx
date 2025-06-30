@@ -88,6 +88,9 @@ const AppBarComponent: React.FC = () => {
         left: 10,
         zIndex: 1000,
         backgroundColor: "grey.200",
+		boxShadow: 4,
+		borderRadius: 2,
+		border: '1px solid #e0e0e0',
         color: "grey.800",
         "&.MuiPaper-root": {
           paddingRight: "16px !important",
