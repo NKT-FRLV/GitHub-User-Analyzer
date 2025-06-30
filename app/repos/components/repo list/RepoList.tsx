@@ -40,7 +40,7 @@ const RepoList: React.FC<RepoListProps> = ({ repOwner }) => {
 			display="flex"
 			sx={{
 				flexDirection: "column",
-				width: isSmallScreen ? "100%" : "50%",
+				width: "100%",
 			}}
 		>
 			<Typography

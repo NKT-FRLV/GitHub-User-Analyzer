@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -59,14 +59,7 @@ const FileSelectionModal: React.FC<FileSelectionModalProps> = ({
   const [loadingContent, setLoadingContent] = useState(false);
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
 
-  // Загружаем список файлов при открытии модалки
-  useEffect(() => {
-    if (isOpen && owner && repoName) {
-      fetchFiles();
-    }
-  }, [isOpen, owner, repoName]);
-
-  const fetchFiles = async () => {
+  const fetchFiles = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetch('/api/repoFiles', {
@@ -86,7 +79,14 @@ const FileSelectionModal: React.FC<FileSelectionModalProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [owner, repoName]);
+
+  // Загружаем список файлов при открытии модалки
+  useEffect(() => {
+    if (isOpen && owner && repoName) {
+      fetchFiles();
+    }
+  }, [isOpen, owner, repoName, fetchFiles]);
 
   const fetchFileContent = async (filePath: string) => {
     setLoadingContent(true);

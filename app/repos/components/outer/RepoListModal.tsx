@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Box } from "@mui/material";
 import styles from "./outer.module.css";
 import AppBarComponent from "../../../components/common/AppBarComponent";
@@ -25,8 +25,10 @@ interface RepoListPageProps {
 }
 
 const RepoListPage = ({ url }: RepoListPageProps) => {
+	const containerRef = useRef<HTMLDivElement>(null);
 	const repos = useRepoStore((state) => state.repos);
 	const githubUsername = useRepoStore((state) => state.githubUsername);
+	const panelWidths = useRepoStore((state) => state.panelWidths);
 	const fetchRepos = useRepoStore((state) => state.fetchRepos);
 	const setGithubUsername = useRepoStore((state) => state.setGithubUsername);
 
@@ -48,11 +50,39 @@ const RepoListPage = ({ url }: RepoListPageProps) => {
 
 	return (
 		<Box className={styles.reposPageContainer}>
-			<AppBarComponent />
+			<AppBarComponent containerRef={containerRef} />
 
-			<Box className={styles.reposAndAnalyzerContainer} gap={4}>
-				<RepoListResponsive repOwner={ownerLogin} />
-				<AIAnalyzerResponsive repOwner={ownerLogin} />
+			<Box 
+				ref={containerRef}
+				className={styles.reposAndAnalyzerContainer} 
+				sx={{
+					'@media (min-width: 951px)': {
+						gap: 2,
+						// height: 'calc(100vh - 120px)',
+					}
+				}}
+			>
+				<Box 
+					sx={{
+						'@media (min-width: 951px)': {
+							width: `${panelWidths.repoList}%`,
+							// overflow: 'hidden',
+						}
+					}}
+				>
+					<RepoListResponsive repOwner={ownerLogin} />
+				</Box>
+				
+				<Box 
+					sx={{
+						'@media (min-width: 951px)': {
+							width: `${panelWidths.aiAnalyzer}%`,
+							// overflow: 'hidden',
+						}
+					}}
+				>
+					<AIAnalyzerResponsive repOwner={ownerLogin} />
+				</Box>
 			</Box>
 		</Box>
 	);

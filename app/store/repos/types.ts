@@ -19,6 +19,10 @@ export interface RepoState {
     type: string
   } | null
   isFileSelectionModalOpen: boolean
+  panelWidths: {
+    repoList: number
+    aiAnalyzer: number
+  }
 }
 
 export interface RepoActions {
@@ -33,6 +37,7 @@ export interface RepoActions {
   setSelectedLanguage: (lang: string) => void
   setSelectedFile: (file: { path: string; content: string; type: string } | null) => void
   setFileSelectionModalOpen: (isOpen: boolean) => void
+  setPanelWidths: (repoListWidth: number, aiAnalyzerWidth: number) => void
   
   // Filter actions
   filterByLanguage: (language: string) => void

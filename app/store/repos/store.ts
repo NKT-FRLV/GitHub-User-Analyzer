@@ -17,7 +17,11 @@ const initialState: RepoState = {
   selectedPage: 'list',
   selectedLanguage: 'All Langs',
   selectedFile: null,
-  isFileSelectionModalOpen: false
+  isFileSelectionModalOpen: false,
+  panelWidths: {
+    repoList: 50,
+    aiAnalyzer: 50
+  }
 }
 
 export const useRepoStore = create<RepoStore>((set, get) => ({
@@ -38,6 +42,14 @@ export const useRepoStore = create<RepoStore>((set, get) => ({
   setSelectedLanguage: (lang) => set({ selectedLanguage: lang }),
   setSelectedFile: (file) => set({ selectedFile: file }),
   setFileSelectionModalOpen: (isOpen) => set({ isFileSelectionModalOpen: isOpen }),
+  setPanelWidths: (repoListWidth: number, aiAnalyzerWidth: number) => {
+    set({ 
+      panelWidths: { 
+        repoList: repoListWidth, 
+        aiAnalyzer: aiAnalyzerWidth 
+      } 
+    })
+  },
 
   fetchRepos: async (url: string) => {
     set({ loading: true })
