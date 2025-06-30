@@ -5,6 +5,8 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import CloseIcon from '@mui/icons-material/Close'
 import { mapFileTypeToSyntaxHighlighter } from '@/app/utils'
 
+type Theme = typeof coy | typeof dracula | typeof tomorrow;
+
 interface FilePreviewModalProps {
   isOpen: boolean
   setClose: () => void
@@ -14,14 +16,16 @@ interface FilePreviewModalProps {
 
 const FilePreviewModal = ({ isOpen, setClose, fileType, fileContent }: FilePreviewModalProps) => {
 
-    const [fileTheme, setFileTheme] = useState<object>(dracula);
+    const [fileTheme, setFileTheme] = useState<Theme>(dracula);
     const stableFileType = useMemo(() => mapFileTypeToSyntaxHighlighter(fileType), [fileType]);
     
     const handleThemeChange = (
         event: React.MouseEvent<HTMLElement>,
-        newTheme: object | null,
+        newTheme: Theme,
       ) => {
-        setFileTheme(newTheme);
+        if (newTheme) {
+          setFileTheme(newTheme);
+        }
       };
 
   return (
