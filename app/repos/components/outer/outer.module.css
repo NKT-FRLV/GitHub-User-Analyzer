@@ -3,6 +3,7 @@
     margin-top: 16px;
     display: flex;
     flex-direction: row;
+	gap: 16px;
     padding: 16px;
     text-align: center;
 }
@@ -18,8 +19,17 @@
 
 @media (max-width: 600px) {
 
+	.reposAndAnalyzerContainer {
+		padding: 10px;
+	}
+
     .modalContent {
         font-size: 0.875rem;
     }
+
+	.reposPageContainer {
+
+		padding: 0;
+	}
 
 }

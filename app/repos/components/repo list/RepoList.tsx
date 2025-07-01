@@ -41,24 +41,29 @@ const RepoList: React.FC<RepoListProps> = ({ repOwner }) => {
 			sx={{
 				flexDirection: "column",
 				width: "100%",
+				height: "fit-content",
+				border: '1px solid #e0e0e0',
+				borderRadius: 2,
+				padding: 1,
+				boxShadow: 24,
+				overflow: "hidden",
+				
 			}}
 		>
 			<Typography
 				variant="h6"
 				sx={{
 					mt: 2,
+					mb: 1,
 					fontWeight: "bold",
 					fontSize: isSmallScreen ? "1rem" : "1.2rem",
+					textShadow: "0 2px 8px rgba(0, 0, 0, 0.5)",
 				}}
 			>
 				Repositories of {repOwner}:
 			</Typography>
 			<Box mt={1} component="ul" sx={{
-				border: '1px solid #e0e0e0',
-				borderRadius: 2,
-				padding: 1,
-				boxShadow: 24,
-				overflow: "hidden",
+				
 			}}>
 				{currentItems.map((repo) => (
 					<RepoItem

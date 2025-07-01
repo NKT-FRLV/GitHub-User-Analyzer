@@ -19,11 +19,17 @@ export interface RepoState {
     type: string
   } | null
   isFileSelectionModalOpen: boolean
-  panelWidths: {
-    repoList: number
-    aiAnalyzer: number
-  }
+  panelWidths: PanelWidths
 }
+
+// Отдельный интерфейс для панелей
+export interface PanelWidths {
+  repoList: number
+  aiAnalyzer: number
+}
+
+// Union ключей панелей
+export type PanelWidthKeys = keyof PanelWidths
 
 export interface RepoActions {
   setGithubUsername: (url: string) => void

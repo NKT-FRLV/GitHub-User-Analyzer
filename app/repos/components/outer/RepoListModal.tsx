@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { Box } from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
 import styles from "./outer.module.css";
 import AppBarComponent from "../../../components/common/AppBarComponent";
 import { withResponsiveVisibility } from "../../../lib/hoc";
@@ -11,9 +11,11 @@ import { useRepoStore } from "../../../store/repos/store";
 // HOCs
 const RepoListResponsive = withResponsiveVisibility(RepoList, {
 	page: "list",
+	key: "repoList",
 });
 const AIAnalyzerResponsive = withResponsiveVisibility(AIAnalyzer, {
 	page: "ai",
+	key: "aiAnalyzer",
 });
 
 const usernameRegex = /users\/([^\/]+)\/repos/;
@@ -28,9 +30,10 @@ const RepoListPage = ({ url }: RepoListPageProps) => {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const repos = useRepoStore((state) => state.repos);
 	const githubUsername = useRepoStore((state) => state.githubUsername);
-	const panelWidths = useRepoStore((state) => state.panelWidths);
+	// const panelWidths = useRepoStore((state) => state.panelWidths);
 	const fetchRepos = useRepoStore((state) => state.fetchRepos);
 	const setGithubUsername = useRepoStore((state) => state.setGithubUsername);
+	const isSmallScreen = useMediaQuery("(max-width: 950px)");
 
 	const ownerLogin = repos.length > 0 ? repos[0].owner.login : "No owner";
 
@@ -52,37 +55,13 @@ const RepoListPage = ({ url }: RepoListPageProps) => {
 		<Box className={styles.reposPageContainer}>
 			<AppBarComponent containerRef={containerRef} />
 
-			<Box 
+			<Box
 				ref={containerRef}
-				className={styles.reposAndAnalyzerContainer} 
-				sx={{
-					'@media (min-width: 951px)': {
-						gap: 2,
-						// height: 'calc(100vh - 120px)',
-					}
-				}}
+				className={styles.reposAndAnalyzerContainer}
 			>
-				<Box 
-					sx={{
-						'@media (min-width: 951px)': {
-							width: `${panelWidths.repoList}%`,
-							// overflow: 'hidden',
-						}
-					}}
-				>
-					<RepoListResponsive repOwner={ownerLogin} />
-				</Box>
-				
-				<Box 
-					sx={{
-						'@media (min-width: 951px)': {
-							width: `${panelWidths.aiAnalyzer}%`,
-							// overflow: 'hidden',
-						}
-					}}
-				>
-					<AIAnalyzerResponsive repOwner={ownerLogin} />
-				</Box>
+				<RepoListResponsive repOwner={ownerLogin} />
+
+				<AIAnalyzerResponsive repOwner={ownerLogin} />
 			</Box>
 		</Box>
 	);
